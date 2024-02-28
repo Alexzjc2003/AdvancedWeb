@@ -12,7 +12,7 @@ let direction = new Vector3();
 
 
 const onKeyDown = (event) => {
-  console.log(event.code);
+  // console.log(event.code);
   switch (event.code) {
     case 'ArrowUp':
     case 'KeyW':
