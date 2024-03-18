@@ -12,11 +12,9 @@
 
 `ng new subjectThree --style=css`
 
-`cd subjectThree`
-
-`npm install`
-
 ### 运行项目
+
+`cd subjectThree`
 
 `ng serve`
 
