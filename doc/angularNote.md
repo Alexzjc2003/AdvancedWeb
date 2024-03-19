@@ -22,9 +22,13 @@
 
 ### 其他
 
+**安装组件库**
+
+`ng add @angular/material`
+
 **创建组件**
 
-`ng generate component HousingLocation --standalone --inline-template --skip-tests`
+`ng generate component HousingLocation --standalone --skip-tests`
 
 **创建接口**
 
