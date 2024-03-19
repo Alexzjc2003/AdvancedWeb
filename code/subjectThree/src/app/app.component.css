@@ -1,17 +1,4 @@
-main{
-    height: 100%;
-}
-
-.app-navi {
-    height: 64px;
-    font-size: 32px;
-}
-
-.spacer {
+.example-spacer {
     flex: 1 1 auto;
-}
-
-.app-content{
-    height: 100%;
-}
-
+  }
+  
