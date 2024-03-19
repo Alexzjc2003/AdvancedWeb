@@ -1,4 +1,21 @@
 .example-spacer {
     flex: 1 1 auto;
-  }
-  
+}
+
+
+/* .app-navi-button-container {
+    display: table-cell;
+} */
+
+.app-navi-button {
+    height: 40px;
+    width: 80px;
+    font-size: 20px;
+    margin: 8px;
+}
+
+.app-navi-icon {
+    margin-right: 10px;
+    height: 30px;
+    width: 30px;
+}

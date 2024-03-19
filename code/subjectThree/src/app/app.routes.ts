@@ -10,12 +10,12 @@ export const routes: Routes = [
         title: 'Home page'
     },
     {
-        path: '/login',
+        path: 'login',
         component: LoginComponent,
         title: 'login'
     },
     {
-        path: '/register',
+        path: 'register',
         component: RegisterComponent,
         title: 'register'
     }

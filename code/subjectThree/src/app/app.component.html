@@ -1,16 +1,12 @@
 <main>
-  <mat-toolbar color="primary">
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <span>My App</span>
+  <mat-toolbar>
+    <img src="assets/icons/steering-wheel.svg" class="app-navi-icon" />
+    <span>Subject Three</span>
     <span class="example-spacer"></span>
-    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-      <mat-icon>favorite</mat-icon>
-    </button>
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-      <mat-icon>share</mat-icon>
-    </button>
+    <div class="app-navi-button-container">
+      <button mat-button class="app-navi-button" routerLink="login">sign in</button>
+      <button mat-button class="app-navi-button" routerLink="register">sign up</button>
+    </div>
   </mat-toolbar>
   <section class="content">
     <router-outlet></router-outlet>
