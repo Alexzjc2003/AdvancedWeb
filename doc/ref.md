@@ -1,6 +1,6 @@
-### material组件库 
+### primeng组件库 
 
-https://material.angular.cn/components/categories
+https://primeng.org/
 
 **icon**
 

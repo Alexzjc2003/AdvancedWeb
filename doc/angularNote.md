@@ -24,7 +24,6 @@
 
 **安装组件库**
 
-`ng add @angular/material`
 
 **创建组件**
 
