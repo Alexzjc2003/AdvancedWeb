@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService {
+export class UserService {
 
   // url = 'http://localhost:3000/locations';
 
@@ -11,5 +11,9 @@ export class LoginService {
 
   login(username: string, password: string): void{
     console.log(`${username}: ${password}`)
+  }
+
+  register(username: string, password: string): void{
+    console.log(`${username} -- ${password}`)
   }
 }

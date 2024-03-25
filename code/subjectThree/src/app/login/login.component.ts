@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core'
 import {FormsModule} from "@angular/forms";
-import {LoginService} from "../login.service";
+import {UserService} from "../user.service";
 
 
 @Component({
@@ -13,7 +13,7 @@ import {LoginService} from "../login.service";
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  loginService: LoginService = inject(LoginService);
+  loginService: UserService = inject(UserService);
   constructor() {
   }
 

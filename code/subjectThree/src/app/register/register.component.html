@@ -1,1 +1,20 @@
-<p>register works!</p>
+<main class="router-outlet-container">
+  <div class="register-layout">
+    <form class="register-form">
+      <div class="register-field-item">
+        <label class="register-label" for="register-username-field">username: </label>
+        <input class="register-field" id="register-username-field" type="text" placeholder="username" #username>
+      </div>
+      <div class="register-field-item">
+        <label class="register-label" for="register-password-field">password: </label>
+        <input class="register-field" id="register-password-field" type="text" placeholder="password" #password>
+      </div>
+      <div class="register-field-item">
+        <button class="register-button" id="register-submit-button" type="button"
+                (click)="register(username.value, password.value)">submit
+        </button>
+      </div>
+    </form>
+
+  </div>
+</main>
