@@ -1,2 +1,20 @@
-<main>login works
+<main class="router-outlet-container">
+  <div class="login-layout">
+    <form class="login-form">
+      <div class="login-field-item">
+        <label class="login-label" for="login-username-field">username: </label>
+        <input class="login-field" id="login-username-field" type="text" placeholder="username" #username>
+      </div>
+      <div class="login-field-item">
+        <label class="login-label" for="login-password-field">password: </label>
+        <input class="login-field" id="login-password-field" type="text" placeholder="password" #password>
+      </div>
+      <div class="login-field-item">
+        <button class="login-button" id="login-submit-button" type="button"
+                (click)="login(username.value, password.value)">submit
+        </button>
+      </div>
+    </form>
+
+  </div>
 </main>

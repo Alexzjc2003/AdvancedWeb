@@ -5,12 +5,13 @@ import { RouterModule } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {NgOptimizedImage} from "@angular/common";
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterModule, MatIconModule, MatButtonModule, MatToolbarModule],
+  imports: [RouterOutlet, RouterModule, MatIconModule, MatButtonModule, MatToolbarModule, NgOptimizedImage],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
