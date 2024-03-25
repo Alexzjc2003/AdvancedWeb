@@ -1,7 +1,6 @@
-import { Component, inject } from '@angular/core'
+import {Component, inject} from '@angular/core'
 import {FormsModule} from "@angular/forms";
 import {UserService} from "../user.service";
-
 
 @Component({
   selector: 'app-login',
@@ -13,11 +12,14 @@ import {UserService} from "../user.service";
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+  username: string = "";
+  password: string = "";
+
   loginService: UserService = inject(UserService);
   constructor() {
   }
 
-  login(username: string, password: string){
-    this.loginService.login(username, password);
+  login(){
+    this.loginService.login(this.username, this.password);
   }
 }

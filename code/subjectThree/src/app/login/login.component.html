@@ -3,15 +3,15 @@
     <form class="login-form">
       <div class="login-field-item">
         <label class="login-label" for="login-username-field">username: </label>
-        <input class="login-field" id="login-username-field" type="text" placeholder="username" #username>
+        <input class="login-field" id="login-username-field" type="text" placeholder="username" [(ngModel)]="username" name="username">
       </div>
       <div class="login-field-item">
         <label class="login-label" for="login-password-field">password: </label>
-        <input class="login-field" id="login-password-field" type="text" placeholder="password" #password>
+        <input class="login-field" id="login-password-field" type="text" placeholder="password" [(ngModel)]="password" name="password">
       </div>
       <div class="login-field-item">
         <button class="login-button" id="login-submit-button" type="button"
-                (click)="login(username.value, password.value)">submit
+                (click)="login()">submit
         </button>
       </div>
     </form>

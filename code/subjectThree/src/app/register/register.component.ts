@@ -12,12 +12,19 @@ import {UserService} from "../user.service";
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
+  username: string = "";
+  password: string = "";
+  gender: string = "";
+  age: number = 0;
+  phone: string = "";
+  email: string = "";
+
+
   registerService: UserService = inject(UserService);
   constructor() {
   }
 
-  register(username: string, password: string){
-    this.registerService.register(username, password);
+  register(){
+    this.registerService.register(this.username, this.password, this.gender, this.age, this.phone, this.email);
   }
-
 }

@@ -3,15 +3,36 @@
     <form class="register-form">
       <div class="register-field-item">
         <label class="register-label" for="register-username-field">username: </label>
-        <input class="register-field" id="register-username-field" type="text" placeholder="username" #username>
+        <input class="register-field" id="register-username-field" [(ngModel)]="username" name="username" type="text" placeholder="username">
       </div>
       <div class="register-field-item">
         <label class="register-label" for="register-password-field">password: </label>
-        <input class="register-field" id="register-password-field" type="text" placeholder="password" #password>
+        <input class="register-field" id="register-password-field" [(ngModel)]="password" name="password" type="text" placeholder="password">
+      </div>
+      <div class="register-field-item">
+        <label class="register-label">gender:</label>
+        <label>
+          <input type="radio" name="gender" value="female" [(ngModel)]="gender" name="gender"> female
+        </label>
+        <label>
+          <input type="radio" name="gender" value="male" [(ngModel)]="gender" name="gender"> male
+        </label>
+      </div>
+      <div class="register-field-item">
+        <label class="register-label" for="register-age-field">age: </label>
+        <input class="register-field" id="register-age-field" [(ngModel)]="age" name="age" type="number" placeholder="age">
+      </div>
+      <div class="register-field-item">
+        <label class="register-label" for="register-phone-field">phone: </label>
+        <input class="register-field" id="register-phone-field" [(ngModel)]="phone" name="phone" type="text" placeholder="phone">
+      </div>
+      <div class="register-field-item">
+        <label class="register-label" for="register-email-field">email: </label>
+        <input class="register-field" id="register-email-field" [(ngModel)]="email" name="email" type="text" placeholder="email">
       </div>
       <div class="register-field-item">
         <button class="register-button" id="register-submit-button" type="button"
-                (click)="register(username.value, password.value)">submit
+                (click)="register()">submit
         </button>
       </div>
     </form>
