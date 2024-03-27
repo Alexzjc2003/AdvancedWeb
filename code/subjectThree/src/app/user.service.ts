@@ -20,9 +20,10 @@ export class UserService {
     };
     console.log(postData);
     axios
-      .post(this.registerUrl, postData)
+      .post(this.loginUrl, postData)
       .then((res) => {
-        console.log(res);
+        //res.data.access
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -50,7 +51,7 @@ export class UserService {
     axios
       .post(this.registerUrl, postData)
       .then((res) => {
-        console.log(res);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
