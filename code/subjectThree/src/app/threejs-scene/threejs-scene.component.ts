@@ -17,12 +17,15 @@ export class ThreejsSceneComponent implements OnInit {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
-  model;
+  model: THREE.Object3D;
+  road: THREE.Object3D;
   keys;
   cameraPosition: THREE.Vector3;
   lookAtVector: THREE.Vector3;
   ambientLight: THREE.AmbientLight;
   directionalLight: THREE.DirectionalLight;
+  carBox: THREE.Box3;
+  roadBox: THREE.Box3;
 
   constructor() { }
 
@@ -66,12 +69,12 @@ export class ThreejsSceneComponent implements OnInit {
             child.material = material;
           }
         });
-
         // 将模型添加到场景中
         component.scene.add(loadedModel);
       });
 
       component.model = loadedModel;
+      component.carBox = new THREE.Box3().setFromObject(loadedModel);
       component.model.rotateY(Math.PI);
     });
 
@@ -82,7 +85,9 @@ export class ThreejsSceneComponent implements OnInit {
       objLoader.setMaterials(materials);
       objLoader.load('./assets/model/road/roadTile_030.obj', function (object) {
         object.scale.set(100, 100, 100); // 设置模型的缩放
-        object.position.set(0, 0, 0);
+        object.position.set(0, 0, -300);
+        component.road = object;
+        component.roadBox = new THREE.Box3().setFromObject(object);
         component.scene.add(object);
       });
     });
@@ -115,21 +120,39 @@ export class ThreejsSceneComponent implements OnInit {
   renderScene(): void {
     const animate = () => {
       requestAnimationFrame(animate);
-      if (this.model == undefined) {
+      if (this.model == undefined || this.road == undefined) {
         return;
       }
 
+      let deltaX = 0;
+      let deltaZ = 0;
+
+      
+
       if (this.keys['w']) { // W键
-        this.model.position.z -= 30;
+        deltaZ = -30;
       }
       if (this.keys['s']) { // S键
-        this.model.position.z += 30;
+        deltaZ = 30;
       }
       if (this.keys['a']) { // A键
-        this.model.position.x -= 30;
+        deltaX = -30;
       }
       if (this.keys['d']) { // D键
-        this.model.position.x += 30;
+        deltaX = 30;
+      }
+
+      this.model.position.x += deltaX;
+      this.model.position.z += deltaZ;
+
+      this.carBox.setFromObject(this.model);
+
+      // 检查碰撞
+      if (this.roadBox && this.carBox.intersectsBox(this.roadBox)) {
+        console.log('Collision detected!');
+        this.model.position.x -= deltaX;
+        this.model.position.z -= deltaZ;
+        return;
       }
 
       this.camera.position.copy(this.cameraPosition.clone().add(this.model.position));
