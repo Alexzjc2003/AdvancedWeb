@@ -4,6 +4,8 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
+import { roadPosition } from '../roadPosition';
+
 @Component({
   selector: 'app-threejs-scene',
   standalone: true,
@@ -27,9 +29,12 @@ export class ThreejsSceneComponent implements OnInit {
   carDisplayBox;
   roadBox;
 
+  roadPosition;
+
   constructor() {}
 
   ngOnInit(): void {
+    this.roadPosition = roadPosition;
     this.initScene();
     this.renderScene();
   }
@@ -64,8 +69,8 @@ export class ThreejsSceneComponent implements OnInit {
     let component = this;
     loader.load('./assets/model/cars/police.fbx', function (loadedModel) {
       // 设置模型的初始位置
-      loadedModel.position.set(0, 0, 0);
-
+      loadedModel.position.set(100, 150, 300);
+      loadedModel.scale.set(0.6, 0.6, 0.6);
       // 添加纹理
       var textureLoader = new THREE.TextureLoader();
       textureLoader.load(
@@ -89,6 +94,7 @@ export class ThreejsSceneComponent implements OnInit {
       component.carBox = new THREE.Box3().setFromObject(loadedModel);
       component.model.rotateY(Math.PI);
     });
+
     let carNameList = [
       'ambulance',
       'box',
@@ -137,14 +143,14 @@ export class ThreejsSceneComponent implements OnInit {
       'wheel-truck',
     ];
 
-    for (let i = 0; i < carNameList.length; i++) {
-      let carName = carNameList[i];
-      let texturePath = './assets/model/cars/texture/colormap.png';
-      let fbxPath = `./assets/model/cars/${carName}.fbx`;
-      let posX = i * 300;
-      let posZ = 600;
-      this.loadCarDisplay(fbxPath, texturePath, posX, 0, posZ);
-    }
+    // for (let i = 0; i < carNameList.length; i++) {
+    //   let carName = carNameList[i];
+    //   let texturePath = './assets/model/cars/texture/colormap.png';
+    //   let fbxPath = `./assets/model/cars/${carName}.fbx`;
+    //   let posX = i * 300;
+    //   let posZ = 600;
+    //   this.loadCarDisplay(fbxPath, texturePath, posX, 0, posZ);
+    // }
 
     let roadNameList = [
       'road_bend',
@@ -172,27 +178,16 @@ export class ThreejsSceneComponent implements OnInit {
 
     for (let i = 0; i < roadNameList.length; i++) {
       let roadName = roadNameList[i];
-      let mtlPath = `./assets/model/road/${roadName}.mtl`;
-      let objPath = `./assets/model/road/${roadName}.obj`;
-      let posX = i * 300;
-      let posZ = i % 2 == 0 ? -600 : 0;
-      this.loadRoad(mtlPath, objPath, posX, 0, posZ, 300, 300, 300);
+      let mtlPath = `./assets/model/road/road_slantFlat.mtl`;
+      let objPath = `./assets/model/road/road_slantFlat.obj`;
+      let posX = i * 900;
+      this.loadRoad(mtlPath, objPath, posX + 150, 0, 0, 300, 300, 300, 300);
     }
 
-    // 如果不放大，每一块大小为3 * 3
-    // for (let i = 1; i < 303; i++) {
-    //   let numStr = i.toString().padStart(3, '0');
-    //   let mtlPath = `./assets/model/road/roadTile_${numStr}.mtl`;
-    //   let objPath = `./assets/model/road/roadTile_${numStr}.obj`;
-    //   let posX = i * 300;
-    //   let posZ = i % 2 == 0 ? -600 : 0;
-    //   this.loadRoad(mtlPath, objPath, posX, 0, posZ, 100, 100, 100);
-    // }
-
     // 平视
-    // this.cameraPosition = new THREE.Vector3(0, 200, 500);
+    this.cameraPosition = new THREE.Vector3(0, 200, 500);
     // 俯视
-    this.cameraPosition = new THREE.Vector3(0, 1200, 0);
+    // this.cameraPosition = new THREE.Vector3(0, 1200, 0);
 
     this.lookAtVector = new THREE.Vector3(0, 0, 0);
 
@@ -224,7 +219,7 @@ export class ThreejsSceneComponent implements OnInit {
       if (this.model == undefined || this.road == undefined) {
         return;
       }
-      let speed = 15;
+      let speed = 30;
       let deltaX = 0;
       let deltaZ = 0;
 
@@ -249,14 +244,16 @@ export class ThreejsSceneComponent implements OnInit {
       this.model.position.z += deltaZ;
 
       this.carBox.setFromObject(this.model);
+      for(let roadBox of this.roadBox){
+        // 检查碰撞
+        if (this.roadBox && this.carBox.intersectsBox(roadBox)) {
+          console.log('Collision detected!');
+          this.model.position.x -= deltaX;
+          this.model.position.z -= deltaZ;
+          return;
+        }
+      }
 
-      // 检查碰撞
-      // if (this.roadBox && this.carBox.intersectsBox(this.roadBox)) {
-      //   console.log('Collision detected!');
-      //   this.model.position.x -= deltaX;
-      //   this.model.position.z -= deltaZ;
-      //   return;
-      // }
 
       this.camera.position.copy(
         this.cameraPosition.clone().add(this.model.position)
@@ -275,6 +272,7 @@ export class ThreejsSceneComponent implements OnInit {
     positionX,
     positionY,
     positionZ,
+    rotateY,
     scaleX,
     scaleY,
     scaleZ
@@ -291,9 +289,161 @@ export class ThreejsSceneComponent implements OnInit {
         object.position.set(positionX, positionY, positionZ);
         component.road.push(object);
         component.roadBox.push(new THREE.Box3().setFromObject(object));
+        object.rotateY(Math.PI * rotateY);
         component.scene.add(object);
       });
     });
+  }
+
+  getOffsetDict(){
+    let offset_dict = {};
+
+    let x_offset_150 = [
+      // z: 150
+      'road_bend',
+      'road_crossing',
+      'road_crossroadPath',
+      'road_end',
+      'road_endRound',
+      'road_intersectionPath',
+      'road_slant',
+      'road_slantFlat',
+      'road_slantFlatHigh',
+      'road_slantHigh',
+      'road_straight',
+      // z: 250
+      'road_side',
+      'road_sideEntry',
+      'road_sideExit',
+      // z: 300
+      'road_split'
+    ];
+
+    let x_offset_300 = [
+      // z: 150
+      'road_slantCurve',
+      'road_slantFlatCurve',
+      // z: 300
+      'road_curve',
+      'road_curveIntersection',
+    ];
+
+    let x_offset_450 = [
+      // z: 450
+      'road_roundabout'
+    ]
+
+    let z_offset_150 = [
+      // x: 150
+      'road_bend',
+      'road_crossing',
+      'road_crossroadPath',
+      'road_end',
+      'road_endRound',
+      'road_intersectionPath',
+      'road_slant',
+      'road_slantFlat',
+      'road_slantFlatHigh',
+      'road_slantHigh',
+      'road_straight',
+      // x: 300
+      'road_slantCurve',
+      'road_slantFlatCurve'
+    ]
+
+    let z_offset_250 = [
+      // x: 150
+      'road_side',
+      'road_sideEntry',
+      'road_sideExit'
+    ]
+
+    let z_offset_300 = [
+      // x: 150
+      'road_split',
+      // x: 300
+      'road_curve',
+      'road_curveIntersection',
+    ];
+
+    let z_offset_450 = [
+      // x: 450
+      'road_roundabout'
+    ]
+
+    let y_offset_0 = [
+      'road_bend',
+      'road_crossing',
+      'road_crossroadPath',
+      'road_curve',
+      'road_curveIntersection',
+      'road_end',
+      'road_endRound',
+      'road_intersectionPath',
+      'road_roundabout',
+      'road_side',
+      'road_sideEntry',
+      'road_sideExit',
+      'road_slant',
+      'road_slantCurve',
+      'road_slantFlat',
+      'road_slantFlatCurve',
+      'road_slantFlatHigh',
+      'road_slantHigh',
+      'road_split',
+      'road_straight'
+    ];
+
+
+    for(let roadName of x_offset_150){
+      offset_dict[roadName] = {
+        "offset_x": 150
+      };
+    }
+
+    for(let roadName of x_offset_300){
+      offset_dict[roadName] = {
+        "offset_x": 300
+      };
+    }
+
+    for(let roadName of x_offset_450){
+      offset_dict[roadName] = {
+        "offset_x": 450
+      };
+    }
+
+    for(let roadName of y_offset_0){
+      offset_dict[roadName]["offset_y"] = 0;
+    }
+
+    for(let roadName of z_offset_150){
+      offset_dict[roadName]["offset_z"] = 150;
+    }
+
+    for(let roadName of z_offset_250){
+      offset_dict[roadName]["offset_z"] = 250;
+    }
+
+    for(let roadName of z_offset_300){
+      offset_dict[roadName]["offset_z"] = 300;
+    }
+
+    for(let roadName of z_offset_450){
+      offset_dict[roadName]["offset_z"] = 450;
+    }
+
+    return offset_dict;
+  }
+
+  loadRoadFromJSON(roadName, positionX, positionY, positionZ, rotateY){
+    let offset_dict = this.getOffsetDict();
+    let offset_x = offset_dict[roadName]["offset_x"];
+    let offset_y = offset_dict[roadName]["offset_y"];
+    let offset_z = offset_dict[roadName]["offset_z"];
+    let mtlPath = `./assets/model/road/${roadName}.mtl`;
+    let objPath = `./assets/model/road/${roadName}.obj`;
+    this.loadRoad(mtlPath, objPath, positionX + offset_x, positionY + offset_y, positionZ + offset_z, rotateY, 300, 300, 300);
   }
 
   loadCarDisplay(fbxPath, texturePath, positionX, positionY, positionZ) {
@@ -319,3 +469,74 @@ export class ThreejsSceneComponent implements OnInit {
     });
   }
 }
+
+
+// let roadNameList = [
+    //   // 'bridge_pillar',
+    //   // 'bridge_pillarWide',
+    //   // 'construction_barrier',
+    //   // 'construction_light',
+    //   // 'construction_pylon',
+    //   // 'light_curved',
+    //   // 'light_curvedCross',
+    //   // 'light_curvedDouble',
+    //   // 'light_square',
+    //   // 'light_squareCross',
+    //   // 'light_squareDouble',
+    //   'road_bend',
+    //   // 'road_bendBarrier',
+    //   // 'road_bendSidewalk',
+    //   // 'road_bendSquare',
+    //   // 'road_bendSquareBarrier',
+    //   // 'road_bridge',
+    //   'road_crossing',
+    //   'road_crossroad',
+    //   // 'road_crossroadBarrier',
+    //   'road_crossroadLine',
+    //   'road_crossroadPath',
+    //   'road_curve',
+    //   // 'road_curveBarrier',
+    //   'road_curveIntersection',
+    //   // 'road_curveIntersectionBarrier',
+    //   // 'road_curvePavement',
+    //   // 'road_drivewayDouble',
+    //   // 'road_drivewayDoubleBarrier',
+    //   // 'road_drivewaySingle',
+    //   // 'road_drivewaySingleBarrier',
+    //   'road_end',
+    //   // 'road_endBarrier',
+    //   'road_endRound',
+    //   // 'road_endRoundBarrier',
+    //   'road_intersection',
+    //   // 'road_intersectionBarrier',
+    //   // 'road_intersectionLine',
+    //   'road_intersectionPath',
+    //   'road_roundabout',
+    //   // 'road_roundaboutBarrier',
+    //   'road_side',
+    //   // 'road_sideBarrier',
+    //   'road_sideEntry',
+    //   // 'road_sideEntryBarrier',
+    //   'road_sideExit',
+    //   // 'road_sideExitBarrier',
+    //   'road_slant',
+    //   // 'road_slantBarrier',
+    //   'road_slantCurve',
+    //   // 'road_slantCurveBarrier',
+    //   'road_slantFlat',
+    //   'road_slantFlatCurve',
+    //   'road_slantFlatHigh',
+    //   'road_slantHigh',
+    //   // 'road_slantHighBarrier',
+    //   'road_split',
+    //   // 'road_splitBarrier',
+    //   // 'road_square',
+    //   // 'road_squareBarrier',
+    //   'road_straight',
+    //   // 'road_straightBarrier',
+    //   // 'road_straightBarrierEnd',
+    //   'tile_high',
+    //   'tile_low',
+    //   'tile_slant',
+    //   'tile_slantHigh'
+    // ];
