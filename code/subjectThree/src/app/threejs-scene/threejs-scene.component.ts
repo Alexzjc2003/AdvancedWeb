@@ -69,7 +69,7 @@ export class ThreejsSceneComponent implements OnInit {
     let component = this;
     loader.load('./assets/model/cars/police.fbx', function (loadedModel) {
       // 设置模型的初始位置
-      loadedModel.position.set(100, 0, 300);
+      loadedModel.position.set(100, 150, 300);
       loadedModel.scale.set(0.6, 0.6, 0.6);
       // 添加纹理
       var textureLoader = new THREE.TextureLoader();
@@ -175,18 +175,18 @@ export class ThreejsSceneComponent implements OnInit {
       'road_straight'
     ];
 
-    for(let i = 0; i < this.roadPosition.length; i++){
-      let obj = this.roadPosition[i];
-      this.loadRoadFromJSON(obj["name"], obj["x"], obj["y"], obj["z"], obj["rotate"]);
-    }
-
-    // for (let i = 0; i < roadNameList.length; i++) {
-    //   let roadName = roadNameList[i];
-    //   let mtlPath = `./assets/model/road/road_bendSquare.mtl`;
-    //   let objPath = `./assets/model/road/road_bendSquare.obj`;
-    //   let posX = i * 900;
-    //   this.loadRoad(mtlPath, objPath, posX + 150, 0, 300, 300, 300, 300);
+    // for(let i = 0; i < this.roadPosition.length; i++){
+    //   let obj = this.roadPosition[i];
+    //   this.loadRoadFromJSON(obj["name"], obj["x"], obj["y"], obj["z"], obj["rotate"]);
     // }
+
+    for (let i = 0; i < roadNameList.length; i++) {
+      let roadName = roadNameList[i];
+      let mtlPath = `./assets/model/road/road_slantFlat.mtl`;
+      let objPath = `./assets/model/road/road_slantFlat.obj`;
+      let posX = i * 900;
+      this.loadRoad(mtlPath, objPath, posX + 150, 0, 0, 300, 300, 300, 300);
+    }
 
     // 平视
     this.cameraPosition = new THREE.Vector3(0, 200, 500);
@@ -248,14 +248,16 @@ export class ThreejsSceneComponent implements OnInit {
       this.model.position.z += deltaZ;
 
       this.carBox.setFromObject(this.model);
+      for(let roadBox of this.roadBox){
+        // 检查碰撞
+        if (this.roadBox && this.carBox.intersectsBox(roadBox)) {
+          console.log('Collision detected!');
+          this.model.position.x -= deltaX;
+          this.model.position.z -= deltaZ;
+          return;
+        }
+      }
 
-      // 检查碰撞
-      // if (this.roadBox && this.carBox.intersectsBox(this.roadBox)) {
-      //   console.log('Collision detected!');
-      //   this.model.position.x -= deltaX;
-      //   this.model.position.z -= deltaZ;
-      //   return;
-      // }
 
       this.camera.position.copy(
         this.cameraPosition.clone().add(this.model.position)
