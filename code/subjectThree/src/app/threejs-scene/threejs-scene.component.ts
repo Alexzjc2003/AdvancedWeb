@@ -176,12 +176,17 @@ export class ThreejsSceneComponent implements OnInit {
       'road_straight',
     ];
 
-    for (let i = 0; i < roadNameList.length; i++) {
-      let roadName = roadNameList[i];
-      let mtlPath = `./assets/model/road/road_slantFlat.mtl`;
-      let objPath = `./assets/model/road/road_slantFlat.obj`;
-      let posX = i * 900;
-      this.loadRoad(mtlPath, objPath, posX + 150, 0, 0, 300, 300, 300, 300);
+    // for (let i = 0; i < roadNameList.length; i++) {
+    //   let roadName = roadNameList[i];
+    //   let mtlPath = `./assets/model/road/road_slantFlat.mtl`;
+    //   let objPath = `./assets/model/road/road_slantFlat.obj`;
+    //   let posX = i * 900;
+    //   this.loadRoad(mtlPath, objPath, posX + 150, 0, 0, 300, 300, 300, 300);
+    // }
+
+    for(let i = 0; i < this.roadPosition.length; i++){
+      let obj = this.roadPosition[i];
+      this.loadRoadFromJSON(obj["name"], obj["x"], obj["y"], obj["z"], obj["rotate"]);
     }
 
     // 平视
