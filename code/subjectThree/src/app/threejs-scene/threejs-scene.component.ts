@@ -5,31 +5,49 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { roadPosition } from '../roadPosition';
+import { CarspeedService } from '../carspeed.service';
 
 @Component({
   selector: 'app-threejs-scene',
   standalone: true,
   imports: [],
+  providers: [CarspeedService],
   templateUrl: './threejs-scene.component.html',
   styleUrl: './threejs-scene.component.css',
 })
 export class ThreejsSceneComponent implements OnInit {
-  scene: THREE.Scene;
-  camera: THREE.PerspectiveCamera;
-  renderer: THREE.WebGLRenderer;
-  model: THREE.Object3D;
+  scene: THREE.Scene = new THREE.Scene();
+  camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
+  renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
+  clock: THREE.Clock = new THREE.Clock();
+  model: THREE.Object3D | undefined;
   carDisplay;
   road;
   keys;
-  cameraPosition: THREE.Vector3;
-  lookAtVector: THREE.Vector3;
-  ambientLight: THREE.AmbientLight;
-  directionalLight: THREE.DirectionalLight;
-  carBox: THREE.Box3;
+  cameraPosition: THREE.Vector3 = new THREE.Vector3();
+  lookAtVector: THREE.Vector3 = new THREE.Vector3();
+  ambientLight: THREE.AmbientLight = new THREE.AmbientLight();
+  directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight();
+  carBox: THREE.Box3 = new THREE.Box3();
   carDisplayBox;
   roadBox;
 
   roadPosition;
+
+  carspeed: CarspeedService = new CarspeedService({
+    ratioFraction: 10,
+    ratioBrake: 500,
+    ratioAccelerate: 200,
+    ratioSpeed: 10,
+    ratioTurn: 10,
+
+    maxSpeedForward: 60,
+    maxSpeedBackword: -10,
+    maxTurnDegree: 100,
+    minTurnDegree: 80,
+
+    modelLength: 100,
+  });
 
   constructor() {}
 
@@ -37,6 +55,7 @@ export class ThreejsSceneComponent implements OnInit {
     this.roadPosition = roadPosition;
     this.initScene();
     this.renderScene();
+    // this.carspeed = CarspeedService
   }
 
   initScene(): void {
@@ -184,9 +203,15 @@ export class ThreejsSceneComponent implements OnInit {
     //   this.loadRoad(mtlPath, objPath, posX + 150, 0, 0, 300, 300, 300, 300);
     // }
 
-    for(let i = 0; i < this.roadPosition.length; i++){
+    for (let i = 0; i < this.roadPosition.length; i++) {
       let obj = this.roadPosition[i];
-      this.loadRoadFromJSON(obj["name"], obj["x"], obj["y"], obj["z"], obj["rotate"]);
+      this.loadRoadFromJSON(
+        obj['name'],
+        obj['x'],
+        obj['y'],
+        obj['z'],
+        obj['rotate']
+      );
     }
 
     // 平视
@@ -224,41 +249,53 @@ export class ThreejsSceneComponent implements OnInit {
       if (this.model == undefined || this.road == undefined) {
         return;
       }
-      let speed = 30;
-      let deltaX = 0;
-      let deltaZ = 0;
+      // let speed = 30;
+      // let deltaX = 0;
+      // let deltaZ = 0;
 
       if (this.keys['w']) {
         // W键
-        deltaZ = -speed;
+        // deltaZ = -speed;
+        this.carspeed.status.isAccelerating += 1;
       }
       if (this.keys['s']) {
         // S键
-        deltaZ = speed;
+        // deltaZ = speed;
+        this.carspeed.status.isAccelerating -= 1;
       }
       if (this.keys['a']) {
         // A键
-        deltaX = -speed;
+        // deltaX = -speed;
+        this.carspeed.status.isTurning += 1;
       }
       if (this.keys['d']) {
         // D键
-        deltaX = speed;
+        // deltaX = speed;
+        this.carspeed.status.isTurning -= 1;
       }
 
-      this.model.position.x += deltaX;
-      this.model.position.z += deltaZ;
+      // this.model.position.x += deltaX;
+      // this.model.position.z += deltaZ;
+
+      let dt = this.clock.getDelta();
+      let [_pos, _dir] = this.carspeed.getNextPosDir(
+        dt,
+        this.model.position,
+        this.model.rotation
+      );
+      this.model.position.copy(_pos);
+      this.model.rotation.set(_dir.x, _dir.y, _dir.z);
 
       this.carBox.setFromObject(this.model);
-      for(let roadBox of this.roadBox){
+      for (let roadBox of this.roadBox) {
         // 检查碰撞
         if (this.roadBox && this.carBox.intersectsBox(roadBox)) {
           console.log('Collision detected!');
-          this.model.position.x -= deltaX;
-          this.model.position.z -= deltaZ;
+          // this.model.position.x -= deltaX;
+          // this.model.position.z -= deltaZ;
           return;
         }
       }
-
 
       this.camera.position.copy(
         this.cameraPosition.clone().add(this.model.position)
@@ -300,7 +337,7 @@ export class ThreejsSceneComponent implements OnInit {
     });
   }
 
-  getOffsetDict(){
+  getOffsetDict() {
     let offset_dict = {};
 
     let x_offset_150 = [
@@ -321,7 +358,7 @@ export class ThreejsSceneComponent implements OnInit {
       'road_sideEntry',
       'road_sideExit',
       // z: 300
-      'road_split'
+      'road_split',
     ];
 
     let x_offset_300 = [
@@ -335,8 +372,8 @@ export class ThreejsSceneComponent implements OnInit {
 
     let x_offset_450 = [
       // z: 450
-      'road_roundabout'
-    ]
+      'road_roundabout',
+    ];
 
     let z_offset_150 = [
       // x: 150
@@ -353,15 +390,15 @@ export class ThreejsSceneComponent implements OnInit {
       'road_straight',
       // x: 300
       'road_slantCurve',
-      'road_slantFlatCurve'
-    ]
+      'road_slantFlatCurve',
+    ];
 
     let z_offset_250 = [
       // x: 150
       'road_side',
       'road_sideEntry',
-      'road_sideExit'
-    ]
+      'road_sideExit',
+    ];
 
     let z_offset_300 = [
       // x: 150
@@ -373,8 +410,8 @@ export class ThreejsSceneComponent implements OnInit {
 
     let z_offset_450 = [
       // x: 450
-      'road_roundabout'
-    ]
+      'road_roundabout',
+    ];
 
     let y_offset_0 = [
       'road_bend',
@@ -396,59 +433,68 @@ export class ThreejsSceneComponent implements OnInit {
       'road_slantFlatHigh',
       'road_slantHigh',
       'road_split',
-      'road_straight'
+      'road_straight',
     ];
 
-
-    for(let roadName of x_offset_150){
+    for (let roadName of x_offset_150) {
       offset_dict[roadName] = {
-        "offset_x": 150
+        offset_x: 150,
       };
     }
 
-    for(let roadName of x_offset_300){
+    for (let roadName of x_offset_300) {
       offset_dict[roadName] = {
-        "offset_x": 300
+        offset_x: 300,
       };
     }
 
-    for(let roadName of x_offset_450){
+    for (let roadName of x_offset_450) {
       offset_dict[roadName] = {
-        "offset_x": 450
+        offset_x: 450,
       };
     }
 
-    for(let roadName of y_offset_0){
-      offset_dict[roadName]["offset_y"] = 0;
+    for (let roadName of y_offset_0) {
+      offset_dict[roadName]['offset_y'] = 0;
     }
 
-    for(let roadName of z_offset_150){
-      offset_dict[roadName]["offset_z"] = 150;
+    for (let roadName of z_offset_150) {
+      offset_dict[roadName]['offset_z'] = 150;
     }
 
-    for(let roadName of z_offset_250){
-      offset_dict[roadName]["offset_z"] = 250;
+    for (let roadName of z_offset_250) {
+      offset_dict[roadName]['offset_z'] = 250;
     }
 
-    for(let roadName of z_offset_300){
-      offset_dict[roadName]["offset_z"] = 300;
+    for (let roadName of z_offset_300) {
+      offset_dict[roadName]['offset_z'] = 300;
     }
 
-    for(let roadName of z_offset_450){
-      offset_dict[roadName]["offset_z"] = 450;
+    for (let roadName of z_offset_450) {
+      offset_dict[roadName]['offset_z'] = 450;
     }
 
     return offset_dict;
   }
 
-  loadRoadFromJSON(roadName, positionX, positionY, positionZ, rotateY){
+  loadRoadFromJSON(roadName, positionX, positionY, positionZ, rotateY) {
     let offset_dict = this.getOffsetDict();
-    let offset_x = offset_dict[roadName]["offset_x"];
-    let offset_y = offset_dict[roadName]["offset_y"];
-    let offset_z = offset_dict[roadName]["offset_z"];
+    let offset_x = offset_dict[roadName]['offset_x'];
+    let offset_y = offset_dict[roadName]['offset_y'];
+    let offset_z = offset_dict[roadName]['offset_z'];
     let mtlPath = `./assets/model/road/${roadName}.mtl`;
     let objPath = `./assets/model/road/${roadName}.obj`;
-    this.loadRoad(mtlPath, objPath, positionX + offset_x, positionY + offset_y, positionZ + offset_z, rotateY, 300, 300, 300);
+    this.loadRoad(
+      mtlPath,
+      objPath,
+      positionX + offset_x,
+      positionY + offset_y,
+      positionZ + offset_z,
+      rotateY,
+      300,
+      300,
+      300
+    );
   }
 
   loadCarDisplay(fbxPath, texturePath, positionX, positionY, positionZ) {
@@ -475,73 +521,72 @@ export class ThreejsSceneComponent implements OnInit {
   }
 }
 
-
 // let roadNameList = [
-    //   // 'bridge_pillar',
-    //   // 'bridge_pillarWide',
-    //   // 'construction_barrier',
-    //   // 'construction_light',
-    //   // 'construction_pylon',
-    //   // 'light_curved',
-    //   // 'light_curvedCross',
-    //   // 'light_curvedDouble',
-    //   // 'light_square',
-    //   // 'light_squareCross',
-    //   // 'light_squareDouble',
-    //   'road_bend',
-    //   // 'road_bendBarrier',
-    //   // 'road_bendSidewalk',
-    //   // 'road_bendSquare',
-    //   // 'road_bendSquareBarrier',
-    //   // 'road_bridge',
-    //   'road_crossing',
-    //   'road_crossroad',
-    //   // 'road_crossroadBarrier',
-    //   'road_crossroadLine',
-    //   'road_crossroadPath',
-    //   'road_curve',
-    //   // 'road_curveBarrier',
-    //   'road_curveIntersection',
-    //   // 'road_curveIntersectionBarrier',
-    //   // 'road_curvePavement',
-    //   // 'road_drivewayDouble',
-    //   // 'road_drivewayDoubleBarrier',
-    //   // 'road_drivewaySingle',
-    //   // 'road_drivewaySingleBarrier',
-    //   'road_end',
-    //   // 'road_endBarrier',
-    //   'road_endRound',
-    //   // 'road_endRoundBarrier',
-    //   'road_intersection',
-    //   // 'road_intersectionBarrier',
-    //   // 'road_intersectionLine',
-    //   'road_intersectionPath',
-    //   'road_roundabout',
-    //   // 'road_roundaboutBarrier',
-    //   'road_side',
-    //   // 'road_sideBarrier',
-    //   'road_sideEntry',
-    //   // 'road_sideEntryBarrier',
-    //   'road_sideExit',
-    //   // 'road_sideExitBarrier',
-    //   'road_slant',
-    //   // 'road_slantBarrier',
-    //   'road_slantCurve',
-    //   // 'road_slantCurveBarrier',
-    //   'road_slantFlat',
-    //   'road_slantFlatCurve',
-    //   'road_slantFlatHigh',
-    //   'road_slantHigh',
-    //   // 'road_slantHighBarrier',
-    //   'road_split',
-    //   // 'road_splitBarrier',
-    //   // 'road_square',
-    //   // 'road_squareBarrier',
-    //   'road_straight',
-    //   // 'road_straightBarrier',
-    //   // 'road_straightBarrierEnd',
-    //   'tile_high',
-    //   'tile_low',
-    //   'tile_slant',
-    //   'tile_slantHigh'
-    // ];
+//   // 'bridge_pillar',
+//   // 'bridge_pillarWide',
+//   // 'construction_barrier',
+//   // 'construction_light',
+//   // 'construction_pylon',
+//   // 'light_curved',
+//   // 'light_curvedCross',
+//   // 'light_curvedDouble',
+//   // 'light_square',
+//   // 'light_squareCross',
+//   // 'light_squareDouble',
+//   'road_bend',
+//   // 'road_bendBarrier',
+//   // 'road_bendSidewalk',
+//   // 'road_bendSquare',
+//   // 'road_bendSquareBarrier',
+//   // 'road_bridge',
+//   'road_crossing',
+//   'road_crossroad',
+//   // 'road_crossroadBarrier',
+//   'road_crossroadLine',
+//   'road_crossroadPath',
+//   'road_curve',
+//   // 'road_curveBarrier',
+//   'road_curveIntersection',
+//   // 'road_curveIntersectionBarrier',
+//   // 'road_curvePavement',
+//   // 'road_drivewayDouble',
+//   // 'road_drivewayDoubleBarrier',
+//   // 'road_drivewaySingle',
+//   // 'road_drivewaySingleBarrier',
+//   'road_end',
+//   // 'road_endBarrier',
+//   'road_endRound',
+//   // 'road_endRoundBarrier',
+//   'road_intersection',
+//   // 'road_intersectionBarrier',
+//   // 'road_intersectionLine',
+//   'road_intersectionPath',
+//   'road_roundabout',
+//   // 'road_roundaboutBarrier',
+//   'road_side',
+//   // 'road_sideBarrier',
+//   'road_sideEntry',
+//   // 'road_sideEntryBarrier',
+//   'road_sideExit',
+//   // 'road_sideExitBarrier',
+//   'road_slant',
+//   // 'road_slantBarrier',
+//   'road_slantCurve',
+//   // 'road_slantCurveBarrier',
+//   'road_slantFlat',
+//   'road_slantFlatCurve',
+//   'road_slantFlatHigh',
+//   'road_slantHigh',
+//   // 'road_slantHighBarrier',
+//   'road_split',
+//   // 'road_splitBarrier',
+//   // 'road_square',
+//   // 'road_squareBarrier',
+//   'road_straight',
+//   // 'road_straightBarrier',
+//   // 'road_straightBarrierEnd',
+//   'tile_high',
+//   'tile_low',
+//   'tile_slant',
+//   'tile_slantHigh'
+// ];
