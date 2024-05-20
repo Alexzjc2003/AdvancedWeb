@@ -478,10 +478,16 @@ export class ThreejsSceneComponent implements OnInit {
   }
 
   loadRoadFromJSON(roadName, positionX, positionY, positionZ, rotateY) {
+    let offset_scale = 300
+    let scaleX = 300;
+    let scaleY = 300;
+    let scaleZ = 300;
+
     let offset_dict = this.getOffsetDict();
-    let offset_x = offset_dict[roadName]['offset_x'];
-    let offset_y = offset_dict[roadName]['offset_y'];
-    let offset_z = offset_dict[roadName]['offset_z'];
+    let offset_x = offset_dict[roadName]['offset_x'] * (scaleX / offset_scale);
+    let offset_y = offset_dict[roadName]['offset_y'] * (scaleY / offset_scale);
+    let offset_z = offset_dict[roadName]['offset_z'] * (scaleZ / offset_scale);
+    
     let mtlPath = `./assets/model/road/${roadName}.mtl`;
     let objPath = `./assets/model/road/${roadName}.obj`;
     this.loadRoad(
@@ -491,9 +497,9 @@ export class ThreejsSceneComponent implements OnInit {
       positionY + offset_y,
       positionZ + offset_z,
       rotateY,
-      300,
-      300,
-      300
+      scaleX,
+      scaleY,
+      scaleZ
     );
   }
 
