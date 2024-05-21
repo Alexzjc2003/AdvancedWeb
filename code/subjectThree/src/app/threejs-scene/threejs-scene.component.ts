@@ -115,8 +115,42 @@ export class ThreejsSceneComponent implements OnInit {
 
 		this.loadLocalCar();
 		this.loadRoadEnvironment();
+		// this.loadAllRoads();
 
 		this.bindEventListener();
+	}
+
+	loadAllRoads(){
+		let roadNameList = [
+			// 'road_bend',
+			'road_crossing',
+			'road_crossroadPath',
+			// 'road_curve',
+			// 'road_curveIntersection',
+			'road_end',
+			// 'road_endRound',
+			'road_intersectionPath',
+			// 'road_roundabout',
+			'road_side',
+			// 'road_sideEntry',
+			// 'road_sideExit',
+			'road_slant',
+			// 'road_slantCurve',
+			'road_slantFlat',
+			// 'road_slantFlatCurve',
+			'road_slantFlatHigh',
+			'road_slantHigh',
+			// 'road_split',
+			'road_straight'
+		  ];
+
+		  for (let i = 0; i < roadNameList.length; i++) {
+		    let roadName = roadNameList[i];
+		    let mtlPath = `./assets/model/road/road_slantHigh.mtl`;
+		    let objPath = `./assets/model/road/road_slantHigh.obj`;
+		    let posX = i * 900;
+		    this.loadRoadResource(mtlPath, objPath, posX + 150, -150, 0, 300, 300, 300, 300);
+		  }
 	}
 
 	loadLocalCar() {
@@ -219,12 +253,12 @@ export class ThreejsSceneComponent implements OnInit {
 			this.model["obj"].rotation.set(_dir.x, _dir.y, _dir.z);
 
 			this.model["box"].setFromObject(this.model["obj"]);
-			for (let road of this.roadList) {
-				if (road["box"] && this.model["box"].intersectsBox(road["box"])) {
-					console.log('Collision detected!');
-					return;
-				}
-			}
+			// for (let road of this.roadList) {
+			// 	if (road["box"] && this.model["box"].intersectsBox(road["box"])) {
+			// 		console.log('Collision detected!');
+			// 		return;
+			// 	}
+			// }
 
 			this.camera.position.copy(
 				this.cameraPosition.clone().add(this.model["obj"].position)
@@ -280,6 +314,10 @@ export class ThreejsSceneComponent implements OnInit {
 		let offset_x = offset_dict[roadName]['offset_x'] * (scaleX / offset_scale);
 		let offset_y = offset_dict[roadName]['offset_y'] * (scaleY / offset_scale);
 		let offset_z = offset_dict[roadName]['offset_z'] * (scaleZ / offset_scale);
+		let puzzles = offset_dict[roadName]['puzzle'];
+		for(let puzzle of puzzles){
+			console.log(puzzle["type"], puzzle["vectorX"], puzzle["vectorZ"]);
+		}
 
 		let mtlPath = `./assets/model/road/${roadName}.mtl`;
 		let objPath = `./assets/model/road/${roadName}.obj`;
