@@ -48,12 +48,15 @@ export class ThreejsSceneComponent implements OnInit {
 	}[];
 
 	roadPosition: {
-		name: string;
-		x: number;
-		y: number;
-		z: number;
-		rotate: number;
-	}[];
+		scale: number[],
+		clips: {
+			name: string;
+			x: number;
+			y: number;
+			z: number;
+			rotate: number;
+		}[]
+	};
 
 	keyboardPressed: { [key: string]: number };
 
@@ -61,6 +64,8 @@ export class ThreejsSceneComponent implements OnInit {
 	carcontrol: CarcontrolService = new CarcontrolService();
 	io: WebSocketService = new WebSocketService();
 	loader: LoadResourceService = new LoadResourceService();
+
+	globalScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1);
 
 	constructor(private notification: NotificationService) {
 		this.roadPosition = roadPosition;
@@ -119,12 +124,12 @@ export class ThreejsSceneComponent implements OnInit {
 
 		this.bindEventListener();
 
-		// this.init_websocket();
+		this.init_websocket();
 	}
 
 	init_websocket() {
 		this.io.connect("ws://10.117.245.17:53000");
-		this.io.onMessage("setId").subscribe((msg: string) => {
+		this.io.onMessage("setId").subscribe((msg: any) => {
 			console.log(`receive: ${msg}`);
 		})
 		// this.io.sendMsg(this.socketId, "connect", "");
@@ -172,8 +177,12 @@ export class ThreejsSceneComponent implements OnInit {
 	loadLocalCar() {
 		let self = this;
 		this.loader.loadLocalCar((carObj) => {
-			carObj.position.set(200, 50, 200);
-			carObj.scale.set(0.6, 0.6, 0.6);
+			carObj.position.set(3, 3, 3);
+			const box = new THREE.Box3().setFromObject(carObj);
+			const size = new THREE.Vector3();
+			box.getSize(size);
+			const f = 2 / size.x;
+			carObj.scale.set(f, f, f);
 			self.scene.add(carObj);
 			self.model = {
 				obj: carObj
@@ -184,11 +193,13 @@ export class ThreejsSceneComponent implements OnInit {
 	}
 
 	loadRoadEnvironment() {
-		for (let i = 0; i < this.roadPosition.length; i++) {
-			let road = this.roadPosition[i];
+		let scale = new THREE.Vector3(this.roadPosition.scale[0], this.roadPosition.scale[1], this.roadPosition.scale[2])
+		for (let i = 0; i < this.roadPosition.clips.length; i++) {
+			let road = this.roadPosition.clips[i];
 			this.loadRoad(
 				road.name,
 				new THREE.Vector3(road.x, road.y, road.z),
+				scale,
 				road.rotate
 			);
 		}
@@ -250,11 +261,11 @@ export class ThreejsSceneComponent implements OnInit {
 			const direction = new THREE.Vector3();
 			this.model.obj.getWorldDirection(direction);
 
-			direction.multiplyScalar(300);
+			direction.multiplyScalar(6);
 			direction.negate();
 
 			this.camera.position.copy(
-				direction.clone().add(this.model.obj.position).add(new THREE.Vector3(0, 150, 0))
+				direction.clone().add(this.model.obj.position).add(new THREE.Vector3(0, 4, 0))
 			);
 			this.camera.lookAt(this.lookAtVector.copy(this.model.obj.position));
 
@@ -288,21 +299,20 @@ export class ThreejsSceneComponent implements OnInit {
 	loadRoad(
 		roadName: string,
 		centerPosition: THREE.Vector3,
+		scale: THREE.Vector3,
 		rotateY: number
 	) {
-		let offset_scale = 300;
-		let scale = new THREE.Vector3(300, 300, 300);
-
 		let offset_dict = this.roadOffset;
-		let offset_x = offset_dict[roadName].offset_x * (scale.x / offset_scale);
-		let offset_y = offset_dict[roadName].offset_y * (scale.y / offset_scale);
-		let offset_z = offset_dict[roadName].offset_z * (scale.z / offset_scale);
+		let offset_x = offset_dict[roadName].offset_x * scale.x;
+		let offset_y = offset_dict[roadName].offset_y * scale.y;
+		let offset_z = offset_dict[roadName].offset_z * scale.z;
 
 		let offset = new THREE.Vector3(offset_x, offset_y, offset_z);
 
-
 		let cornerPosition = centerPosition.clone();
 		cornerPosition.add(offset);
+
+		console.log(cornerPosition);
 
 		let mtlPath = `./assets/model/road/${roadName}.mtl`;
 		let objPath = `./assets/model/road/${roadName}.obj`;
@@ -322,14 +332,14 @@ export class ThreejsSceneComponent implements OnInit {
 			this.physics.addRoad(
 				centerPosition,
 				new THREE.Vector3(
-					puzzle.vectorZ[0],
-					puzzle.vectorZ[1],
-					puzzle.vectorZ[2]
+					puzzle.vectorZ[0] * scale.x,
+					puzzle.vectorZ[1] * scale.y,
+					puzzle.vectorZ[2] * scale.z
 				),
 				new THREE.Vector3(
-					puzzle.vectorX[0],
-					puzzle.vectorX[1],
-					puzzle.vectorX[2]
+					puzzle.vectorX[0] * scale.x,
+					puzzle.vectorX[1] * scale.y,
+					puzzle.vectorX[2] * scale.z
 				)
 			);
 		}

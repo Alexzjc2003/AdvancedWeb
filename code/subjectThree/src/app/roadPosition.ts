@@ -1,114 +1,117 @@
-export const roadPosition = [
-    {
-      "name": "road_end",
-      "x": 0,
-      "z": 0,
-      "y": 0,
-      "rotate": -0.5
-    },
-    {
-      "name": "road_straight",
-      "x": 0,
-      "z": 300,
-      "y": 0,
-      "rotate": -0.5
-    },
-    {
-      "name": "road_straight",
-      "x": 0,
-      "z": 600,
-      "y": 0,
-      "rotate": -0.5
-    },
-    {
-      "name": "road_straight",
-      "x": 0,
-      "z": 900,
-      "y": 0,
-      "rotate": -0.5
-    },
-    {
-      "name": "road_straight",
-      "x": 0,
-      "z": 1200,
-      "y": 0,
-      "rotate": -0.5
-    },
-    {
-      "name": "road_intersectionPath",
-      "x": 0,
-      "z": 1500,
-      "y": 0,
-      "rotate": 0.5
-    },
-    {
-      "name": "road_straight",
-      "x": 0,
-      "z": 1800,
-      "y": 0,
-      "rotate": -0.5
-    },
-    {
-      "name": "road_straight",
-      "x": 0,
-      "z": 2100,
-      "y": 0,
-      "rotate": -0.5
-    },
-    {
-      "name": "road_straight",
-      "x": 0,
-      "z": 2400,
-      "y": 0,
-      "rotate": -0.5
-    },
-    {
-      "name": "road_straight",
-      "x": 0,
-      "z": 2700,
-      "y": 0,
-      "rotate": -0.5
-    },
-    {
-      "name": "road_bendSquare",
-      "x": 0,
-      "z": 3000,
-      "y": 0,
-      "rotate": 1
-    },
-    {
-      "name": "road_straight",
-      "x": 300,
-      "z": 1500,
-      "y": 0,
-      "rotate": 0
-    },
-    {
-      "name": "road_straight",
-      "x": 600,
-      "z": 1500,
-      "y": 0,
-      "rotate": 0
-    },
-    {
-      "name": "road_straight",
-      "x": 900,
-      "z": 1500,
-      "y": 0,
-      "rotate": 0
-    },
-    {
-      "name": "road_straight",
-      "x": 1200,
-      "z": 1500,
-      "y": 0,
-      "rotate": 0
-    },
-    {
-      "name": "road_crossroadPath",
-      "x": 1500,
-      "z": 1500,
-      "y": 0,
-      "rotate": 0
-    }
-  ]
+export const roadPosition = {
+	"scale": [10, 10, 10],
+	"clips": [
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 0,
+			"y": 0,
+			"rotate": -0.5
+		},
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 10,
+			"y": 0,
+			"rotate": -0.5
+		},
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 20,
+			"y": 0,
+			"rotate": -0.5
+		},
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 30,
+			"y": 0,
+			"rotate": -0.5
+		},
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 40,
+			"y": 0,
+			"rotate": -0.5
+		},
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 50,
+			"y": 0,
+			"rotate": 0.5
+		},
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 60,
+			"y": 0,
+			"rotate": -0.5
+		},
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 70,
+			"y": 0,
+			"rotate": -0.5
+		},
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 80,
+			"y": 0,
+			"rotate": -0.5
+		},
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 90,
+			"y": 0,
+			"rotate": -0.5
+		},
+		{
+			"name": "road_straight",
+			"x": 0,
+			"z": 100,
+			"y": 0,
+			"rotate": 1
+		},
+		{
+			"name": "road_straight",
+			"x": 10,
+			"z": 50,
+			"y": 0,
+			"rotate": 0
+		},
+		{
+			"name": "road_straight",
+			"x": 20,
+			"z": 50,
+			"y": 0,
+			"rotate": 0
+		},
+		{
+			"name": "road_straight",
+			"x": 30,
+			"z": 50,
+			"y": 0,
+			"rotate": 0
+		},
+		{
+			"name": "road_straight",
+			"x": 40,
+			"z": 50,
+			"y": 0,
+			"rotate": 0
+		},
+		{
+			"name": "road_straight",
+			"x": 50,
+			"z": 50,
+			"y": 0,
+			"rotate": 0
+		}
+	]
+}
