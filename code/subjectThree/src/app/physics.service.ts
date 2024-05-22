@@ -9,22 +9,26 @@ import { CarStatus } from './carcontrol.service';
 export class PhysicsService {
   world: CANNON.World;
   groundMaterial: CANNON.Material = new CANNON.Material({
-    friction: 0.01,
+    friction: 0,
     restitution: 0.001,
   });
   groundBody: CANNON.Body = new CANNON.Body({
     type: CANNON.Body.STATIC,
-    // mass: 0,
     material: this.groundMaterial,
   });
 
   car: CANNON.Body = new CANNON.Body({
-    type: CANNON.BODY_TYPES.DYNAMIC,
     mass: 1200,
     material: new CANNON.Material({
-      friction: 0.05,
-      restitution: 0.001,
+      friction: 0,
+      restitution: 0.01,
     }),
+  });
+  vehicle: CANNON.RaycastVehicle = new CANNON.RaycastVehicle({
+    chassisBody: this.car,
+    indexRightAxis: 0,
+    indexForwardAxis: 1,
+    indexUpAxis: 2,
   });
 
   constructor() {
@@ -32,7 +36,7 @@ export class PhysicsService {
     this.world.gravity.set(0, -9.8, 0);
 
     this.world.addBody(this.groundBody);
-    this.world.addBody(this.car);
+    this.vehicle?.addToWorld(this.world);
   }
 
   public addRoad(
@@ -50,7 +54,11 @@ export class PhysicsService {
     _otho_ptr = _otho_ptr.scale(_dir_ptr.length());
 
     let _box = new CANNON.Box(
-      new CANNON.Vec3(base_ptr.length() / 2, 0.01, dir_ptr.length() / 2)
+      new CANNON.Vec3(
+        base_ptr.length() / 2 + 0.01,
+        0.01,
+        dir_ptr.length() / 2 + 0.01
+      )
     );
 
     this.groundBody.addShape(
@@ -88,58 +96,103 @@ export class PhysicsService {
       )
     );
 
-    let _c_wheel = new CANNON.Box(
-      new CANNON.Vec3(_size.x * 0.1, _size.y * 0.05, _size.z * 0.1)
+    // let _options:CANNON.WheelInfoOptions = {
+    let _options = {
+      radius: 0.05 * _size.y,
+      directionLocal: new CANNON.Vec3(0, -1, 0),
+      suspensionStiffness: 30,
+      suspensionRestLength: 0.3,
+      maxSuspensionTravel: 0.3,
+      maxSuspensionForce: 100000,
+      dampingRelaxation: 2.3,
+      dampingCompression: 4.4,
+      axleLocal: new CANNON.Vec3(0, 0, 1),
+      chassisConnectionPointLocal: new CANNON.Vec3(1, 0, 1),
+      frictionSlip: 1,
+      rollInfluence: 0.01,
+      useCustomSlidingRotationalSpeed: true,
+      customSlidingRotationalSpeed: -30,
+      
+    };
+    //设置第一个轮的位置，并将轮子信息添加到车辆类中
+    _options.chassisConnectionPointLocal.set(
+      _size.x * 0.5,
+      // _size.y * 0.2,
+      0,
+      _size.z * 0.45
     );
+    this.vehicle.addWheel(_options);
+    //设置第二个轮的位置，并将轮子信息添加到车辆类中
+    _options.chassisConnectionPointLocal.set(
+      -_size.x * 0.5,
+      // _size.y * 0.2,
+      0,
+      _size.z * 0.45
+    );
+    this.vehicle.addWheel(_options);
+    //设置第三个轮的位置，并将轮子信息添加到车辆类中
+    _options.chassisConnectionPointLocal.set(
+      _size.x * 0.5,
+      // _size.y * 0.2,
+      0,
+      -_size.z * 0.45
+    );
+    this.vehicle.addWheel(_options);
+    //设置第四个轮的位置，并将轮子信息添加到车辆类中
+    _options.chassisConnectionPointLocal.set(
+      -_size.x * 0.5,
+      // _size.y * 0.2,
+      0,
+      -_size.z * 0.45
+    );
+    this.vehicle.addWheel(_options);
 
-    this.car.addShape(
-      _c_wheel,
-      new CANNON.Vec3(
-        _center.x - car.position.x + _size.x * 0.45,
-        _center.y - car.position.y - _size.y * 0.45,
-        _center.z - car.position.z + _size.z * 0.35
-      )
-    );
-    this.car.addShape(
-      _c_wheel,
-      new CANNON.Vec3(
-        _center.x - car.position.x - _size.x * 0.45,
-        _center.y - car.position.y - _size.y * 0.45,
-        _center.z - car.position.z + _size.z * 0.35
-      )
-    );
-    this.car.addShape(
-      _c_wheel,
-      new CANNON.Vec3(
-        _center.x - car.position.x + _size.x * 0.45,
-        _center.y - car.position.y - _size.y * 0.45,
-        _center.z - car.position.z - _size.z * 0.35
-      )
-    );
-    this.car.addShape(
-      _c_wheel,
-      new CANNON.Vec3(
-        _center.x - car.position.x - _size.x * 0.45,
-        _center.y - car.position.y - _size.y * 0.45,
-        _center.z - car.position.z + _size.z * 0.35
-      )
-    );
+    // this.vehicle.wheelInfos.forEach((w) => {
+    //   let _cylinder = new CANNON.Cylinder(w.radius, w.radius, 0.2);
+    //   let _wheelbody = new CANNON.Body({
+    //     mass: 1,
+    //     type: CANNON.BODY_TYPES.KINEMATIC,
+    //     collisionFilterGroup: 0,
+    //   });
+    //   _wheelbody.addShape(
+    //     _cylinder,
+    //     new CANNON.Vec3(),
+    //     new CANNON.Quaternion().setFromAxisAngle(
+    //       new CANNON.Vec3(1, 0, 0),
+    //       Math.PI / 2
+    //     )
+    //   );
+    //   this.world.addBody(_wheelbody);
+    // });
 
     this.car.position = new CANNON.Vec3(
       car.position.x,
       car.position.y,
       car.position.z
     );
+    this.car.quaternion = new CANNON.Quaternion(
+      car.quaternion.x,
+      car.quaternion.y,
+      car.quaternion.z,
+      car.quaternion.w
+    );
   }
 
   public getCarPosition(): THREE.Vector3 {
-    let _pos = this.car.position;
-    return new THREE.Vector3(_pos.x, _pos.y, _pos.z);
+    return new THREE.Vector3(
+      this.car.position.x,
+      this.car.position.y,
+      this.car.position.z
+    );
   }
 
   public getCarRotation(): THREE.Quaternion {
-    let _quat = this.car.quaternion;
-    return new THREE.Quaternion(_quat.x, _quat.y, _quat.z, _quat.w);
+    return new THREE.Quaternion(
+      this.car.quaternion.x,
+      this.car.quaternion.y,
+      this.car.quaternion.z,
+      this.car.quaternion.w
+    );
   }
 
   /**
@@ -147,73 +200,36 @@ export class PhysicsService {
    * @param {number} dt delta time (in seconds) since last step call
    */
   public step(dt: number): void {
-    // console.log(this.car.velocity.length()*3.6)
     this.world.step(1 / 60, dt, 100);
   }
 
   public controlCar(status: CarStatus) {
-    let _force = new CANNON.Vec3();
-    let _up_axis = new CANNON.Mat3()
-      .setRotationFromQuaternion(this.car.quaternion)
-      .vmult(new CANNON.Vec3(0, 1, 0));
-    let _v = this.car.velocity.clone();
-    _v = new CANNON.Vec3(1, 0, 1).vmul(_v);
+    let _P = 80000;
+    let _v = this.car.velocity.length();
 
-    let _v_scale = this.car.velocity.length();
+    // _v = _v < 25 ? 25 : _v;
+    // let _f = _P / _v;
 
-    _v_scale = _v_scale > 10 ? _v_scale : 10;
-    let _f = 120000 / _v_scale;
+    let _f = 2000;
 
-    if (status.gear === 1) {
-      _force.set(0, 0, _f);
-    } else if (status.gear === 0) {
-      _force.set(0, 0, 0);
-    } else if (status.gear === -1) {
-      _force.set(0, 0, -0.3 * _f);
+    for (let i = 0; i < 4; i++) {
+      this.vehicle.setBrake(status.brake ? 5000 : 0, i);
     }
 
-    _force = new CANNON.Mat3()
-      .setRotationFromQuaternion(this.car.quaternion)
-      .vmult(_force);
+    this.vehicle.applyEngineForce(
+      status.throttle ? -_f * status.gear * 0.5 : 0,
+      3
+    );
+    this.vehicle.applyEngineForce(
+      status.throttle ? -_f * status.gear * 0.5 : 0,
+      2
+    );
 
-    if (status.brake) {
-      this.car.velocity = new CANNON.Vec3(0, 0, 0);
-    }
+    this.vehicle.setSteeringValue((status.rotation / 180) * Math.PI, 0);
+    this.vehicle.setSteeringValue((status.rotation / 180) * Math.PI, 1);
 
-    if (status.throttle) {
-      this.car.applyForce(
-        _force.scale(0.1),
-        this.car.shapeOffsets[3]
-      );
-      this.car.applyForce(
-        _force.scale(0.1),
-        this.car.shapeOffsets[4]
-      );
 
-      this.car.applyForce(
-        new CANNON.Mat3()
-          .setRotationFromQuaternion(
-            new CANNON.Quaternion().setFromAxisAngle(
-              _up_axis,
-              (status.rotation / 180) * Math.PI
-            )
-          )
-          .vmult(_force.scale(0.4)),
-        this.car.shapeOffsets[1]
-      );
-      this.car.applyForce(
-        new CANNON.Mat3()
-          .setRotationFromQuaternion(
-            new CANNON.Quaternion().setFromAxisAngle(
-              _up_axis,
-              (status.rotation / 180) * Math.PI
-            )
-          )
-          .vmult(_force.scale(0.4)),
-        this.car.shapeOffsets[2]
-      );
-
-      // console.log(this.car.torque)
-    }
+    // this.vehicle.applyEngineForce(status.throttle ? -500 * status.gear : 0, 0);
+    // this.vehicle.applyEngineForce(status.throttle ? -500 * status.gear : 0, 1);
   }
 }

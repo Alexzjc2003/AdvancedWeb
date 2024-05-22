@@ -6,9 +6,9 @@ import { Injectable } from '@angular/core';
 export class CarcontrolService {
   status: CarStatus = new CarStatus();
 
-  rotationMin: number = -80;
-  rotationMax: number = 80;
-  rotationRatio: number = 80;
+  rotationMin: number = -20;
+  rotationMax: number = 20;
+  rotationRatio: number[] = [10, 20, 50];
 
   constructor() {}
 
@@ -19,7 +19,10 @@ export class CarcontrolService {
     brake: boolean = false,
     turn: number = 0
   ): void {
-    this.status.rotation += dt * turn * this.rotationRatio;
+    this.status.rotation +=
+      dt *
+      turn *
+      this.rotationRatio[Math.floor(Math.abs(this.status.rotation) / 8)];
     this.status.rotation =
       this.status.rotation < this.rotationMin
         ? this.rotationMin
