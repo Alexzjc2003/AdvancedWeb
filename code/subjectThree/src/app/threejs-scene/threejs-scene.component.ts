@@ -279,6 +279,8 @@ export class ThreejsSceneComponent implements OnInit {
 		let texturePath = "./assets/model/cars/texture/colormap.png";
 		this.loader.loadCarResource(fbxPath, texturePath, (carObj) => {
 			carObj.position.set(3, 3, 3);
+			carObj.rotateY(Math.PI);
+			
 			const box = new THREE.Box3().setFromObject(carObj);
 			const size = new THREE.Vector3();
 			box.getSize(size);
@@ -288,7 +290,9 @@ export class ThreejsSceneComponent implements OnInit {
 			self.model = {
 				obj: carObj
 			};
+
 			self.physics.setCar(carObj);
+			
 			self.sendInit();
 		});
 	}
