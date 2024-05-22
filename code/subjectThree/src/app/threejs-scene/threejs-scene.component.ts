@@ -6,331 +6,321 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { roadPosition } from '../roadPosition';
 import { roadOffset } from '../roadOffset';
-import { CarspeedService } from '../carspeed.service';
+import { PhysicsService } from '../physics.service';
 
 @Component({
-	selector: 'app-threejs-scene',
-	standalone: true,
-	imports: [],
-	providers: [CarspeedService],
-	templateUrl: './threejs-scene.component.html',
-	styleUrl: './threejs-scene.component.css',
+  selector: 'app-threejs-scene',
+  standalone: true,
+  imports: [],
+  providers: [PhysicsService],
+  templateUrl: './threejs-scene.component.html',
+  styleUrl: './threejs-scene.component.css',
 })
 export class ThreejsSceneComponent implements OnInit {
-	scene: THREE.Scene = new THREE.Scene();
-	camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
-	renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
-	clock: THREE.Clock = new THREE.Clock();
+  scene: THREE.Scene = new THREE.Scene();
+  camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
+  renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
+  clock: THREE.Clock = new THREE.Clock();
 
-	cameraPosition: THREE.Vector3 = new THREE.Vector3();
-	lookAtVector: THREE.Vector3 = new THREE.Vector3();
-	ambientLight: THREE.AmbientLight = new THREE.AmbientLight();
-	directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight();
+  cameraPosition: THREE.Vector3 = new THREE.Vector3();
+  lookAtVector: THREE.Vector3 = new THREE.Vector3();
+  ambientLight: THREE.AmbientLight = new THREE.AmbientLight();
+  directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight();
 
-	model: {
-		"obj": THREE.Object3D,
-		"box": THREE.Box3
-	} | undefined;
+  model:
+    | {
+        obj: THREE.Object3D;
+        // box: THREE.Box3;
+      }
+    | undefined;
 
-	roadList: {
-		"obj": THREE.Object3D,
-		"box": THREE.Box3
-	}[];
+  roadList: {
+    obj: THREE.Object3D;
+    box: THREE.Box3;
+  }[];
 
-	roadPosition: { "name": string, "x": number, "y": number, "z": number, "rotate": number }[];
-	roadOffset: { [key: string]: { "offset_x": number, "offset_y": number, "offset_z": number } };
+  roadPosition: {
+    name: string;
+    x: number;
+    y: number;
+    z: number;
+    rotate: number;
+  }[];
+  roadOffset: {
+    [key: string]: { offset_x: number; offset_y: number; offset_z: number };
+  };
 
-	keyboardPressed: { [key: string]: number };
+  keyboardPressed: { [key: string]: number };
 
-	carspeed: CarspeedService = new CarspeedService({
-		ratioFraction: 10,
-		ratioBrake: 500,
-		ratioAccelerate: 200,
-		ratioSpeed: 10,
-		ratioTurn: 10,
+  physics: PhysicsService = new PhysicsService();
 
-		maxSpeedForward: 60,
-		maxSpeedBackword: -10,
-		maxTurnDegree: 100,
-		minTurnDegree: 80,
+  constructor() {
+    this.roadPosition = roadPosition;
+    this.roadOffset = roadOffset;
 
-		modelLength: 100,
-	});
+    this.roadList = [];
+    this.keyboardPressed = {
+      w: 0,
+      a: 0,
+      s: 0,
+      d: 0,
+    };
+  }
 
-	constructor() {
-		this.roadPosition = roadPosition;
-		this.roadOffset = roadOffset;
+  ngOnInit(): void {
+    this.roadPosition = roadPosition;
+    this.roadOffset = roadOffset;
+    this.initScene();
+    this.renderScene();
+  }
 
-		this.roadList = [];
-		this.keyboardPressed = {
-			"w": 0,
-			"a": 0,
-			"s": 0,
-			"d": 0
-		};
-	}
+  initScene(): void {
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0xadd8e6);
 
-	ngOnInit(): void {
-		this.roadPosition = roadPosition;
-		this.roadOffset = roadOffset;
-		this.initScene();
-		this.renderScene();
-		// this.carspeed = CarspeedService
-	}
+    this.renderer = new THREE.WebGLRenderer();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(this.renderer.domElement);
 
-	initScene(): void {
-		this.scene = new THREE.Scene();
-		this.scene.background = new THREE.Color(0xadd8e6);
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      5000
+    );
+    this.camera.position.y = 2;
 
-		this.renderer = new THREE.WebGLRenderer();
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		document.body.appendChild(this.renderer.domElement);
+    // 平视
+    this.cameraPosition = new THREE.Vector3(0, 200, 500);
+    // 俯视
+    // this.cameraPosition = new THREE.Vector3(0, 1200, 0);
 
-		this.camera = new THREE.PerspectiveCamera(
-			75,
-			window.innerWidth / window.innerHeight,
-			0.1,
-			5000
-		);
-		this.camera.position.y = 2;
+    this.lookAtVector = new THREE.Vector3(0, 0, 0);
 
-		// 平视
-		this.cameraPosition = new THREE.Vector3(0, 200, 500);
-		// 俯视
-		// this.cameraPosition = new THREE.Vector3(0, 1200, 0);
+    // 添加环境光
+    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    this.scene.add(this.ambientLight);
 
-		this.lookAtVector = new THREE.Vector3(0, 0, 0);
+    // 添加方向光
+    this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    this.directionalLight.position.set(10, 10, 10);
+    this.scene.add(this.directionalLight);
 
-		// 添加环境光
-		this.ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-		this.scene.add(this.ambientLight);
+    let axes = new THREE.AxesHelper(2000);
+    this.scene.add(axes);
 
-		// 添加方向光
-		this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-		this.directionalLight.position.set(10, 10, 10);
-		this.scene.add(this.directionalLight);
+    this.loadLocalCar();
+    this.loadRoadEnvironment();
+    // this.loadAllRoads();
 
-		let axes = new THREE.AxesHelper(2000);
-		this.scene.add(axes);
+    this.bindEventListener();
+  }
 
-		this.loadLocalCar();
-		this.loadRoadEnvironment();
-		// this.loadAllRoads();
+  loadAllRoads() {
+    let roadNameList = [
+      // 'road_bend',
+      'road_crossing',
+      'road_crossroadPath',
+      // 'road_curve',
+      // 'road_curveIntersection',
+      'road_end',
+      // 'road_endRound',
+      'road_intersectionPath',
+      // 'road_roundabout',
+      'road_side',
+      // 'road_sideEntry',
+      // 'road_sideExit',
+      'road_slant',
+      // 'road_slantCurve',
+      'road_slantFlat',
+      // 'road_slantFlatCurve',
+      'road_slantFlatHigh',
+      'road_slantHigh',
+      // 'road_split',
+      'road_straight',
+    ];
 
-		this.bindEventListener();
-	}
+    for (let i = 0; i < roadNameList.length; i++) {
+      let roadName = roadNameList[i];
+      let mtlPath = `./assets/model/road/road_slantHigh.mtl`;
+      let objPath = `./assets/model/road/road_slantHigh.obj`;
+      let posX = i * 900;
+      this.loadRoadResource(
+        mtlPath,
+        objPath,
+        posX + 150,
+        -150,
+        0,
+        300,
+        300,
+        300,
+        300
+      );
+    }
+  }
 
-	loadAllRoads(){
-		let roadNameList = [
-			// 'road_bend',
-			'road_crossing',
-			'road_crossroadPath',
-			// 'road_curve',
-			// 'road_curveIntersection',
-			'road_end',
-			// 'road_endRound',
-			'road_intersectionPath',
-			// 'road_roundabout',
-			'road_side',
-			// 'road_sideEntry',
-			// 'road_sideExit',
-			'road_slant',
-			// 'road_slantCurve',
-			'road_slantFlat',
-			// 'road_slantFlatCurve',
-			'road_slantFlatHigh',
-			'road_slantHigh',
-			// 'road_split',
-			'road_straight'
-		  ];
+  loadLocalCar() {
+    let loader = new FBXLoader();
+    this.model = undefined;
 
-		  for (let i = 0; i < roadNameList.length; i++) {
-		    let roadName = roadNameList[i];
-		    let mtlPath = `./assets/model/road/road_slantHigh.mtl`;
-		    let objPath = `./assets/model/road/road_slantHigh.obj`;
-		    let posX = i * 900;
-		    this.loadRoadResource(mtlPath, objPath, posX + 150, -150, 0, 300, 300, 300, 300);
-		  }
-	}
+    let component = this;
+    loader.load('./assets/model/cars/police.fbx', function (object) {
+      object.position.set(100, 200, 300);
+      object.scale.set(0.6, 0.6, 0.6);
 
-	loadLocalCar() {
-		let loader = new FBXLoader();
-		this.model = undefined;
+      let textureLoader = new THREE.TextureLoader();
+      textureLoader.load(
+        './assets/model/cars/texture/colormap.png',
+        function (texture) {
+          let material = new THREE.MeshBasicMaterial({ map: texture });
 
-		let component = this;
-		loader.load('./assets/model/cars/police.fbx', function (object) {
-			object.position.set(100, 150, 300);
-			object.scale.set(0.6, 0.6, 0.6);
+          object.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = material;
+            }
+          });
+          component.scene.add(object);
+        }
+      );
 
-			let textureLoader = new THREE.TextureLoader();
-			textureLoader.load('./assets/model/cars/texture/colormap.png',
-				function (texture) {
-					let material = new THREE.MeshBasicMaterial({ map: texture });
+      object.rotateY(Math.PI);
 
-					object.traverse(function (child) {
-						if (child instanceof THREE.Mesh) {
-							child.material = material;
-						}
-					});
-					component.scene.add(object);
-				}
-			);
+      component.model = {
+        obj: object,
+        // box: new THREE.Box3().setFromObject(object),
+      };
 
-			object.rotateY(Math.PI);
+      component.physics.setCar(object);
+    });
+  }
 
-			component.model = {
-				"obj": object,
-				"box": new THREE.Box3().setFromObject(object)
-			};
-		});
-	}
+  loadRoadEnvironment() {
+    for (let i = 0; i < this.roadPosition.length; i++) {
+      let road = this.roadPosition[i];
+      this.loadRoad(
+        road['name'],
+        road['x'],
+        road['y'],
+        road['z'],
+        road['rotate']
+      );
+    }
+  }
 
-	loadRoadEnvironment() {
-		for (let i = 0; i < this.roadPosition.length; i++) {
-			let road = this.roadPosition[i];
-			this.loadRoad(
-				road['name'],
-				road['x'],
-				road['y'],
-				road['z'],
-				road['rotate']
-			);
-		}
-	}
+  bindEventListener() {
+    let component = this;
+    document.addEventListener('keydown', function (event) {
+      component.keyboardPressed[event.key] = 1;
+    });
 
-	bindEventListener() {
-		let component = this;
-		document.addEventListener('keydown', function (event) {
-			component.keyboardPressed[event.key] = 1;
-		});
+    document.addEventListener('keyup', function (event) {
+      component.keyboardPressed[event.key] = 0;
+    });
+  }
 
-		document.addEventListener('keyup', function (event) {
-			component.keyboardPressed[event.key] = 0;
-		});
-	}
+  renderScene(): void {
+    const animate = () => {
+      requestAnimationFrame(animate);
+      if (this.model == undefined) {
+        return;
+      }
 
-	renderScene(): void {
-		const animate = () => {
-			requestAnimationFrame(animate);
-			if (this.model == undefined) {
-				return;
-			}
-			// let speed = 30;
-			// let deltaX = 0;
-			// let deltaZ = 0;
+      if (this.keyboardPressed['w'] == 1) {
+        // W键
+      }
+      if (this.keyboardPressed['s'] == 1) {
+        // S键
+      }
+      if (this.keyboardPressed['a'] == 1) {
+        // A键
+      }
+      if (this.keyboardPressed['d'] == 1) {
+        // D键
+      }
 
-			if (this.keyboardPressed['w'] == 1) {
-				// W键
-				// deltaZ = -speed;
-				this.carspeed.status.isAccelerating += 1;
-			}
-			if (this.keyboardPressed['s'] == 1) {
-				// S键
-				// deltaZ = speed;
-				this.carspeed.status.isAccelerating -= 1;
-			}
-			if (this.keyboardPressed['a'] == 1) {
-				// A键
-				// deltaX = -speed;
-				this.carspeed.status.isTurning += 1;
-			}
-			if (this.keyboardPressed['d'] == 1) {
-				// D键
-				// deltaX = speed;
-				this.carspeed.status.isTurning -= 1;
-			}
+      let dt = this.clock.getDelta();
+      this.physics.step(dt);
 
-			// this.model.position.x += deltaX;
-			// this.model.position.z += deltaZ;
+      this.model.obj.position.copy(this.physics.getCarPosition());
+      this.model.obj.quaternion.copy(this.physics.getCarRotation());
 
-			let dt = this.clock.getDelta();
-			let [_pos, _dir] = this.carspeed.getNextPosDir(
-				dt,
-				this.model["obj"].position,
-				this.model["obj"].rotation
-			);
-			this.model["obj"].position.copy(_pos);
-			this.model["obj"].rotation.set(_dir.x, _dir.y, _dir.z);
+      this.camera.position.copy(
+        this.cameraPosition.clone().add(this.model['obj'].position)
+      );
+      this.camera.lookAt(this.lookAtVector.copy(this.model['obj'].position));
 
-			this.model["box"].setFromObject(this.model["obj"]);
-			// for (let road of this.roadList) {
-			// 	if (road["box"] && this.model["box"].intersectsBox(road["box"])) {
-			// 		console.log('Collision detected!');
-			// 		return;
-			// 	}
-			// }
+      this.renderer.render(this.scene, this.camera);
+    };
 
-			this.camera.position.copy(
-				this.cameraPosition.clone().add(this.model["obj"].position)
-			);
-			this.camera.lookAt(this.lookAtVector.copy(this.model["obj"].position));
+    animate();
+  }
 
-			this.renderer.render(this.scene, this.camera);
-		};
+  loadRoadResource(
+    mtlPath: string,
+    objPath: string,
+    positionX: number,
+    positionY: number,
+    positionZ: number,
+    rotateY: number,
+    scaleX: number,
+    scaleY: number,
+    scaleZ: number
+  ) {
+    let component = this;
 
-		animate();
-	}
+    let mtlLoader = new MTLLoader();
+    mtlLoader.load(mtlPath, function (materials) {
+      materials.preload();
+      let objLoader = new OBJLoader();
+      objLoader.setMaterials(materials);
+      objLoader.load(objPath, function (object) {
+        object.scale.set(scaleX, scaleY, scaleZ);
+        object.position.set(positionX, positionY, positionZ);
+        object.rotateY(Math.PI * rotateY);
+        component.scene.add(object);
 
-	loadRoadResource(
-		mtlPath: string,
-		objPath: string,
-		positionX: number,
-		positionY: number,
-		positionZ: number,
-		rotateY: number,
-		scaleX: number,
-		scaleY: number,
-		scaleZ: number
-	) {
-		let component = this;
+        let road = {
+          obj: object,
+          box: new THREE.Box3().setFromObject(object),
+        };
+        component.roadList.push(road);
+      });
+    });
+  }
 
-		let mtlLoader = new MTLLoader();
-		mtlLoader.load(mtlPath, function (materials) {
-			materials.preload();
-			let objLoader = new OBJLoader();
-			objLoader.setMaterials(materials);
-			objLoader.load(objPath, function (object) {
-				object.scale.set(scaleX, scaleY, scaleZ);
-				object.position.set(positionX, positionY, positionZ);
-				object.rotateY(Math.PI * rotateY);
-				component.scene.add(object);
+  loadRoad(
+    roadName: string,
+    positionX: number,
+    positionY: number,
+    positionZ: number,
+    rotateY: number
+  ) {
+    let offset_scale = 300;
+    let scaleX = 300;
+    let scaleY = 300;
+    let scaleZ = 300;
 
-				let road = {
-					"obj": object,
-					"box": new THREE.Box3().setFromObject(object)
-				};
-				component.roadList.push(road);
-			});
-		});
-	}
+    let offset_dict = this.roadOffset;
+    let offset_x = offset_dict[roadName]['offset_x'] * (scaleX / offset_scale);
+    let offset_y = offset_dict[roadName]['offset_y'] * (scaleY / offset_scale);
+    let offset_z = offset_dict[roadName]['offset_z'] * (scaleZ / offset_scale);
+    let puzzles = offset_dict[roadName]['puzzle'];
+    for (let puzzle of puzzles) {
+      console.log(puzzle['type'], puzzle['vectorX'], puzzle['vectorZ']);
+    }
 
-	loadRoad(roadName: string, positionX: number, positionY: number, positionZ: number, rotateY: number) {
-		let offset_scale = 300
-		let scaleX = 300;
-		let scaleY = 300;
-		let scaleZ = 300;
-
-		let offset_dict = this.roadOffset;
-		let offset_x = offset_dict[roadName]['offset_x'] * (scaleX / offset_scale);
-		let offset_y = offset_dict[roadName]['offset_y'] * (scaleY / offset_scale);
-		let offset_z = offset_dict[roadName]['offset_z'] * (scaleZ / offset_scale);
-		let puzzles = offset_dict[roadName]['puzzle'];
-		for(let puzzle of puzzles){
-			console.log(puzzle["type"], puzzle["vectorX"], puzzle["vectorZ"]);
-		}
-
-		let mtlPath = `./assets/model/road/${roadName}.mtl`;
-		let objPath = `./assets/model/road/${roadName}.obj`;
-		this.loadRoadResource(
-			mtlPath,
-			objPath,
-			positionX + offset_x,
-			positionY + offset_y,
-			positionZ + offset_z,
-			rotateY,
-			scaleX,
-			scaleY,
-			scaleZ
-		);
-	}
+    let mtlPath = `./assets/model/road/${roadName}.mtl`;
+    let objPath = `./assets/model/road/${roadName}.obj`;
+    this.loadRoadResource(
+      mtlPath,
+      objPath,
+      positionX + offset_x,
+      positionY + offset_y,
+      positionZ + offset_z,
+      rotateY,
+      scaleX,
+      scaleY,
+      scaleZ
+    );
+  }
 }
