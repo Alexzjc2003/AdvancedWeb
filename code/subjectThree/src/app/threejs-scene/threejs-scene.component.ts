@@ -23,7 +23,6 @@ export class ThreejsSceneComponent implements OnInit {
   renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
   clock: THREE.Clock = new THREE.Clock();
 
-  cameraPosition: THREE.Vector3 = new THREE.Vector3();
   lookAtVector: THREE.Vector3 = new THREE.Vector3();
   ambientLight: THREE.AmbientLight = new THREE.AmbientLight();
   directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight();
@@ -91,12 +90,6 @@ export class ThreejsSceneComponent implements OnInit {
       5000
     );
     this.camera.position.y = 2;
-
-    // 平视
-    // this.cameraPosition = new THREE.Vector3(0, 200, 500);
-    // this.cameraPosition = new THREE.Vector3(500, 0, 0);
-    // 俯视
-    this.cameraPosition = new THREE.Vector3(0, 1200, 0);
 
     this.lookAtVector = new THREE.Vector3(0, 0, 0);
 
@@ -260,10 +253,16 @@ export class ThreejsSceneComponent implements OnInit {
       this.model.obj.position.copy(this.physics.getCarPosition());
       this.model.obj.quaternion.copy(this.physics.getCarRotation());
 
+      const direction = new THREE.Vector3();
+      this.model.obj.getWorldDirection(direction);
+
+      direction.multiplyScalar(300);
+      direction.negate();
+
       this.camera.position.copy(
-        this.cameraPosition.clone().add(this.model['obj'].position)
+        direction.clone().add(this.model.obj.position).add(new THREE.Vector3(0, 150, 0))
       );
-      this.camera.lookAt(this.lookAtVector.copy(this.model['obj'].position));
+      this.camera.lookAt(this.lookAtVector.copy(this.model.obj.position));
 
       this.renderer.render(this.scene, this.camera);
     };
