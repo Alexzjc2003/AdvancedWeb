@@ -1,6 +1,6 @@
 export const roadPosition = [
 	{
-		"name": "road_end",
+		"name": "road_straight",
 		"x": 0,
 		"z": 0,
 		"y": 0,
@@ -35,7 +35,7 @@ export const roadPosition = [
 		"rotate": -0.5
 	},
 	{
-		"name": "road_intersectionPath",
+		"name": "road_straight",
 		"x": 0,
 		"z": 1500,
 		"y": 0,
@@ -70,7 +70,7 @@ export const roadPosition = [
 		"rotate": -0.5
 	},
 	{
-		"name": "road_bend",
+		"name": "road_straight",
 		"x": 0,
 		"z": 3000,
 		"y": 0,
@@ -105,7 +105,7 @@ export const roadPosition = [
 		"rotate": 0
 	},
 	{
-		"name": "road_crossroadPath",
+		"name": "road_straight",
 		"x": 1500,
 		"z": 1500,
 		"y": 0,
