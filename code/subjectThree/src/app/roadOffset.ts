@@ -3,26 +3,20 @@ export const roadOffset = {
         "offset_x": 150,
         "offset_y": 0,
         "offset_z": 150,
-        "puzzle": [
-          {
-          "type": "rectangle",
-          "vectorX": [150, 0, 0],
-          "vectorZ": [0, 0, 150]
-          }
-        ]
+        "puzzle": []
     },
     "road_bendSquare": {
-      "offset_x": 150,
-      "offset_y": 0,
-      "offset_z": 150,
-      "puzzle": [
-        {
-        "type": "rectangle",
-        "vectorX": [150, 0, 0],
-        "vectorZ": [0, 0, 150]
-        }
-      ]
-  },
+        "offset_x": 150,
+        "offset_y": 0,
+        "offset_z": 150,
+        "puzzle": [
+            {
+                "type": "rectangle",
+                "vectorX": [300, 0, 0],
+                "vectorZ": [0, 0, 300]
+            }
+        ]
+    },
     "road_crossing": {
         "offset_x": 150,
         "offset_y": 0,
@@ -30,8 +24,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [150, 0, 0],
-                "vectorZ": [0, 0, 150]
+                "vectorX": [300, 0, 0],
+                "vectorZ": [0, 0, 300]
             }
         ]
     },
@@ -42,8 +36,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [150, 0, 0],
-                "vectorZ": [0, 0, 150]
+                "vectorX": [300, 0, 0],
+                "vectorZ": [0, 0, 300]
             }
         ]
     },
@@ -66,8 +60,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [150, 0, 0],
-                "vectorZ": [0, 0, 150]
+                "vectorX": [300, 0, 0],
+                "vectorZ": [0, 0, 300]
             }
         ]
     },
@@ -84,8 +78,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [150, 0, 0],
-                "vectorZ": [0, 0, 150]
+                "vectorX": [300, 0, 0],
+                "vectorZ": [0, 0, 300]
             }
         ]
     },
@@ -102,8 +96,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [150, 0, 0],
-                "vectorZ": [0, 0, 200]
+                "vectorX": [300, 0, 0],
+                "vectorZ": [0, 0, 400]
             }
         ]
     },
@@ -126,8 +120,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [150, 75, 0],
-                "vectorZ": [0, 0, 150]
+                "vectorX": [300, 75, 0],
+                "vectorZ": [0, 0, 300]
             }
         ]
     },
@@ -144,8 +138,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [150, 75, 0],
-                "vectorZ": [0, 0, 150]
+                "vectorX": [300, 75, 0],
+                "vectorZ": [0, 0, 300]
             }
         ]
     },
@@ -162,8 +156,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [150, 150, 0],
-                "vectorZ": [0, 0, 150]
+                "vectorX": [300, 150, 0],
+                "vectorZ": [0, 0, 300]
             }
         ]
     },
@@ -174,8 +168,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [150, 150, 0],
-                "vectorZ": [0, 0, 150]
+                "vectorX": [300, 150, 0],
+                "vectorZ": [0, 0, 300]
             }
         ]
     },
@@ -192,8 +186,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [150, 0, 0],
-                "vectorZ": [0, 0, 150]
+                "vectorX": [300, 0, 0],
+                "vectorZ": [0, 0, 300]
             }
         ]
     },
