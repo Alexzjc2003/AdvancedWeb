@@ -311,6 +311,7 @@ export class ThreejsSceneComponent implements OnInit {
     positionZ: number,
     rotateY: number
   ) {
+    console.log(`road: ${roadName}`)
     let offset_scale = 300;
     let scaleX = 300;
     let scaleY = 300;

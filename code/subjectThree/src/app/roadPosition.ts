@@ -70,7 +70,7 @@ export const roadPosition = [
       "rotate": -0.5
     },
     {
-      "name": "road_bendSquare",
+      "name": "road_straight",
       "x": 0,
       "z": 3000,
       "y": 0,
