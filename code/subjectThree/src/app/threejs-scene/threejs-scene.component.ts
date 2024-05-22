@@ -7,6 +7,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { roadPosition } from '../roadPosition';
 import { roadOffset } from '../roadOffset';
 import { PhysicsService } from '../physics.service';
+import { WebSocketService } from '../websocket.service';
 
 @Component({
   selector: 'app-threejs-scene',
@@ -52,7 +53,10 @@ export class ThreejsSceneComponent implements OnInit {
 
   keyboardPressed: { [key: string]: number };
 
+  socketId: number = -1;
+
   physics: PhysicsService = new PhysicsService();
+  io: WebSocketService = new WebSocketService();
 
   constructor() {
     this.roadPosition = roadPosition;
@@ -114,6 +118,15 @@ export class ThreejsSceneComponent implements OnInit {
     // this.loadAllRoads();
 
     this.bindEventListener();
+
+    this.init_websocket();
+  }
+
+  init_websocket(){
+    this.socketId = this.io.connect("localhost:1234");
+    this.io.onMessage(this.socketId, "remoteData").subscribe((msg: string) => {
+      console.log(`message from remote ${msg}`)
+    })
   }
 
   loadAllRoads() {
