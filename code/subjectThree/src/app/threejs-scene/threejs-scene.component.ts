@@ -214,7 +214,6 @@ export class ThreejsSceneComponent implements OnInit {
     let component = this;
     document.addEventListener('keydown', function (event) {
       component.keyboardPressed[event.key] = 1;
-			console.log(component.keyboardPressed)
     });
 
     document.addEventListener('keyup', function (event) {
@@ -232,7 +231,8 @@ export class ThreejsSceneComponent implements OnInit {
       // let _status = this.carcontrol.getStatus();
       let _gear = 0,
         _throttle = false,
-        _turn = 0;
+        _turn = 0,
+        _brake = false;
       if (this.keyboardPressed['w'] == 1) {
         // W键
         _gear += 1;
@@ -245,16 +245,19 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['a'] == 1) {
         // A键
-        _turn -= 1;
+        _turn += 1;
       }
       if (this.keyboardPressed['d'] == 1) {
         // D键
-        _turn += 1;
+        _turn -= 1;
+      }
+      if (this.keyboardPressed['b']) {
+        _brake = true;
       }
 
       let dt = this.clock.getDelta();
-      this.carcontrol.setControl(dt, _gear, _throttle, false, _turn);
-			this.physics.controlCar(this.carcontrol.getStatus())
+      this.carcontrol.setControl(dt, _gear, _throttle, _brake, _turn);
+      this.physics.controlCar(this.carcontrol.getStatus());
       this.physics.step(dt);
 
       this.model.obj.position.copy(this.physics.getCarPosition());
@@ -311,7 +314,7 @@ export class ThreejsSceneComponent implements OnInit {
     positionZ: number,
     rotateY: number
   ) {
-    console.log(`road: ${roadName}`)
+    console.log(`road: ${roadName}`);
     let offset_scale = 300;
     let scaleX = 300;
     let scaleY = 300;

@@ -9,18 +9,22 @@ import { CarStatus } from './carcontrol.service';
 export class PhysicsService {
   world: CANNON.World;
   groundMaterial: CANNON.Material = new CANNON.Material({
-    friction: 1,
+    friction: 0.01,
     restitution: 0.001,
   });
   groundBody: CANNON.Body = new CANNON.Body({
     type: CANNON.Body.STATIC,
-    mass: 0,
+    // mass: 0,
     material: this.groundMaterial,
   });
 
   car: CANNON.Body = new CANNON.Body({
+    type: CANNON.BODY_TYPES.DYNAMIC,
     mass: 1200,
-    material: new CANNON.Material({ friction: 0.001, restitution: 0.01 }),
+    material: new CANNON.Material({
+      friction: 0.05,
+      restitution: 0.001,
+    }),
   });
 
   constructor() {
@@ -72,17 +76,55 @@ export class PhysicsService {
     _3_box.getCenter(_center);
 
     let _c_box = new CANNON.Box(
-      new CANNON.Vec3(_size.x / 2, _size.y / 2, _size.z / 2)
+      new CANNON.Vec3(_size.x * 0.5, _size.y * 0.45, _size.z * 0.5)
     );
     this.car.shapes.forEach((s) => this.car.removeShape(s));
     this.car.addShape(
       _c_box,
       new CANNON.Vec3(
         _center.x - car.position.x,
-        _center.y - car.position.y,
+        _center.y - car.position.y + _size.y * 0.05,
         _center.z - car.position.z
       )
     );
+
+    let _c_wheel = new CANNON.Box(
+      new CANNON.Vec3(_size.x * 0.1, _size.y * 0.05, _size.z * 0.1)
+    );
+
+    this.car.addShape(
+      _c_wheel,
+      new CANNON.Vec3(
+        _center.x - car.position.x + _size.x * 0.45,
+        _center.y - car.position.y - _size.y * 0.45,
+        _center.z - car.position.z + _size.z * 0.35
+      )
+    );
+    this.car.addShape(
+      _c_wheel,
+      new CANNON.Vec3(
+        _center.x - car.position.x - _size.x * 0.45,
+        _center.y - car.position.y - _size.y * 0.45,
+        _center.z - car.position.z + _size.z * 0.35
+      )
+    );
+    this.car.addShape(
+      _c_wheel,
+      new CANNON.Vec3(
+        _center.x - car.position.x + _size.x * 0.45,
+        _center.y - car.position.y - _size.y * 0.45,
+        _center.z - car.position.z - _size.z * 0.35
+      )
+    );
+    this.car.addShape(
+      _c_wheel,
+      new CANNON.Vec3(
+        _center.x - car.position.x - _size.x * 0.45,
+        _center.y - car.position.y - _size.y * 0.45,
+        _center.z - car.position.z + _size.z * 0.35
+      )
+    );
+
     this.car.position = new CANNON.Vec3(
       car.position.x,
       car.position.y,
@@ -105,43 +147,73 @@ export class PhysicsService {
    * @param {number} dt delta time (in seconds) since last step call
    */
   public step(dt: number): void {
+    // console.log(this.car.velocity.length()*3.6)
     this.world.step(1 / 60, dt, 100);
   }
 
   public controlCar(status: CarStatus) {
     let _force = new CANNON.Vec3();
+    let _up_axis = new CANNON.Mat3()
+      .setRotationFromQuaternion(this.car.quaternion)
+      .vmult(new CANNON.Vec3(0, 1, 0));
+    let _v = this.car.velocity.clone();
+    _v = new CANNON.Vec3(1, 0, 1).vmul(_v);
+
+    let _v_scale = this.car.velocity.length();
+
+    _v_scale = _v_scale > 10 ? _v_scale : 10;
+    let _f = 120000 / _v_scale;
 
     if (status.gear === 1) {
-      _force.set(0, 0, 5000);
+      _force.set(0, 0, _f);
     } else if (status.gear === 0) {
       _force.set(0, 0, 0);
     } else if (status.gear === -1) {
-      _force.set(0, 0, -1200);
+      _force.set(0, 0, -0.3 * _f);
     }
 
-    let _dir = this.car.quaternion.clone();
-    _force = new CANNON.Mat3().setRotationFromQuaternion(_dir).vmult(_force);
+    _force = new CANNON.Mat3()
+      .setRotationFromQuaternion(this.car.quaternion)
+      .vmult(_force);
+
+    if (status.brake) {
+      this.car.velocity = new CANNON.Vec3(0, 0, 0);
+    }
 
     if (status.throttle) {
       this.car.applyForce(
-        _force,
-        new CANNON.Vec3(0, 0, this.car.shapes[0].boundingSphereRadius * 0.3)
+        _force.scale(0.1),
+        this.car.shapeOffsets[3]
+      );
+      this.car.applyForce(
+        _force.scale(0.1),
+        this.car.shapeOffsets[4]
       );
 
-      let _axis_up = new CANNON.Mat3()
-        .setRotationFromQuaternion(_dir)
-        .vmult(new CANNON.Vec3(0, 1, 0));
       this.car.applyForce(
         new CANNON.Mat3()
           .setRotationFromQuaternion(
             new CANNON.Quaternion().setFromAxisAngle(
-              _axis_up,
+              _up_axis,
               (status.rotation / 180) * Math.PI
             )
           )
-          .vmult(_force),
-        new CANNON.Vec3(0, 0, -this.car.shapes[0].boundingSphereRadius * 0.3)
+          .vmult(_force.scale(0.4)),
+        this.car.shapeOffsets[1]
       );
+      this.car.applyForce(
+        new CANNON.Mat3()
+          .setRotationFromQuaternion(
+            new CANNON.Quaternion().setFromAxisAngle(
+              _up_axis,
+              (status.rotation / 180) * Math.PI
+            )
+          )
+          .vmult(_force.scale(0.4)),
+        this.car.shapeOffsets[2]
+      );
+
+      // console.log(this.car.torque)
     }
   }
 }
