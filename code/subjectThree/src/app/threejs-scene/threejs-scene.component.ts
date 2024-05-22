@@ -8,12 +8,13 @@ import { roadPosition } from '../roadPosition';
 import { roadOffset } from '../roadOffset';
 import { PhysicsService } from '../physics.service';
 import { WebSocketService } from '../websocket.service';
+import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'app-threejs-scene',
   standalone: true,
   imports: [],
-  providers: [PhysicsService],
+  providers: [PhysicsService, NotificationService],
   templateUrl: './threejs-scene.component.html',
   styleUrl: './threejs-scene.component.css',
 })
@@ -58,7 +59,8 @@ export class ThreejsSceneComponent implements OnInit {
   physics: PhysicsService = new PhysicsService();
   io: WebSocketService = new WebSocketService();
 
-  constructor() {
+
+  constructor(private notification: NotificationService) {
     this.roadPosition = roadPosition;
     this.roadOffset = roadOffset;
 
@@ -68,6 +70,7 @@ export class ThreejsSceneComponent implements OnInit {
       a: 0,
       s: 0,
       d: 0,
+      e: 0,
     };
   }
 
@@ -249,6 +252,10 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['d'] == 1) {
         // D键
+      }
+      if (this.keyboardPressed['e'] == 1){
+        // E键 - 弹窗测试
+        this.notification.showNotification("This is a test message.");
       }
 
       let dt = this.clock.getDelta();

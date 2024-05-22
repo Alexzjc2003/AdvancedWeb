@@ -3,8 +3,26 @@ export const roadOffset = {
         "offset_x": 150,
         "offset_y": 0,
         "offset_z": 150,
-        "puzzle": []
+        "puzzle": [
+          {
+          "type": "rectangle",
+          "vectorX": [150, 0, 0],
+          "vectorZ": [0, 0, 150]
+          }
+        ]
     },
+    "road_bendSquare": {
+      "offset_x": 150,
+      "offset_y": 0,
+      "offset_z": 150,
+      "puzzle": [
+        {
+        "type": "rectangle",
+        "vectorX": [150, 0, 0],
+        "vectorZ": [0, 0, 150]
+        }
+      ]
+  },
     "road_crossing": {
         "offset_x": 150,
         "offset_y": 0,
