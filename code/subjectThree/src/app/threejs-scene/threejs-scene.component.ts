@@ -7,6 +7,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { roadPosition } from '../roadPosition';
 import { roadOffset } from '../roadOffset';
 import { PhysicsService } from '../physics.service';
+import { CarcontrolService } from '../carcontrol.service';
 
 @Component({
   selector: 'app-threejs-scene',
@@ -29,9 +30,9 @@ export class ThreejsSceneComponent implements OnInit {
 
   model:
     | {
-      obj: THREE.Object3D;
-      // box: THREE.Box3;
-    }
+        obj: THREE.Object3D;
+        // box: THREE.Box3;
+      }
     | undefined;
 
   roadList: {
@@ -53,6 +54,7 @@ export class ThreejsSceneComponent implements OnInit {
   keyboardPressed: { [key: string]: number };
 
   physics: PhysicsService = new PhysicsService();
+  carcontrol: CarcontrolService = new CarcontrolService();
 
   constructor() {
     this.roadPosition = roadPosition;
@@ -91,9 +93,10 @@ export class ThreejsSceneComponent implements OnInit {
     this.camera.position.y = 2;
 
     // 平视
-    this.cameraPosition = new THREE.Vector3(0, 200, 500);
+    // this.cameraPosition = new THREE.Vector3(0, 200, 500);
+    // this.cameraPosition = new THREE.Vector3(500, 0, 0);
     // 俯视
-    // this.cameraPosition = new THREE.Vector3(0, 1200, 0);
+    this.cameraPosition = new THREE.Vector3(0, 1200, 0);
 
     this.lookAtVector = new THREE.Vector3(0, 0, 0);
 
@@ -165,7 +168,7 @@ export class ThreejsSceneComponent implements OnInit {
 
     let component = this;
     loader.load('./assets/model/cars/police.fbx', function (object) {
-      object.position.set(100, 200, 300);
+      object.position.set(200, 50, 200);
       object.scale.set(0.6, 0.6, 0.6);
 
       let textureLoader = new THREE.TextureLoader();
@@ -211,6 +214,7 @@ export class ThreejsSceneComponent implements OnInit {
     let component = this;
     document.addEventListener('keydown', function (event) {
       component.keyboardPressed[event.key] = 1;
+			console.log(component.keyboardPressed)
     });
 
     document.addEventListener('keyup', function (event) {
@@ -225,20 +229,32 @@ export class ThreejsSceneComponent implements OnInit {
         return;
       }
 
+      // let _status = this.carcontrol.getStatus();
+      let _gear = 0,
+        _throttle = false,
+        _turn = 0;
       if (this.keyboardPressed['w'] == 1) {
         // W键
+        _gear += 1;
+        _throttle = true;
       }
       if (this.keyboardPressed['s'] == 1) {
         // S键
+        _gear -= 1;
+        _throttle = true;
       }
       if (this.keyboardPressed['a'] == 1) {
         // A键
+        _turn -= 1;
       }
       if (this.keyboardPressed['d'] == 1) {
         // D键
+        _turn += 1;
       }
 
       let dt = this.clock.getDelta();
+      this.carcontrol.setControl(dt, _gear, _throttle, false, _turn);
+			this.physics.controlCar(this.carcontrol.getStatus())
       this.physics.step(dt);
 
       this.model.obj.position.copy(this.physics.getCarPosition());
@@ -309,7 +325,7 @@ export class ThreejsSceneComponent implements OnInit {
     let pos_x = positionX + offset_x;
     let pos_y = positionY + offset_y;
     let pos_z = positionZ + offset_z;
-    
+
     let mtlPath = `./assets/model/road/${roadName}.mtl`;
     let objPath = `./assets/model/road/${roadName}.obj`;
     this.loadRoadResource(
@@ -325,12 +341,20 @@ export class ThreejsSceneComponent implements OnInit {
     );
 
     for (let puzzle of puzzles) {
-      console.log(puzzle['type'], puzzle['vectorX'], puzzle['vectorZ']);
+      // console.log(puzzle['type'], puzzle['vectorX'], puzzle['vectorZ']);
       this.physics.addRoad(
-        new THREE.Vector3(pos_x, pos_y, pos_z),
-        new THREE.Vector3(puzzle["vectorZ"][0], puzzle["vectorZ"][1], puzzle["vectorZ"][2]),
-        new THREE.Vector3(puzzle["vectorX"][0], puzzle["vectorX"][1], puzzle["vectorX"][2])
-      )
+        new THREE.Vector3(positionX, positionY, positionZ),
+        new THREE.Vector3(
+          puzzle['vectorZ'][0],
+          puzzle['vectorZ'][1],
+          puzzle['vectorZ'][2]
+        ),
+        new THREE.Vector3(
+          puzzle['vectorX'][0],
+          puzzle['vectorX'][1],
+          puzzle['vectorX'][2]
+        )
+      );
     }
   }
 }
