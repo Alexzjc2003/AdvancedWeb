@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as THREE from 'three';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { HostListener } from '@angular/core';
 
 import { roadPosition } from '../roadPosition';
 
@@ -32,12 +30,7 @@ export class ThreejsSceneComponent implements OnInit {
 	ambientLight: THREE.AmbientLight = new THREE.AmbientLight();
 	directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight();
 
-	model:
-		| {
-			obj: THREE.Object3D;
-			// box: THREE.Box3;
-		}
-		| undefined;
+	model: any;
 
 	roadOffset: {
 		[key: string]: { offset_x: number; offset_y: number; offset_z: number; puzzle: any[] };
@@ -66,6 +59,9 @@ export class ThreejsSceneComponent implements OnInit {
 	loader: LoadResourceService = new LoadResourceService();
 
 	globalScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1);
+
+	socketId: string = "";
+	remoteCars: Map<string, any> = new Map<string, any>();
 
 	constructor(private notification: NotificationService) {
 		this.roadPosition = roadPosition;
@@ -118,7 +114,7 @@ export class ThreejsSceneComponent implements OnInit {
 		let axes = new THREE.AxesHelper(2000);
 		this.scene.add(axes);
 
-		this.loadLocalCar();
+		this.loadLocalCar("police");
 		this.loadRoadEnvironment();
 		// this.loadAllRoads();
 
@@ -128,11 +124,94 @@ export class ThreejsSceneComponent implements OnInit {
 	}
 
 	init_websocket() {
+		let self = this;
 		this.io.connect("ws://10.117.245.17:53000");
-		this.io.onMessage("setId").subscribe((msg: any) => {
-			console.log(`receive: ${msg}`);
-		})
-		// this.io.sendMsg(this.socketId, "connect", "");
+		this.io.onMessage("online").subscribe((obj: any) => {
+			console.log(obj);
+			self.socketId = obj.id;
+		});
+
+		this.io.onMessage("update").subscribe((obj: any) => {
+			console.log(obj);
+			self.handleUpdate(obj);
+		});
+
+		this.io.onMessage("offline").subscribe((obj: any) => {
+			console.log(obj);
+			self.handleOffline(obj.id);
+		});
+	}
+
+	sendInit(){
+		this.io.sendMsg("init", {
+			"roomID": "testRoom",
+			"model": "police",
+			"position": {
+				"x": this.model.obj.position.x, 
+				"y": this.model.obj.position.y,
+				"z": this.model.obj.position.z
+			},
+			"rotation": {
+				"w": this.model.obj.quaternion.w,
+				"x": this.model.obj.quaternion.x,
+				"y": this.model.obj.quaternion.y,
+				"z": this.model.obj.quaternion.z
+			}
+		});
+	}
+
+	sendDisconnect(){
+		this.io.sendMsg("disconnect", {});
+	}
+
+	handleUpdate(remoteDataList: any[]){
+		let self = this;
+		for(let remoteData of remoteDataList){
+			let remoteId = remoteData.id;
+			if(remoteId == this.socketId){
+				continue;
+			}
+			let centerPosition = remoteData.position;
+			let quaternion = remoteData.quaternion;
+			if(!this.remoteCars.has(remoteId)){
+				this.loadRemoteCar(remoteData.model, (carObj) => {
+					carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
+					carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+
+					self.scene.add(carObj);
+					self.remoteCars.set(remoteId, {
+						"obj": carObj
+					});
+				})
+			} else {
+				let carObj = this.remoteCars.get(remoteId).obj;
+				carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
+				carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+			}
+		}
+	}
+
+	handleOffline(socketId){
+		if(this.remoteCars.has(socketId)){
+			this.scene.remove(this.remoteCars.get(socketId).obj);
+			this.remoteCars.delete(socketId);
+		}
+	}
+
+	updateSocket(){
+		this.io.sendMsg("update", {
+			"position": {
+				"x": this.model.obj.position.x, 
+				"y": this.model.obj.position.y,
+				"z": this.model.obj.position.z
+			},
+			"rotation": {
+				"w": this.model.obj.quaternion.w,
+				"x": this.model.obj.quaternion.x,
+				"y": this.model.obj.quaternion.y,
+				"z": this.model.obj.quaternion.z
+			}
+		});
 	}
 
 	loadAllRoads() {
@@ -174,9 +253,31 @@ export class ThreejsSceneComponent implements OnInit {
 		}
 	}
 
-	loadLocalCar() {
+	@HostListener('window:beforeunload', ['$event'])
+	handleBeforeUnload(event: Event) {
+		console.log("before unload");
+		this.sendDisconnect();
+	}
+
+	loadRemoteCar(carName: string, callback: (object: THREE.Object3D) => void) {
+		let fbxPath = `./assets/model/cars/${carName}.fbx`;
+		let texturePath = "./assets/model/cars/texture/colormap.png";
+		this.loader.loadCarResource(fbxPath, texturePath, (carObj) => {
+			const box = new THREE.Box3().setFromObject(carObj);
+			const size = new THREE.Vector3();
+			box.getSize(size);
+			const f = 2 / size.x;
+			carObj.scale.set(f, f, f);
+
+			callback(carObj);
+		});
+	}
+
+	loadLocalCar(carName: string) {
 		let self = this;
-		this.loader.loadLocalCar((carObj) => {
+		let fbxPath = `./assets/model/cars/${carName}.fbx`;
+		let texturePath = "./assets/model/cars/texture/colormap.png";
+		this.loader.loadCarResource(fbxPath, texturePath, (carObj) => {
 			carObj.position.set(3, 3, 3);
 			const box = new THREE.Box3().setFromObject(carObj);
 			const size = new THREE.Vector3();
@@ -188,8 +289,8 @@ export class ThreejsSceneComponent implements OnInit {
 				obj: carObj
 			};
 			self.physics.setCar(carObj);
+			self.sendInit();
 		});
-
 	}
 
 	loadRoadEnvironment() {
@@ -264,13 +365,19 @@ export class ThreejsSceneComponent implements OnInit {
 			direction.multiplyScalar(6);
 			direction.negate();
 
+			this.updateSocket();
+
 			this.camera.position.copy(
 				direction.clone().add(this.model.obj.position).add(new THREE.Vector3(0, 4, 0))
 			);
 			this.camera.lookAt(this.lookAtVector.copy(this.model.obj.position));
 
+			
+
 			this.renderer.render(this.scene, this.camera);
 		};
+
+		
 
 		animate();
 	}
@@ -312,7 +419,7 @@ export class ThreejsSceneComponent implements OnInit {
 		let cornerPosition = centerPosition.clone();
 		cornerPosition.add(offset);
 
-		console.log(cornerPosition);
+		// console.log(cornerPosition);
 
 		let mtlPath = `./assets/model/road/${roadName}.mtl`;
 		let objPath = `./assets/model/road/${roadName}.obj`;

@@ -17,14 +17,12 @@ export class LoadResourceService {
     
   }
 
-  loadLocalCar(callback: (object: THREE.Object3D) => void) {
+  loadCarResource(fbxPath, texturePath, callback: (object: THREE.Object3D) => void) {
     let loader = new FBXLoader();
     
-    loader.load('./assets/model/cars/police.fbx', function (object) {
+    loader.load(fbxPath, function (object) {
       let textureLoader = new THREE.TextureLoader();
-      textureLoader.load(
-        './assets/model/cars/texture/colormap.png',
-        function (texture) {
+      textureLoader.load(texturePath, function (texture) {
           let material = new THREE.MeshBasicMaterial({ map: texture });
 
           object.traverse(function (child) {
