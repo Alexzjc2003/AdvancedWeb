@@ -13,7 +13,7 @@ export const roadNameList = [
   'road_bend',
   // 'road_bendBarrier',
   // 'road_bendSidewalk',
-  // 'road_bendSquare',
+  'road_bendSquare',
   // 'road_bendSquareBarrier',
   // 'road_bridge',
   'road_crossing',
