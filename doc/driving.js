@@ -1,52 +1,34 @@
-const express = require('express');
-const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+var app = require('express')();
+var http = require('http').createServer(app);
+var io = require('socket.io')(http, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 
-// app.use(express.static('../frontend/'));
-// app.use(express.static('../frontend/libs'));
-// // app.use(express.static('../../public_html/blockland/v3'));
-// app.get('/', function (req, res) {
-// 	res.sendFile(__dirname + '../frontend/index.html');
-// });
-
-// data = {
-//     model,
-//     colour,
-//     id,
-//     roomID,
-//     position : {
-//         x,y,z,
-//     },
-//     rotation : {
-//       w,x,y,z,
-//     }
-// }
-
-// chat = {
-// 	id,
-// 	roomID,
-// 	type,
-// 	message,
-// }
-
-io.sockets.on('connect', function (socket) {
+io.on('connection', function (socket) {
     console.log(`${socket.id} connected`);
 
-	socket.data.position = { x: 0, y: 0, z: 0 };
-	socket.data.rotation = { w: 0, x: 0, y: 0, z: 0 };
+	socket.data = {
+		position:{
+			x: 0, y: 0, z: 0
+		},
+		rotation:{
+			w: 0, x: 0, y: 0, z: 0
+		}
+	}
 
-	socket.emit('setId', { id: socket.id });
+	socket.emit('online', { id: socket.id });
 
 	socket.on('disconnect', function () {
 		console.log(`${socket.id} in ${socket.roomID} disconnected`);
-		io.to(socket.roomID).emit('leave', { id: socket.id });
+		io.to(socket.roomID).emit('offline', { id: socket.id });
 		// socket.broadcast.emit('deletePlayer', { id: socket.id });
 	});
 
 	socket.on('init', function (data) {
-		// console.log(`init ${data.roomID}`);
-        // console.log(`socket.init ${data.model}`);
+		console.log(data)
 		socket.join(data.roomID);
 		socket.roomID = data.roomID;
 
@@ -55,10 +37,13 @@ io.sockets.on('connect', function (socket) {
 		socket.data.model = data.model;
 		socket.data.colour = data.colour;
 
+		if(data.position === undefined)
+			return;
 		socket.data.position.x = data.position.x;
 		socket.data.position.y = data.position.y;
 		socket.data.position.z = data.position.z;
-
+		if(data.rotation === undefined)
+			return;
 		socket.data.rotation.w = data.rotation.w;
 		socket.data.rotation.x = data.rotation.x;
 		socket.data.rotation.y = data.rotation.y;
@@ -66,10 +51,13 @@ io.sockets.on('connect', function (socket) {
 	});
 
 	socket.on('update', function (data) {
+		if(data.position === undefined)
+			return;
 		socket.data.position.x = data.position.x;
 		socket.data.position.y = data.position.y;
 		socket.data.position.z = data.position.z;
-
+		if(data.rotation === undefined)
+			return;
 		socket.data.rotation.w = data.rotation.w;
 		socket.data.rotation.x = data.rotation.x;
 		socket.data.rotation.y = data.rotation.y;
