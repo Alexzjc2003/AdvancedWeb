@@ -29,9 +29,9 @@ export class ThreejsSceneComponent implements OnInit {
 
   model:
     | {
-        obj: THREE.Object3D;
-        // box: THREE.Box3;
-      }
+      obj: THREE.Object3D;
+      // box: THREE.Box3;
+    }
     | undefined;
 
   roadList: {
@@ -305,22 +305,32 @@ export class ThreejsSceneComponent implements OnInit {
     let offset_y = offset_dict[roadName]['offset_y'] * (scaleY / offset_scale);
     let offset_z = offset_dict[roadName]['offset_z'] * (scaleZ / offset_scale);
     let puzzles = offset_dict[roadName]['puzzle'];
-    for (let puzzle of puzzles) {
-      console.log(puzzle['type'], puzzle['vectorX'], puzzle['vectorZ']);
-    }
 
+    let pos_x = positionX + offset_x;
+    let pos_y = positionY + offset_y;
+    let pos_z = positionZ + offset_z;
+    
     let mtlPath = `./assets/model/road/${roadName}.mtl`;
     let objPath = `./assets/model/road/${roadName}.obj`;
     this.loadRoadResource(
       mtlPath,
       objPath,
-      positionX + offset_x,
-      positionY + offset_y,
-      positionZ + offset_z,
+      pos_x,
+      pos_y,
+      pos_z,
       rotateY,
       scaleX,
       scaleY,
       scaleZ
     );
+
+    for (let puzzle of puzzles) {
+      console.log(puzzle['type'], puzzle['vectorX'], puzzle['vectorZ']);
+      this.physics.addRoad(
+        new THREE.Vector3(pos_x, pos_y, pos_z),
+        new THREE.Vector3(puzzle["vectorZ"][0], puzzle["vectorZ"][1], puzzle["vectorZ"][2]),
+        new THREE.Vector3(puzzle["vectorX"][0], puzzle["vectorX"][1], puzzle["vectorX"][2])
+      )
+    }
   }
 }
