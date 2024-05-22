@@ -6,13 +6,14 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { roadPosition } from '../roadPosition';
 import { roadOffset } from '../roadOffset';
-import { CarspeedService } from '../carspeed.service';
+import { PhysicsService } from '../physics.service';
+import { WebSocketService } from '../websocket.service';
 
 @Component({
   selector: 'app-threejs-scene',
   standalone: true,
   imports: [],
-  providers: [CarspeedService],
+  providers: [PhysicsService],
   templateUrl: './threejs-scene.component.html',
   styleUrl: './threejs-scene.component.css',
 })
@@ -29,9 +30,9 @@ export class ThreejsSceneComponent implements OnInit {
 
   model:
     | {
-        obj: THREE.Object3D;
-        box: THREE.Box3;
-      }
+      obj: THREE.Object3D;
+      // box: THREE.Box3;
+    }
     | undefined;
 
   roadList: {
@@ -52,20 +53,10 @@ export class ThreejsSceneComponent implements OnInit {
 
   keyboardPressed: { [key: string]: number };
 
-  carspeed: CarspeedService = new CarspeedService({
-    ratioFraction: 10,
-    ratioBrake: 500,
-    ratioAccelerate: 200,
-    ratioSpeed: 10,
-    ratioTurn: 10,
+  socketId: number = -1;
 
-    maxSpeedForward: 60,
-    maxSpeedBackword: -10,
-    maxTurnDegree: 100,
-    minTurnDegree: 80,
-
-    modelLength: 100,
-  });
+  physics: PhysicsService = new PhysicsService();
+  io: WebSocketService = new WebSocketService();
 
   constructor() {
     this.roadPosition = roadPosition;
@@ -85,7 +76,6 @@ export class ThreejsSceneComponent implements OnInit {
     this.roadOffset = roadOffset;
     this.initScene();
     this.renderScene();
-    // this.carspeed = CarspeedService
   }
 
   initScene(): void {
@@ -125,8 +115,61 @@ export class ThreejsSceneComponent implements OnInit {
 
     this.loadLocalCar();
     this.loadRoadEnvironment();
+    // this.loadAllRoads();
 
     this.bindEventListener();
+
+    this.init_websocket();
+  }
+
+  init_websocket(){
+    this.socketId = this.io.connect("localhost:1234");
+    this.io.onMessage(this.socketId, "remoteData").subscribe((msg: string) => {
+      console.log(`message from remote ${msg}`)
+    })
+  }
+
+  loadAllRoads() {
+    let roadNameList = [
+      // 'road_bend',
+      'road_crossing',
+      'road_crossroadPath',
+      // 'road_curve',
+      // 'road_curveIntersection',
+      'road_end',
+      // 'road_endRound',
+      'road_intersectionPath',
+      // 'road_roundabout',
+      'road_side',
+      // 'road_sideEntry',
+      // 'road_sideExit',
+      'road_slant',
+      // 'road_slantCurve',
+      'road_slantFlat',
+      // 'road_slantFlatCurve',
+      'road_slantFlatHigh',
+      'road_slantHigh',
+      // 'road_split',
+      'road_straight',
+    ];
+
+    for (let i = 0; i < roadNameList.length; i++) {
+      let roadName = roadNameList[i];
+      let mtlPath = `./assets/model/road/road_slantHigh.mtl`;
+      let objPath = `./assets/model/road/road_slantHigh.obj`;
+      let posX = i * 900;
+      this.loadRoadResource(
+        mtlPath,
+        objPath,
+        posX + 150,
+        -150,
+        0,
+        300,
+        300,
+        300,
+        300
+      );
+    }
   }
 
   loadLocalCar() {
@@ -135,7 +178,7 @@ export class ThreejsSceneComponent implements OnInit {
 
     let component = this;
     loader.load('./assets/model/cars/police.fbx', function (object) {
-      object.position.set(100, 150, 300);
+      object.position.set(100, 200, 300);
       object.scale.set(0.6, 0.6, 0.6);
 
       let textureLoader = new THREE.TextureLoader();
@@ -157,8 +200,10 @@ export class ThreejsSceneComponent implements OnInit {
 
       component.model = {
         obj: object,
-        box: new THREE.Box3().setFromObject(object),
+        // box: new THREE.Box3().setFromObject(object),
       };
+
+      component.physics.setCar(object);
     });
   }
 
@@ -192,50 +237,25 @@ export class ThreejsSceneComponent implements OnInit {
       if (this.model == undefined) {
         return;
       }
-      // let speed = 30;
-      // let deltaX = 0;
-      // let deltaZ = 0;
 
       if (this.keyboardPressed['w'] == 1) {
         // W键
-        // deltaZ = -speed;
-        this.carspeed.status.isAccelerating += 1;
       }
       if (this.keyboardPressed['s'] == 1) {
         // S键
-        // deltaZ = speed;
-        this.carspeed.status.isAccelerating -= 1;
       }
       if (this.keyboardPressed['a'] == 1) {
         // A键
-        // deltaX = -speed;
-        this.carspeed.status.isTurning += 1;
       }
       if (this.keyboardPressed['d'] == 1) {
         // D键
-        // deltaX = speed;
-        this.carspeed.status.isTurning -= 1;
       }
-
-      // this.model.position.x += deltaX;
-      // this.model.position.z += deltaZ;
 
       let dt = this.clock.getDelta();
-      let [_pos, _dir] = this.carspeed.getNextPosDir(
-        dt,
-        this.model['obj'].position,
-        this.model['obj'].rotation
-      );
-      this.model['obj'].position.copy(_pos);
-      this.model['obj'].rotation.set(_dir.x, _dir.y, _dir.z);
+      this.physics.step(dt);
 
-      this.model['box'].setFromObject(this.model['obj']);
-      for (let road of this.roadList) {
-        if (road['box'] && this.model['box'].intersectsBox(road['box'])) {
-          console.log('Collision detected!');
-          return;
-        }
-      }
+      this.model.obj.position.copy(this.physics.getCarPosition());
+      this.model.obj.quaternion.copy(this.physics.getCarRotation());
 
       this.camera.position.copy(
         this.cameraPosition.clone().add(this.model['obj'].position)
@@ -297,19 +317,33 @@ export class ThreejsSceneComponent implements OnInit {
     let offset_x = offset_dict[roadName]['offset_x'] * (scaleX / offset_scale);
     let offset_y = offset_dict[roadName]['offset_y'] * (scaleY / offset_scale);
     let offset_z = offset_dict[roadName]['offset_z'] * (scaleZ / offset_scale);
+    let puzzles = offset_dict[roadName]['puzzle'];
+
+    let pos_x = positionX + offset_x;
+    let pos_y = positionY + offset_y;
+    let pos_z = positionZ + offset_z;
 
     let mtlPath = `./assets/model/road/${roadName}.mtl`;
     let objPath = `./assets/model/road/${roadName}.obj`;
     this.loadRoadResource(
       mtlPath,
       objPath,
-      positionX + offset_x,
-      positionY + offset_y,
-      positionZ + offset_z,
+      pos_x,
+      pos_y,
+      pos_z,
       rotateY,
       scaleX,
       scaleY,
       scaleZ
     );
+
+    for (let puzzle of puzzles) {
+      console.log(puzzle['type'], puzzle['vectorX'], puzzle['vectorZ']);
+      this.physics.addRoad(
+        new THREE.Vector3(pos_x, pos_y, pos_z),
+        new THREE.Vector3(puzzle["vectorZ"][0], puzzle["vectorZ"][1], puzzle["vectorZ"][2]),
+        new THREE.Vector3(puzzle["vectorX"][0], puzzle["vectorX"][1], puzzle["vectorX"][2])
+      )
+    }
   }
 }
