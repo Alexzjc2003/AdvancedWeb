@@ -15,12 +15,12 @@ import { LoadResourceService } from '../load-resource.service';
 import { roadOffset } from '../roadOffset';
 
 @Component({
-  selector: 'app-threejs-scene',
-  standalone: true,
-  imports: [],
-  providers: [PhysicsService, NotificationService],
-  templateUrl: './threejs-scene.component.html',
-  styleUrl: './threejs-scene.component.css',
+	selector: 'app-threejs-scene',
+	standalone: true,
+	imports: [],
+	providers: [PhysicsService, NotificationService],
+	templateUrl: './threejs-scene.component.html',
+	styleUrl: './threejs-scene.component.css',
 })
 export class ThreejsSceneComponent implements OnInit {
 	scene: THREE.Scene = new THREE.Scene();
@@ -47,16 +47,13 @@ export class ThreejsSceneComponent implements OnInit {
 		box: THREE.Box3;
 	}[];
 
-  roadPosition: {
-    name: string;
-    x: number;
-    y: number;
-    z: number;
-    rotate: number;
-  }[];
-  roadOffset: {
-    [key: string]: { offset_x: number; offset_y: number; offset_z: number };
-  };
+	roadPosition: {
+		name: string;
+		x: number;
+		y: number;
+		z: number;
+		rotate: number;
+	}[];
 
 	keyboardPressed: { [key: string]: number };
 
@@ -69,15 +66,15 @@ export class ThreejsSceneComponent implements OnInit {
 		this.roadPosition = roadPosition;
 		this.roadOffset = roadOffset;
 
-    this.roadList = [];
-    this.keyboardPressed = {
-      w: 0,
-      a: 0,
-      s: 0,
-      d: 0,
-      e: 0,
-    };
-  }
+		this.roadList = [];
+		this.keyboardPressed = {
+			w: 0,
+			a: 0,
+			s: 0,
+			d: 0,
+			e: 0,
+		};
+	}
 
 	ngOnInit(): void {
 		this.roadPosition = roadPosition;
@@ -237,13 +234,13 @@ export class ThreejsSceneComponent implements OnInit {
 				// D键
 				_turn += 1;
 			}
-      if (this.keyboardPressed['e'] == 1){
-        // E键 - 弹窗测试
-        this.notification.showNotification("This is a test message.");
-      }
+			if (this.keyboardPressed['e'] == 1) {
+				// E键 - 弹窗测试
+				this.notification.showNotification("This is a test message.");
+			}
 
-      let dt = this.clock.getDelta();
-      this.carcontrol.setControl(dt, _gear, _throttle, false, _turn);
+			let dt = this.clock.getDelta();
+			this.carcontrol.setControl(dt, _gear, _throttle, false, _turn);
 			this.physics.controlCar(this.carcontrol.getStatus())
 			this.physics.step(dt);
 
@@ -277,8 +274,8 @@ export class ThreejsSceneComponent implements OnInit {
 		let self = this;
 		this.loader.loadRoadResource(mtlPath, objPath, (roadObj) => {
 			roadObj.scale.set(scale.x, scale.y, scale.z);
-        	roadObj.position.set(position.x, position.y, position.z);
-        	roadObj.rotateY(Math.PI * rotateY);
+			roadObj.position.set(position.x, position.y, position.z);
+			roadObj.rotateY(Math.PI * rotateY);
 			self.scene.add(roadObj);
 			let road = {
 				obj: roadObj,
@@ -300,16 +297,16 @@ export class ThreejsSceneComponent implements OnInit {
 		let offset_x = offset_dict[roadName].offset_x * (scale.x / offset_scale);
 		let offset_y = offset_dict[roadName].offset_y * (scale.y / offset_scale);
 		let offset_z = offset_dict[roadName].offset_z * (scale.z / offset_scale);
-		
+
 		let offset = new THREE.Vector3(offset_x, offset_y, offset_z);
-		
+
 
 		let cornerPosition = centerPosition.clone();
 		cornerPosition.add(offset);
-		
+
 		let mtlPath = `./assets/model/road/${roadName}.mtl`;
 		let objPath = `./assets/model/road/${roadName}.obj`;
-		
+
 		this.loadRoadResource(
 			mtlPath,
 			objPath,
