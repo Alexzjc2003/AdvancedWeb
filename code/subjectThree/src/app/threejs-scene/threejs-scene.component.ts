@@ -9,17 +9,18 @@ import { roadPosition } from '../roadPosition';
 import { PhysicsService } from '../physics.service';
 import { CarcontrolService } from '../carcontrol.service';
 import { WebSocketService } from '../websocket.service';
+import { NotificationService } from '../notification.service';
 import { LoadResourceService } from '../load-resource.service';
 
 import { roadOffset } from '../roadOffset';
 
 @Component({
-	selector: 'app-threejs-scene',
-	standalone: true,
-	imports: [],
-	providers: [PhysicsService],
-	templateUrl: './threejs-scene.component.html',
-	styleUrl: './threejs-scene.component.css',
+  selector: 'app-threejs-scene',
+  standalone: true,
+  imports: [],
+  providers: [PhysicsService, NotificationService],
+  templateUrl: './threejs-scene.component.html',
+  styleUrl: './threejs-scene.component.css',
 })
 export class ThreejsSceneComponent implements OnInit {
 	scene: THREE.Scene = new THREE.Scene();
@@ -46,16 +47,16 @@ export class ThreejsSceneComponent implements OnInit {
 		box: THREE.Box3;
 	}[];
 
-	roadPosition: {
-		name: string;
-		x: number;
-		y: number;
-		z: number;
-		rotate: number;
-	}[];
-
-
-	socketId: number = -1;
+  roadPosition: {
+    name: string;
+    x: number;
+    y: number;
+    z: number;
+    rotate: number;
+  }[];
+  roadOffset: {
+    [key: string]: { offset_x: number; offset_y: number; offset_z: number };
+  };
 
 	keyboardPressed: { [key: string]: number };
 
@@ -64,18 +65,19 @@ export class ThreejsSceneComponent implements OnInit {
 	io: WebSocketService = new WebSocketService();
 	loader: LoadResourceService = new LoadResourceService();
 
-	constructor() {
+	constructor(private notification: NotificationService) {
 		this.roadPosition = roadPosition;
 		this.roadOffset = roadOffset;
 
-		this.roadList = [];
-		this.keyboardPressed = {
-			w: 0,
-			a: 0,
-			s: 0,
-			d: 0,
-		};
-	}
+    this.roadList = [];
+    this.keyboardPressed = {
+      w: 0,
+      a: 0,
+      s: 0,
+      d: 0,
+      e: 0,
+    };
+  }
 
 	ngOnInit(): void {
 		this.roadPosition = roadPosition;
@@ -235,9 +237,13 @@ export class ThreejsSceneComponent implements OnInit {
 				// D键
 				_turn += 1;
 			}
+      if (this.keyboardPressed['e'] == 1){
+        // E键 - 弹窗测试
+        this.notification.showNotification("This is a test message.");
+      }
 
-			let dt = this.clock.getDelta();
-			this.carcontrol.setControl(dt, _gear, _throttle, false, _turn);
+      let dt = this.clock.getDelta();
+      this.carcontrol.setControl(dt, _gear, _throttle, false, _turn);
 			this.physics.controlCar(this.carcontrol.getStatus())
 			this.physics.step(dt);
 
