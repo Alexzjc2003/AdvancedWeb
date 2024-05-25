@@ -17,7 +17,7 @@ export class LoadResourceService {
     
   }
 
-  loadCarResource(fbxPath, texturePath, callback: (object: THREE.Object3D) => void) {
+  loadFbxTextureResource(fbxPath, texturePath, callback: (object: THREE.Object3D) => void) {
     let loader = new FBXLoader();
     
     loader.load(fbxPath, function (object) {
@@ -33,12 +33,11 @@ export class LoadResourceService {
         }
       );
 
-      object.rotateY(Math.PI);
       callback(object);
     });
   }
 
-  loadRoadResource(mtlPath, objPath, callback: (object: THREE.Object3D) => void) {
+  loadMtlObjResource(mtlPath, objPath, callback: (object: THREE.Object3D) => void) {
     let mtlLoader = new MTLLoader();
     mtlLoader.load(mtlPath, function (materials) {
       materials.preload();
@@ -49,5 +48,4 @@ export class LoadResourceService {
       });
     });
   }
-
 }
