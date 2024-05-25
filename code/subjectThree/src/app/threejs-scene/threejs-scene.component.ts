@@ -53,6 +53,8 @@ export class ThreejsSceneComponent implements OnInit {
 		box: THREE.Box3;
 	}[];
 
+	ground: any;
+
 	roadPosition: {
 		scale: number[],
 		clips: {
@@ -87,7 +89,7 @@ export class ThreejsSceneComponent implements OnInit {
 	socketId: string = "";
 	remoteCars: Map<string, any> = new Map<string, any>();
 
-	debug_mode: number = 1;
+	debug_mode: number = 0;
 
 	constructor(private notification: NotificationService) {
 		this.roadPosition = roadPosition;
@@ -320,6 +322,8 @@ export class ThreejsSceneComponent implements OnInit {
 				building.rotate
 			);
 		}
+
+		this.loadGround();
 	}
 
 	bindEventListener() {
@@ -645,4 +649,38 @@ export class ThreejsSceneComponent implements OnInit {
 	}
 
 
+	loadGround() {
+		// 30 * 30
+		let mtlPath = `./assets/model/other/ground.mtl`;
+		let objPath = `./assets/model/other/ground.obj`;
+		let x_width = 300;
+		let z_width = 300;
+		this.loadGroundResource(
+			mtlPath,
+			objPath,
+			new THREE.Vector3(-x_width/2, -1, z_width/2),
+			0,
+			new THREE.Vector3(100, 2.4, 100)
+		);
+	}
+
+	loadGroundResource(
+		mtlPath: string,
+		objPath: string,
+		position: THREE.Vector3,
+		rotateY: number,
+		scale: THREE.Vector3
+	) {
+		let self = this;
+		this.loader.loadMtlObjResource(mtlPath, objPath, (groundObj) => {
+			groundObj.scale.set(scale.x, scale.y, scale.z);
+			groundObj.position.set(position.x, position.y, position.z);
+			groundObj.rotateY(Math.PI * rotateY);
+			self.scene.add(groundObj);
+			self.ground = {
+				obj: groundObj,
+				box: new THREE.Box3().setFromObject(groundObj)
+			};
+		});
+	}
 }
