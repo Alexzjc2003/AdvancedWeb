@@ -12,8 +12,16 @@ export class NotificationService {
   }
 
   showNotification(message: string): void {
+    let container = document.getElementById("three-container");
+    if (container == undefined) {
+      container = document.body;
+    } else {
+      container.style.position = 'relative';
+    }
+
     const notification = this.renderer.createElement('div');
-    this.renderer.setStyle(notification, 'position', 'fixed');
+    this.renderer.setStyle(notification, 'position', 'absolute');
+    this.renderer.setStyle(notification, 'top', '20px');
     this.renderer.setStyle(notification, 'right', '20px');
     this.renderer.setStyle(notification, 'backgroundColor', 'rgba(0, 0, 0, 0.7)');
     this.renderer.setStyle(notification, 'color', 'white');
@@ -25,7 +33,7 @@ export class NotificationService {
 
     const text = this.renderer.createText(message);
     this.renderer.appendChild(notification, text);
-    this.renderer.appendChild(document.body, notification);
+    this.renderer.appendChild(container, notification);
 
     this.notifications.push(notification);
     this.updateNotificationPositions();
@@ -33,7 +41,7 @@ export class NotificationService {
     setTimeout(() => {
       this.renderer.setStyle(notification, 'opacity', '0');
       setTimeout(() => {
-        this.renderer.removeChild(document.body, notification);
+        this.renderer.removeChild(container, notification);
         this.notifications = this.notifications.filter(n => n !== notification);
         this.updateNotificationPositions();
       }, 500);
