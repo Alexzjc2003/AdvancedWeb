@@ -2,7 +2,7 @@ export const roadPosition = {
 	"scale": [10, 10, 10],
 	"clips": [
 		{
-			"name": "road_straight",
+			"name": "road_end",
 			"x": 0,
 			"z": 0,
 			"y": 0,
@@ -37,7 +37,7 @@ export const roadPosition = {
 			"rotate": -0.5
 		},
 		{
-			"name": "road_straight",
+			"name": "road_intersectionPath",
 			"x": 0,
 			"z": 50,
 			"y": 0,
@@ -72,7 +72,7 @@ export const roadPosition = {
 			"rotate": -0.5
 		},
 		{
-			"name": "road_straight",
+			"name": "road_bendSquare",
 			"x": 0,
 			"z": 100,
 			"y": 0,
@@ -107,11 +107,46 @@ export const roadPosition = {
 			"rotate": 0
 		},
 		{
-			"name": "road_straight",
+			"name": "road_crossroadPath",
 			"x": 50,
 			"z": 50,
 			"y": 0,
 			"rotate": 0
-		}
+		},
+    {
+			"name": "road_straight",
+			"x": 50,
+			"z": 40,
+			"y": 0,
+			"rotate": 0.5
+		},
+    {
+			"name": "road_straight",
+			"x": 50,
+			"z": 30,
+			"y": 0,
+			"rotate": 0.5
+		},
+    {
+			"name": "road_straight",
+			"x": 50,
+			"z": 20,
+			"y": 0,
+			"rotate": 0.5
+		},
+    {
+			"name": "road_straight",
+			"x": 50,
+			"z": 10,
+			"y": 0,
+			"rotate": 0.5
+		},
+    {
+			"name": "road_end",
+			"x": 50,
+			"z": 0,
+			"y": 0,
+			"rotate": -0.5
+		},
 	]
 }
