@@ -132,7 +132,7 @@ export class ThreejsSceneComponent implements OnInit {
 		});
 
 		this.io.onMessage("update").subscribe((obj: any) => {
-			console.log(obj);
+			console.log("update", obj);
 			self.handleUpdate(obj);
 		});
 
@@ -143,6 +143,7 @@ export class ThreejsSceneComponent implements OnInit {
 	}
 
 	sendInit(){
+		console.log("sendInit");
 		this.io.sendMsg("init", {
 			"roomID": "testRoom",
 			"model": "police",
@@ -172,7 +173,7 @@ export class ThreejsSceneComponent implements OnInit {
 				continue;
 			}
 			let centerPosition = remoteData.position;
-			let quaternion = remoteData.quaternion;
+			let quaternion = remoteData.rotation;
 			if(!this.remoteCars.has(remoteId)){
 				this.loadRemoteCar(remoteData.model, (carObj) => {
 					carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
@@ -185,6 +186,7 @@ export class ThreejsSceneComponent implements OnInit {
 				})
 			} else {
 				let carObj = this.remoteCars.get(remoteId).obj;
+				console.log(`update ${remoteId}`);
 				carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
 				carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 			}
