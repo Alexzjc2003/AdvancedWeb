@@ -87,7 +87,7 @@ export class ThreejsSceneComponent implements OnInit {
 	socketId: string = "";
 	remoteCars: Map<string, any> = new Map<string, any>();
 
-	debug_mode: number = 0;
+	debug_mode: number = 1;
 
 	constructor(private notification: NotificationService) {
 		this.roadPosition = roadPosition;
@@ -281,7 +281,7 @@ export class ThreejsSceneComponent implements OnInit {
 		let texturePath = "./assets/model/cars/texture/colormap.png";
 		this.loader.loadFbxTextureResource(fbxPath, texturePath, (carObj) => {
 			carObj.position.set(3, 3, 3);
-			
+
 			const box = new THREE.Box3().setFromObject(carObj);
 			const size = new THREE.Vector3();
 			box.getSize(size);
@@ -644,5 +644,5 @@ export class ThreejsSceneComponent implements OnInit {
 		}
 	}
 
-	
+
 }
