@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as THREE from 'three';
 import { HostListener } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { roadPosition } from '../roadPosition';
 import { buildingPosition } from '../buildingPosition';
@@ -89,9 +90,11 @@ export class ThreejsSceneComponent implements OnInit {
 	socketId: string = "";
 	remoteCars: Map<string, any> = new Map<string, any>();
 
+	container: any;
+
 	debug_mode: number = 0;
 
-	constructor(private notification: NotificationService) {
+	constructor(private notification: NotificationService, private router: Router) {
 		this.roadPosition = roadPosition;
 		this.roadOffset = roadOffset;
 
@@ -123,17 +126,25 @@ export class ThreejsSceneComponent implements OnInit {
 		this.scene = new THREE.Scene();
 		this.scene.background = new THREE.Color(0xadd8e6);
 
-		this.renderer = new THREE.WebGLRenderer();
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		document.body.appendChild(this.renderer.domElement);
+		this.container = document.getElementById("three-container");
+		if (this.container == undefined) {
+			console.log("container not found. use document instead.");
+			this.container = document.body;
+		}
+		this.bindEventListener();
 
 		this.camera = new THREE.PerspectiveCamera(
 			75,
-			window.innerWidth / window.innerHeight,
+			this.container.clientWidth / this.container.clientHeight,
 			0.1,
 			5000
 		);
 
+		this.renderer = new THREE.WebGLRenderer();
+		this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+		
+		this.container.appendChild(this.renderer.domElement);
+		
 		if (this.debug_mode) {
 			this.camera.position.copy(new THREE.Vector3(0, 10, 0));
 			this.camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -157,11 +168,15 @@ export class ThreejsSceneComponent implements OnInit {
 		this.loadEnvironment();
 		// this.loadAllRoads();
 
-		this.bindEventListener();
-
 		// this.loadAllBuildings();
 
 		this.init_websocket();
+
+		this.router.events.subscribe(event => {
+			if (event instanceof NavigationEnd) {
+				this.sendDisconnect();
+			}
+		});
 	}
 
 	init_websocket() {
@@ -227,7 +242,6 @@ export class ThreejsSceneComponent implements OnInit {
 				})
 			} else {
 				let carObj = this.remoteCars.get(remoteId).obj;
-				console.log(`update ${remoteId}`);
 				carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
 				carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 			}
@@ -327,13 +341,23 @@ export class ThreejsSceneComponent implements OnInit {
 	}
 
 	bindEventListener() {
-		let component = this;
+		let self = this;
+
+		document.addEventListener('resize', () => {
+            const width = self.container.clientWidth;
+            const height = self.container.clientHeight;
+
+            self.renderer.setSize(width, height);
+            self.camera.aspect = width / height;
+            self.camera.updateProjectionMatrix();
+        });
+
 		document.addEventListener('keydown', function (event) {
-			component.keyboardPressed[event.key] = 1;
+			self.keyboardPressed[event.key] = 1;
 		});
 
 		document.addEventListener('keyup', function (event) {
-			component.keyboardPressed[event.key] = 0;
+			self.keyboardPressed[event.key] = 0;
 		});
 	}
 
@@ -658,7 +682,7 @@ export class ThreejsSceneComponent implements OnInit {
 		this.loadGroundResource(
 			mtlPath,
 			objPath,
-			new THREE.Vector3(-x_width/2, -1, z_width/2),
+			new THREE.Vector3(-x_width / 2, -1, z_width / 2),
 			0,
 			new THREE.Vector3(100, 2.4, 100)
 		);
