@@ -16,6 +16,7 @@ import { roadOffset } from '../roadOffset';
 import { buildingOffset } from '../buildingOffset';
 
 import { FormsModule } from '@angular/forms';
+import { KnowledgeService } from '../knowledge.service';
 
 
 @Component({
@@ -86,6 +87,7 @@ export class ThreejsSceneComponent implements OnInit {
 	carcontrol: CarcontrolService = new CarcontrolService();
 	io: WebSocketService = new WebSocketService();
 	loader: LoadResourceService = new LoadResourceService();
+	knowledge: KnowledgeService = new KnowledgeService();
 
 	globalScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1);
 
@@ -182,6 +184,8 @@ export class ThreejsSceneComponent implements OnInit {
 				this.sendDisconnect();
 			}
 		});
+
+		// this.showNotice("发动");
 	}
 
 	init_websocket() {
@@ -290,6 +294,27 @@ export class ThreejsSceneComponent implements OnInit {
 				"z": this.model.obj.quaternion.z
 			}
 		});
+	}
+
+	showNotice(theme: string){
+		let noticeContainer = document.getElementById("notice-container");
+		if(noticeContainer == undefined) return;
+
+		noticeContainer.innerHTML = '';
+		const themeTitle = document.createElement('p');
+		themeTitle.textContent = `关于 ${theme} 的提示：`;
+
+		const ul = document.createElement('ul');
+        const items = this.knowledge.getKnowledge(theme);
+
+        items.forEach(function(item) {
+            const li = document.createElement('li');
+            li.textContent = `${item.title}: ${item.content}`;
+            ul.appendChild(li);
+        });
+
+		noticeContainer.appendChild(themeTitle);
+        noticeContainer.appendChild(ul);
 	}
 
 	@HostListener('window:beforeunload', ['$event'])
@@ -401,6 +426,7 @@ export class ThreejsSceneComponent implements OnInit {
 				_turn = 0;
 			if (this.keyboardPressed['w'] == 1) {
 				// W键
+				this.showNotice("发动");
 				_gear += 1;
 				_throttle = true;
 			}
@@ -411,10 +437,12 @@ export class ThreejsSceneComponent implements OnInit {
 			}
 			if (this.keyboardPressed['a'] == 1) {
 				// A键
+				this.showNotice("转弯");
 				_turn -= 1;
 			}
 			if (this.keyboardPressed['d'] == 1) {
 				// D键
+				this.showNotice("转弯");
 				_turn += 1;
 			}
 			if (this.keyboardPressed['e'] == 1) {

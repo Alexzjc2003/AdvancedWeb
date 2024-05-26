@@ -10,11 +10,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
   providedIn: 'root'
 })
 export class LoadResourceService {
-
-  
-
   constructor() { 
-    
   }
 
   loadFbxTextureResource(fbxPath, texturePath, callback: (object: THREE.Object3D) => void) {
