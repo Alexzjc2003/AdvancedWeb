@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
     paths:
     - 'code/**'
+    - '.github/workflows/**'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -16,9 +17,7 @@ env:
   APP_NAME: advanced_web_frontend
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
