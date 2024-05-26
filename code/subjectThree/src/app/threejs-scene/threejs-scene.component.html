@@ -1,8 +1,10 @@
-<div id="three-container">
-  <!-- {{ this.physics.car.velocity.length() * 3.6 }}<br />
-  {{ this.carcontrol.getStatus().rotation }}<br />
-  {{ this.carcontrol.getStatus().gear }}<br /> -->
-</div>
-<div id="msg-container">
-
+<div class="container">
+  <div id="three-container"></div>
+  <div id="notice-container"></div>
+  <div id="input-container">
+    <form>
+      <input [(ngModel)]="chat_msg" name="chat_msg" id="three-input-box" (focus)="isTyping=true" (blur)="isTyping=false"/>
+      <button (click)="sendChatMsg()" class="button fancy-button" id="three-send-btm"><i class="material-icons">send</i>send</button>
+    </form>
+  </div>
 </div>

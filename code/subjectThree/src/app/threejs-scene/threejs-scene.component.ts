@@ -15,11 +15,13 @@ import { LoadResourceService } from '../load-resource.service';
 import { roadOffset } from '../roadOffset';
 import { buildingOffset } from '../buildingOffset';
 
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
 	selector: 'app-threejs-scene',
 	standalone: true,
-	imports: [],
+	imports: [FormsModule],
 	providers: [PhysicsService, NotificationService],
 	templateUrl: './threejs-scene.component.html',
 	styleUrl: './threejs-scene.component.css',
@@ -91,6 +93,9 @@ export class ThreejsSceneComponent implements OnInit {
 	remoteCars: Map<string, any> = new Map<string, any>();
 
 	container: any;
+
+	chat_msg: string = "";
+	isTyping: boolean = false;
 
 	debug_mode: number = 0;
 
@@ -196,6 +201,11 @@ export class ThreejsSceneComponent implements OnInit {
 			// console.log(obj);
 			self.handleOffline(obj.id);
 		});
+
+		this.io.onMessage("message").subscribe((obj: any) => {
+			// console.log(obj);
+			self.handleChat(obj.id, obj.message);
+		});
 	}
 
 	sendInit() {
@@ -214,6 +224,13 @@ export class ThreejsSceneComponent implements OnInit {
 				"y": this.model.obj.quaternion.y,
 				"z": this.model.obj.quaternion.z
 			}
+		});
+	}
+
+	sendChatMsg(){
+		this.io.sendMsg("chat", {
+			"type": "room",
+			"message": this.chat_msg
 		});
 	}
 
@@ -253,6 +270,10 @@ export class ThreejsSceneComponent implements OnInit {
 			this.scene.remove(this.remoteCars.get(socketId).obj);
 			this.remoteCars.delete(socketId);
 		}
+	}
+
+	handleChat(fromId, message) {
+		this.notification.showNotification(`${fromId}: ${message}`);
 	}
 
 	updateSocket() {
@@ -353,10 +374,16 @@ export class ThreejsSceneComponent implements OnInit {
         });
 
 		document.addEventListener('keydown', function (event) {
+			if(self.isTyping){
+				return;
+			}
 			self.keyboardPressed[event.key] = 1;
 		});
 
 		document.addEventListener('keyup', function (event) {
+			if(self.isTyping){
+				return;
+			}
 			self.keyboardPressed[event.key] = 0;
 		});
 	}

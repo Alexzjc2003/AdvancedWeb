@@ -1,4 +1,5 @@
 import { Component} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { RouterOutlet } from '@angular/router';
 import { RouterModule } from '@angular/router';
@@ -12,7 +13,7 @@ import {NgOptimizedImage} from "@angular/common";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterModule, MatIconModule, MatButtonModule, MatToolbarModule, NgOptimizedImage],
+  imports: [RouterOutlet, RouterModule, FormsModule, MatIconModule, MatButtonModule, MatToolbarModule, NgOptimizedImage],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
