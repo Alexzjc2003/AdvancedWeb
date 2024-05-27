@@ -13,7 +13,7 @@ FROM nginx:latest
 
 # COPY nginx.conf /etc/nginx/nginx.conf
 
-COPY --from=build /app/dist/subject-three/browser/. /usr/share/nginx/html/
+COPY --from=build /app/dist/subjectThree/browser/. /usr/share/nginx/html/
 
 EXPOSE 80
 
