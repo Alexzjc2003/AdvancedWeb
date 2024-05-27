@@ -21,6 +21,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Docker Layer
+        uses: actions/cache@master
+        with:
+            path: /tmp/.buildx-cache
+            key: ${{ runner.os }}-buildx-${{ github.sha }}
+            restore-keys: |
+              ${{ runner.os }}-buildx-
+
       - name: Checkout
         uses: actions/checkout@master
         
@@ -45,4 +53,5 @@ jobs:
           file: code/subjectThree/Dockerfile
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:latest
-
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
