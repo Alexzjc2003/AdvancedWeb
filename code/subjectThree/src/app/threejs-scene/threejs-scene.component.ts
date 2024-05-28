@@ -246,7 +246,7 @@ export class ThreejsSceneComponent implements OnInit {
 	}
 
 	sendDisconnect() {
-		this.io.sendMsg("disconnect", {});
+		this.io.sendMsg("disconnection", {});
 	}
 
 	handleUpdate(remoteDataList: any[]) {
