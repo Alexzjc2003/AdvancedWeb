@@ -248,9 +248,11 @@ export class ThreejsSceneComponent implements OnInit {
 	sendDisconnect() {
 		this.io.sendMsg("disconnection", {});
 	}
+	isLoading: boolean = false;
 
-	handleUpdate(remoteDataList: any[]) {
+	async handleUpdate(remoteDataList: any[]) {
 		let self = this;
+		let currentLoading = false;
 		for (let remoteData of remoteDataList) {
 			let remoteId = remoteData.id;
 			if (remoteId == this.socketId) {
@@ -259,7 +261,13 @@ export class ThreejsSceneComponent implements OnInit {
 			let centerPosition = remoteData.position;
 			let quaternion = remoteData.rotation;
 			if (!this.remoteCars.has(remoteId)) {
-				this.loadRemoteCar(remoteData.model, (carObj) => {
+				if(this.isLoading && !currentLoading){
+					continue;
+				}
+				currentLoading = true;
+				this.isLoading = true;
+				console.log("load remote car" + remoteId)
+				await this.loadRemoteCar(remoteData.model, (carObj) => {
 					carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
 					carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 
@@ -273,6 +281,10 @@ export class ThreejsSceneComponent implements OnInit {
 				carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
 				carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 			}
+		}
+		if(currentLoading){
+			this.isLoading = false;
+			console.log("loading finished")
 		}
 	}
 
