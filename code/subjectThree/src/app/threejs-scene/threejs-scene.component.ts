@@ -99,6 +99,8 @@ export class ThreejsSceneComponent implements OnInit {
 
   globalScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1);
 
+  roomId: string = "";
+
   socketId: string = '';
   remoteCars: Map<string, any> = new Map<string, any>();
 
@@ -141,6 +143,7 @@ export class ThreejsSceneComponent implements OnInit {
 
     this.route.queryParamMap.subscribe((params) => {
       self.model_name = params.get('model')!;
+      self.roomId = params.get("roomId")!;
       self.initScene();
       self.renderScene();
     });
@@ -241,10 +244,10 @@ export class ThreejsSceneComponent implements OnInit {
   }
 
   sendInit() {
-    console.log('sendInit');
+    console.log('sendInit', this.roomId);
     let self = this;
     this.io.sendMsg('init', {
-      roomID: 'testRoom',
+      roomID: self.roomId,
       model: self.model_name,
       position: {
         x: this.model.obj.position.x,

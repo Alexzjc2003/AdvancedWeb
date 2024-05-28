@@ -1,8 +1,9 @@
 <div id="main-container">
     <div id="main-left">
         <div id="main-room-list">
-            <div *ngFor="let roomName of roomOptions">
-                <button class="main-goto-three-btn" class="main-enter-btn" color="primary" (click)="gotoThree(roomName)">go to {{roomName}}</button>
+            <div *ngFor="let room of roomOptions | keyvalue">
+                <span>{{room.key}}: {{room.value}} member(s) </span>
+                <button class="main-goto-three-btn" class="main-enter-btn" color="primary" (click)="gotoThree(room.key)">go to</button>
             </div>
             <div>
                 <button id="main-create-btn" mat-button class="app-navi-button" (click)="createRoom()">createRoom</button>
