@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as THREE from 'three';
 import { HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { roadPosition } from '../roadPosition';
 import { buildingPosition } from '../buildingPosition';
@@ -38,6 +39,7 @@ export class ThreejsSceneComponent implements OnInit {
 	directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight();
 
 	model: any;
+	model_name: string = "";
 
 	roadOffset: {
 		[key: string]: { offset_x: number; offset_y: number; offset_z: number; puzzle: any[] };
@@ -101,7 +103,7 @@ export class ThreejsSceneComponent implements OnInit {
 
 	debug_mode: number = 0;
 
-	constructor(private notification: NotificationService, private router: Router) {
+	constructor(private notification: NotificationService, private router: Router, private route: ActivatedRoute) {
 		this.roadPosition = roadPosition;
 		this.roadOffset = roadOffset;
 
@@ -124,9 +126,13 @@ export class ThreejsSceneComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.roadPosition = roadPosition;
+		let self = this;
 
-		this.initScene();
-		this.renderScene();
+		this.route.queryParamMap.subscribe(params => {
+			self.model_name = params.get('model')!;
+			self.initScene();
+			self.renderScene();
+		});
 	}
 
 	initScene(): void {
@@ -149,9 +155,9 @@ export class ThreejsSceneComponent implements OnInit {
 
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-		
+
 		this.container.appendChild(this.renderer.domElement);
-		
+
 		if (this.debug_mode) {
 			this.camera.position.copy(new THREE.Vector3(0, 10, 0));
 			this.camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -171,7 +177,7 @@ export class ThreejsSceneComponent implements OnInit {
 		let axes = new THREE.AxesHelper(2000);
 		this.scene.add(axes);
 
-		this.loadLocalCar("police");
+		this.loadLocalCar(this.model_name);
 		this.loadEnvironment();
 		// this.loadAllRoads();
 
@@ -214,9 +220,10 @@ export class ThreejsSceneComponent implements OnInit {
 
 	sendInit() {
 		console.log("sendInit");
+		let self = this;
 		this.io.sendMsg("init", {
 			"roomID": "testRoom",
-			"model": "police",
+			"model": self.model_name,
 			"position": {
 				"x": this.model.obj.position.x,
 				"y": this.model.obj.position.y,
@@ -231,7 +238,7 @@ export class ThreejsSceneComponent implements OnInit {
 		});
 	}
 
-	sendChatMsg(){
+	sendChatMsg() {
 		this.io.sendMsg("chat", {
 			"type": "room",
 			"message": this.chat_msg
@@ -296,25 +303,25 @@ export class ThreejsSceneComponent implements OnInit {
 		});
 	}
 
-	showNotice(theme: string){
+	showNotice(theme: string) {
 		let noticeContainer = document.getElementById("notice-container");
-		if(noticeContainer == undefined) return;
+		if (noticeContainer == undefined) return;
 
 		noticeContainer.innerHTML = '';
 		const themeTitle = document.createElement('p');
 		themeTitle.textContent = `关于 ${theme} 的提示：`;
 
 		const ul = document.createElement('ul');
-        const items = this.knowledge.getKnowledge(theme);
+		const items = this.knowledge.getKnowledge(theme);
 
-        items.forEach(function(item) {
-            const li = document.createElement('li');
-            li.textContent = `${item.title}: ${item.content}`;
-            ul.appendChild(li);
-        });
+		items.forEach(function (item) {
+			const li = document.createElement('li');
+			li.textContent = `${item.title}: ${item.content}`;
+			ul.appendChild(li);
+		});
 
 		noticeContainer.appendChild(themeTitle);
-        noticeContainer.appendChild(ul);
+		noticeContainer.appendChild(ul);
 	}
 
 	@HostListener('window:beforeunload', ['$event'])
@@ -390,23 +397,23 @@ export class ThreejsSceneComponent implements OnInit {
 		let self = this;
 
 		document.addEventListener('resize', () => {
-            const width = self.container.clientWidth;
-            const height = self.container.clientHeight;
+			const width = self.container.clientWidth;
+			const height = self.container.clientHeight;
 
-            self.renderer.setSize(width, height);
-            self.camera.aspect = width / height;
-            self.camera.updateProjectionMatrix();
-        });
+			self.renderer.setSize(width, height);
+			self.camera.aspect = width / height;
+			self.camera.updateProjectionMatrix();
+		});
 
 		document.addEventListener('keydown', function (event) {
-			if(self.isTyping){
+			if (self.isTyping) {
 				return;
 			}
 			self.keyboardPressed[event.key] = 1;
 		});
 
 		document.addEventListener('keyup', function (event) {
-			if(self.isTyping){
+			if (self.isTyping) {
 				return;
 			}
 			self.keyboardPressed[event.key] = 0;

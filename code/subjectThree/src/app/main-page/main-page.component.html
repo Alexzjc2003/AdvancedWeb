@@ -1,1 +1,13 @@
-<app-threejs-scene></app-threejs-scene>
+<div id="main-container">
+    <div id="main-model-list">
+        <div *ngFor="let carName of carOptions let i = index" [ngClass]="{'left': isLeftColumn(i), 'right': !isLeftColumn(i)}">
+            <button class="main-preview-btn" color="primary" (click)="chooseModel(carName)">{{carName}}</button>
+        </div>
+        <div>
+            <button id="main-goto-three-btn" mat-button class="app-navi-button" (click)="gotoThree()">go !</button>
+        </div>
+    </div>
+    <div id="main-model-preview"></div>
+</div>
+
+<!-- <app-threejs-scene></app-threejs-scene> -->

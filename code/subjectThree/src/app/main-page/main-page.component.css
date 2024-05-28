@@ -1,0 +1,45 @@
+#main-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+#main-model-list {
+    width: 40%;
+    height: 80vh;
+    margin-top: 30px;
+    margin-left: 30px;
+    border: 1px solid black;
+}
+
+.main-preview-btn {
+    /* width: 30px; */
+    height: 30px;
+    margin-top: 5px;
+}
+
+#main-model-preview {
+    width: calc(60% - 80px);
+    /* 100% - 70% - 2 * margin-left */
+    height: 80vh;
+    margin-top: 30px;
+    margin-left: 20px;
+    border: 1px solid blue;
+}
+
+.left {
+    width: 50%;
+    float: left;
+}
+
+.right {
+    width: 50%;
+    float: right;
+}
+
+#main-goto-three-btn{
+    margin-top: 50px;
+    margin-left: 30px;
+    width: 80px;
+    height: 40px;
+}
