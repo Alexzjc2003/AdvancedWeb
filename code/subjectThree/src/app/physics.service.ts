@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { CarStatus } from './carcontrol.service';
+import CannonDebugger from 'cannon-es-debugger';
 
 @Injectable({
   providedIn: 'root',
@@ -9,27 +10,20 @@ import { CarStatus } from './carcontrol.service';
 export class PhysicsService {
   world: CANNON.World;
   groundMaterial: CANNON.Material = new CANNON.Material({
-    friction: 0,
+    friction: 0.01,
     restitution: 0.001,
   });
   groundBody: CANNON.Body = new CANNON.Body({
     type: CANNON.Body.STATIC,
     material: this.groundMaterial,
   });
+  debugger: any;
+  updateDebugger!: Function;
 
-  car: CANNON.Body = new CANNON.Body({
-    mass: 1200,
-    material: new CANNON.Material({
-      friction: 0,
-      restitution: 0.01,
-    }),
-  });
-  vehicle: CANNON.RaycastVehicle = new CANNON.RaycastVehicle({
-    chassisBody: this.car,
-    indexRightAxis: 0,
-    indexForwardAxis: 1,
-    indexUpAxis: 2,
-  });
+  useDebugger(scene: THREE.Scene) {
+    this.debugger = CannonDebugger(scene, this.world);
+    this.updateDebugger = this.debugger.update;
+  }
 
   constructor() {
     this.world = new CANNON.World();
@@ -75,6 +69,21 @@ export class PhysicsService {
     );
   }
 
+  car: CANNON.Body = new CANNON.Body({
+    mass: 1200,
+    material: new CANNON.Material({
+      friction: 0,
+      restitution: 0.01,
+    }),
+  });
+
+  vehicle: CANNON.RaycastVehicle = new CANNON.RaycastVehicle({
+    chassisBody: this.car,
+    indexRightAxis: 0,
+    indexForwardAxis: 1,
+    indexUpAxis: 2,
+  });
+
   public setCar(car: THREE.Object3D): void {
     let _3_box = new THREE.Box3().setFromObject(car, true);
     let _size = new THREE.Vector3();
@@ -98,7 +107,7 @@ export class PhysicsService {
 
     // let _options:CANNON.WheelInfoOptions = {
     let _options = {
-      radius: 0.05 * _size.y,
+      radius: 0.06 * _size.y,
       directionLocal: new CANNON.Vec3(0, -1, 0),
       suspensionStiffness: 30,
       suspensionRestLength: 0.3,
@@ -108,43 +117,26 @@ export class PhysicsService {
       dampingCompression: 4.4,
       axleLocal: new CANNON.Vec3(0, 0, 1),
       chassisConnectionPointLocal: new CANNON.Vec3(1, 0, 1),
-      frictionSlip: 1,
+      frictionSlip: 10000,
       rollInfluence: 0.01,
       useCustomSlidingRotationalSpeed: true,
       customSlidingRotationalSpeed: -30,
-      
     };
+
+    let wheel_x = _size.x * 0.5;
+    let wheel_y = _size.y * 0.2;
+    let wheel_z = _size.z * 0.45;
     //设置第一个轮的位置，并将轮子信息添加到车辆类中
-    _options.chassisConnectionPointLocal.set(
-      _size.x * 0.5,
-      // _size.y * 0.2,
-      0,
-      _size.z * 0.45
-    );
+    _options.chassisConnectionPointLocal.set(-wheel_x, wheel_y, wheel_z);
     this.vehicle.addWheel(_options);
     //设置第二个轮的位置，并将轮子信息添加到车辆类中
-    _options.chassisConnectionPointLocal.set(
-      -_size.x * 0.5,
-      // _size.y * 0.2,
-      0,
-      _size.z * 0.45
-    );
+    _options.chassisConnectionPointLocal.set(wheel_x, wheel_y, wheel_z);
     this.vehicle.addWheel(_options);
     //设置第三个轮的位置，并将轮子信息添加到车辆类中
-    _options.chassisConnectionPointLocal.set(
-      _size.x * 0.5,
-      // _size.y * 0.2,
-      0,
-      -_size.z * 0.45
-    );
+    _options.chassisConnectionPointLocal.set(-wheel_x, wheel_y, -wheel_z);
     this.vehicle.addWheel(_options);
     //设置第四个轮的位置，并将轮子信息添加到车辆类中
-    _options.chassisConnectionPointLocal.set(
-      -_size.x * 0.5,
-      // _size.y * 0.2,
-      0,
-      -_size.z * 0.45
-    );
+    _options.chassisConnectionPointLocal.set(wheel_x, wheel_y, -wheel_z);
     this.vehicle.addWheel(_options);
 
     // this.vehicle.wheelInfos.forEach((w) => {
@@ -217,17 +209,16 @@ export class PhysicsService {
     }
 
     this.vehicle.applyEngineForce(
-      status.throttle ? -_f * status.gear * 0.5 : 0,
-      3
+      status.throttle ? _f * status.gear * 0.5 : 0,
+      2
     );
     this.vehicle.applyEngineForce(
-      status.throttle ? -_f * status.gear * 0.5 : 0,
-      2
+      status.throttle ? _f * status.gear * 0.5 : 0,
+      3
     );
 
     this.vehicle.setSteeringValue((status.rotation / 180) * Math.PI, 0);
     this.vehicle.setSteeringValue((status.rotation / 180) * Math.PI, 1);
-
 
     // this.vehicle.applyEngineForce(status.throttle ? -500 * status.gear : 0, 0);
     // this.vehicle.applyEngineForce(status.throttle ? -500 * status.gear : 0, 1);

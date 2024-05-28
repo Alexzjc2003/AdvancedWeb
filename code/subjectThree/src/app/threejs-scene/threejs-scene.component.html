@@ -1,10 +1,24 @@
 <div class="container">
+  <div style="width: 100%">{{ this.physics.car.velocity.length() }}</div>
+  <div style="width: 100%">{{ this.carcontrol.getStatus().rotation }}</div>
   <div id="three-container"></div>
   <div id="notice-container"></div>
   <div id="input-container">
     <form>
-      <input [(ngModel)]="chat_msg" name="chat_msg" id="three-input-box" (focus)="isTyping=true" (blur)="isTyping=false"/>
-      <button (click)="sendChatMsg()" class="button fancy-button" id="three-send-btm"><i class="material-icons">send</i>send</button>
+      <input
+        [(ngModel)]="chat_msg"
+        name="chat_msg"
+        id="three-input-box"
+        (focus)="isTyping = true"
+        (blur)="isTyping = false"
+      />
+      <button
+        (click)="sendChatMsg()"
+        class="button fancy-button"
+        id="three-send-btm"
+      >
+        <i class="material-icons">send</i>send
+      </button>
     </form>
   </div>
 </div>
