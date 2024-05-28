@@ -248,11 +248,11 @@ export class ThreejsSceneComponent implements OnInit {
 	sendDisconnect() {
 		this.io.sendMsg("disconnection", {});
 	}
-	isLoading: boolean = false;
+	// isLoading: boolean = false;
 
 	async handleUpdate(remoteDataList: any[]) {
 		let self = this;
-		let currentLoading = false;
+		// let currentLoading = false;
 		for (let remoteData of remoteDataList) {
 			let remoteId = remoteData.id;
 			if (remoteId == this.socketId) {
@@ -261,12 +261,15 @@ export class ThreejsSceneComponent implements OnInit {
 			let centerPosition = remoteData.position;
 			let quaternion = remoteData.rotation;
 			if (!this.remoteCars.has(remoteId)) {
-				if(this.isLoading && !currentLoading){
-					continue;
-				}
-				currentLoading = true;
-				this.isLoading = true;
+				// if(this.isLoading && !currentLoading){
+				// 	continue;
+				// }
+				// currentLoading = true;
+				// this.isLoading = true;
 				console.log("load remote car" + remoteId)
+				self.remoteCars.set(remoteId, {
+					"obj": "default"
+				});
 				await this.loadRemoteCar(remoteData.model, (carObj) => {
 					carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
 					carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
@@ -282,10 +285,10 @@ export class ThreejsSceneComponent implements OnInit {
 				carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 			}
 		}
-		if(currentLoading){
-			this.isLoading = false;
-			console.log("loading finished")
-		}
+		// if(currentLoading){
+		// 	this.isLoading = false;
+		// 	console.log("loading finished")
+		// }
 	}
 
 	handleOffline(socketId) {
