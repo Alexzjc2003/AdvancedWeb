@@ -6,6 +6,7 @@ import { carNameList } from '../allCars';
 import { Router } from '@angular/router';
 
 import { LoadResourceService } from '../load-resource.service';
+import { WebSocketService } from '../websocket.service';
 
 @Component({
   selector: 'app-main-page',
@@ -16,6 +17,7 @@ import { LoadResourceService } from '../load-resource.service';
 })
 export class MainPageComponent implements OnInit {
   carOptions: string[];
+  roomOptions: string[];
 
   scene: THREE.Scene = new THREE.Scene();
   camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
@@ -27,31 +29,61 @@ export class MainPageComponent implements OnInit {
 
   model: any;
   model_name: string = "";
+  model_index: number = 0;
 
   loader: LoadResourceService = new LoadResourceService();
-
 
   globalScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1);
 
   container: any;
 
-  debug_mode: number = 1;
+  io: WebSocketService = new WebSocketService();
 
   constructor(private router: Router) {
     this.carOptions = carNameList;
+    this.roomOptions = [];
   }
 
   ngOnInit(): void {
+    this.init_websocket();
     this.initScene();
     this.renderScene();
   }
 
-  isLeftColumn(index: number): boolean {
-    return index % 2 === 0;
+
+  prev(){
+    let total = this.carOptions.length;
+    this.model_index = (this.model_index - 1 + total) % total;
+    this.model_name = this.carOptions[this.model_index];
+    this.chooseModel(this.model_name);
   }
 
-  gotoThree() {
+  next(){
+    let total = this.carOptions.length;
+    this.model_index = (this.model_index + 1) % total;
+    this.model_name = this.carOptions[this.model_index];
+    this.chooseModel(this.model_name);
+  }
+
+  init_websocket() {
+		let self = this;
+		this.io.connect("ws://10.117.245.17:53000/hall");
+		this.io.onMessage("sendRooms").subscribe((obj: any) => {
+			console.log(obj);
+		});
+	}
+
+  gotoThree(roomName: string) {
+    console.log(roomName);
     this.router.navigate(['/scene'], { queryParams: { model: this.model_name } });
+  }
+
+  handleNewRooms(roomList){
+    
+  }
+
+  createRoom(){
+    this.io.sendMsg("createRooms", "newRoom");
   }
 
   initScene(): void {
@@ -102,7 +134,6 @@ export class MainPageComponent implements OnInit {
       this.scene.remove(this.model.obj);
       this.model = undefined;
     }
-    this.model_name = carName;
     this.loadLocalCar(carName);
   }
 

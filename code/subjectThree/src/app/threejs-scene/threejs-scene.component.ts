@@ -271,28 +271,23 @@ export class ThreejsSceneComponent implements OnInit {
     this.io.sendMsg('disconnection', {});
   }
 
-  handleUpdate(remoteDataList: any[]) {
-    let self = this;
-    for (let remoteData of remoteDataList) {
-      let remoteId = remoteData.id;
-      if (remoteId == this.socketId) {
-        continue;
-      }
-      let centerPosition = remoteData.position;
-      let quaternion = remoteData.rotation;
-      if (!this.remoteCars.has(remoteId)) {
-        this.loadRemoteCar(remoteData.model, (carObj) => {
-          carObj.position.set(
-            centerPosition.x,
-            centerPosition.y,
-            centerPosition.z
-          );
-          carObj.quaternion.set(
-            quaternion.x,
-            quaternion.y,
-            quaternion.z,
-            quaternion.w
-          );
+	handleUpdate(remoteDataList: any[]) {
+		let self = this;
+		for (let remoteData of remoteDataList) {
+			let remoteId = remoteData.id;
+			if (remoteId == this.socketId) {
+				continue;
+			}
+			let centerPosition = remoteData.position;
+			let quaternion = remoteData.rotation;
+			if (!this.remoteCars.has(remoteId)) {
+				console.log("load remote car" + remoteId)
+				self.remoteCars.set(remoteId, {
+					"obj": "default"
+				});
+				this.loadRemoteCar(remoteData.model, (carObj) => {
+					carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
+					carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 
           self.scene.add(carObj);
           self.remoteCars.set(remoteId, {

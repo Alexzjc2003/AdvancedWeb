@@ -1,13 +1,26 @@
 <div id="main-container">
-    <div id="main-model-list">
-        <div *ngFor="let carName of carOptions let i = index" [ngClass]="{'left': isLeftColumn(i), 'right': !isLeftColumn(i)}">
-            <button class="main-preview-btn" color="primary" (click)="chooseModel(carName)">{{carName}}</button>
-        </div>
-        <div>
-            <button id="main-goto-three-btn" mat-button class="app-navi-button" (click)="gotoThree()">go !</button>
+    <div id="main-left">
+        <div id="main-room-list">
+            <div *ngFor="let roomName of roomOptions">
+                <button class="main-goto-three-btn" class="main-enter-btn" color="primary" (click)="gotoThree(roomName)">go to {{roomName}}</button>
+            </div>
+            <div>
+                <button id="main-create-btn" mat-button class="app-navi-button" (click)="createRoom()">createRoom</button>
+            </div>
         </div>
     </div>
-    <div id="main-model-preview"></div>
+    <div id="main-right">
+        <div id="main-model-preview"></div>
+        <div id="main-model-list">
+            <div class="main-btn-container">
+                <button id="main-prev-btn" color="primary" (click)="prev()">prev</button>
+            </div>
+            <div id="main-model-name">{{model_name}}</div>
+            <div class="main-btn-container">
+                <button id="main-next-btn" color="primary" (click)="next()">next</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- <app-threejs-scene></app-threejs-scene> -->
