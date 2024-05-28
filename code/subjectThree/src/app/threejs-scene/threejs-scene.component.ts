@@ -264,10 +264,13 @@ export class ThreejsSceneComponent implements OnInit {
   }
 
   sendChatMsg() {
+    if (this.chat_msg == "")
+      return
     this.io.sendMsg('chat', {
       type: 'room',
       message: this.chat_msg,
     });
+    this.chat_msg = ""
   }
 
   sendDisconnect() {
