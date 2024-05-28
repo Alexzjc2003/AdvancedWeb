@@ -17,7 +17,7 @@ import { WebSocketService } from '../websocket.service';
 })
 export class MainPageComponent implements OnInit {
   carOptions: string[];
-  roomOptions: string[];
+  roomOptions: { [key: string]: number };
 
   scene: THREE.Scene = new THREE.Scene();
   camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
@@ -41,7 +41,7 @@ export class MainPageComponent implements OnInit {
 
   constructor(private router: Router) {
     this.carOptions = carNameList;
-    this.roomOptions = [];
+    this.roomOptions = {};
   }
 
   ngOnInit(): void {
@@ -51,14 +51,14 @@ export class MainPageComponent implements OnInit {
   }
 
 
-  prev(){
+  prev() {
     let total = this.carOptions.length;
     this.model_index = (this.model_index - 1 + total) % total;
     this.model_name = this.carOptions[this.model_index];
     this.chooseModel(this.model_name);
   }
 
-  next(){
+  next() {
     let total = this.carOptions.length;
     this.model_index = (this.model_index + 1) % total;
     this.model_name = this.carOptions[this.model_index];
@@ -66,24 +66,30 @@ export class MainPageComponent implements OnInit {
   }
 
   init_websocket() {
-		let self = this;
-		this.io.connect("ws://10.117.245.17:53000/hall");
-		this.io.onMessage("sendRooms").subscribe((obj: any) => {
-			console.log(obj);
-		});
-	}
-
-  gotoThree(roomName: string) {
-    console.log(roomName);
-    this.router.navigate(['/scene'], { queryParams: { model: this.model_name } });
+    this.io.connect("ws://10.117.245.17:53000/hall");
+    this.io.onMessage("sendRooms").subscribe((obj: any) => {
+      this.handleNewRooms(obj.rooms);
+    });
   }
 
-  handleNewRooms(roomList){
-    
+  gotoThree(roomId: string) {
+    this.router.navigate(['/scene'], {
+      queryParams: {
+        model: this.model_name,
+        roomId: roomId
+      }
+    });
   }
 
-  createRoom(){
-    this.io.sendMsg("createRooms", "newRoom");
+  handleNewRooms(roomMap: { [key: string]: string[] }) {
+    console.log(roomMap);
+    for (let roomId in roomMap) {
+      this.roomOptions[roomId] = roomMap[roomId].length;
+    }
+  }
+
+  createRoom() {
+    this.io.sendMsg("createRooms", {});
   }
 
   initScene(): void {
@@ -111,7 +117,7 @@ export class MainPageComponent implements OnInit {
 
     this.camera.position.copy(new THREE.Vector3(3, 2, 3));
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-    
+
 
     // 添加环境光
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
