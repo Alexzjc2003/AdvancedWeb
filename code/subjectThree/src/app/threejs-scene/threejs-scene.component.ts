@@ -452,7 +452,7 @@ export class ThreejsSceneComponent implements OnInit {
       if (self.isTyping) {
         return;
       }
-      console.log(event.key);
+      self.keyboardPressed[event.key] = 1;
     });
 
     document.addEventListener('keyup', function (event) {
