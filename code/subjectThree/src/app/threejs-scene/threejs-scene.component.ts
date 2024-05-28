@@ -488,12 +488,12 @@ export class ThreejsSceneComponent implements OnInit {
       if (this.keyboardPressed['a'] == 1) {
         // A键
         this.showNotice('转弯');
-        _turn -= 1;
+        _turn += 1;
       }
       if (this.keyboardPressed['d'] == 1) {
         // D键
         this.showNotice('转弯');
-        _turn += 1;
+        _turn -= 1;
       }
       if (this.keyboardPressed['e'] == 1) {
         // E键 - 弹窗测试
@@ -613,7 +613,7 @@ export class ThreejsSceneComponent implements OnInit {
       roadObj.scale.set(scale.x, scale.y, scale.z);
       roadObj.position.set(position.x, position.y, position.z);
       roadObj.rotateY(Math.PI * rotateY);
-      self.scene.add(roadObj);
+      // self.scene.add(roadObj);
       let road = {
         obj: roadObj,
         box: new THREE.Box3().setFromObject(roadObj),
@@ -820,7 +820,7 @@ export class ThreejsSceneComponent implements OnInit {
       groundObj.scale.set(scale.x, scale.y, scale.z);
       groundObj.position.set(position.x, position.y, position.z);
       groundObj.rotateY(Math.PI * rotateY);
-      self.scene.add(groundObj);
+      // self.scene.add(groundObj);
       self.ground = {
         obj: groundObj,
         box: new THREE.Box3().setFromObject(groundObj),

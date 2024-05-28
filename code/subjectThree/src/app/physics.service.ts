@@ -77,6 +77,8 @@ export class PhysicsService {
     }),
   });
 
+  wheels: CANNON.Body[] = [];
+
   vehicle: CANNON.RaycastVehicle = new CANNON.RaycastVehicle({
     chassisBody: this.car,
     indexRightAxis: 0,
@@ -107,7 +109,7 @@ export class PhysicsService {
 
     // let _options:CANNON.WheelInfoOptions = {
     let _options = {
-      radius: 0.06 * _size.y,
+      radius: 0.25 * _size.y,
       directionLocal: new CANNON.Vec3(0, -1, 0),
       suspensionStiffness: 30,
       suspensionRestLength: 0.3,
@@ -117,15 +119,17 @@ export class PhysicsService {
       dampingCompression: 4.4,
       axleLocal: new CANNON.Vec3(0, 0, 1),
       chassisConnectionPointLocal: new CANNON.Vec3(1, 0, 1),
-      frictionSlip: 10000,
-      rollInfluence: 0.01,
       useCustomSlidingRotationalSpeed: true,
-      customSlidingRotationalSpeed: -30,
+
+      // Todo: following parameters need further tests
+      frictionSlip: 10000,
+      rollInfluence: 0.05,
+      customSlidingRotationalSpeed: -10000,
     };
 
-    let wheel_x = _size.x * 0.5;
-    let wheel_y = _size.y * 0.2;
-    let wheel_z = _size.z * 0.45;
+    let wheel_x = _size.x * 0.35;
+    let wheel_y = _size.y * 0.35;
+    let wheel_z = _size.z * 0.3;
     //设置第一个轮的位置，并将轮子信息添加到车辆类中
     _options.chassisConnectionPointLocal.set(-wheel_x, wheel_y, wheel_z);
     this.vehicle.addWheel(_options);
@@ -139,23 +143,25 @@ export class PhysicsService {
     _options.chassisConnectionPointLocal.set(wheel_x, wheel_y, -wheel_z);
     this.vehicle.addWheel(_options);
 
-    // this.vehicle.wheelInfos.forEach((w) => {
-    //   let _cylinder = new CANNON.Cylinder(w.radius, w.radius, 0.2);
-    //   let _wheelbody = new CANNON.Body({
-    //     mass: 1,
-    //     type: CANNON.BODY_TYPES.KINEMATIC,
-    //     collisionFilterGroup: 0,
-    //   });
-    //   _wheelbody.addShape(
-    //     _cylinder,
-    //     new CANNON.Vec3(),
-    //     new CANNON.Quaternion().setFromAxisAngle(
-    //       new CANNON.Vec3(1, 0, 0),
-    //       Math.PI / 2
-    //     )
-    //   );
-    //   this.world.addBody(_wheelbody);
-    // });
+    this.vehicle.wheelInfos.forEach((w) => {
+      let _cylinder = new CANNON.Cylinder(w.radius, w.radius, 0.2);
+      let _wheelbody = new CANNON.Body({
+        mass: 1,
+        type: CANNON.BODY_TYPES.KINEMATIC,
+        collisionFilterGroup: 0,
+      });
+      _wheelbody.addShape(
+        _cylinder,
+        new CANNON.Vec3(),
+        new CANNON.Quaternion()
+        .setFromAxisAngle(
+        new CANNON.Vec3(0, 0, 1),
+        Math.PI / 2
+      )
+      );
+      this.world.addBody(_wheelbody);
+      this.wheels.push(_wheelbody);
+    });
 
     this.car.position = new CANNON.Vec3(
       car.position.x,
@@ -193,10 +199,15 @@ export class PhysicsService {
    */
   public step(dt: number): void {
     this.world.step(1 / 60, dt, 100);
+
+    this.vehicle.wheelInfos.forEach((w, i) => {
+      this.wheels[i].position.copy(w.worldTransform.position);
+      this.wheels[i].quaternion.copy(w.worldTransform.quaternion);
+    });
   }
 
   public controlCar(status: CarStatus) {
-    let _P = 80000;
+    let _P = 120000;
     let _v = this.car.velocity.length();
 
     // _v = _v < 25 ? 25 : _v;
@@ -209,11 +220,11 @@ export class PhysicsService {
     }
 
     this.vehicle.applyEngineForce(
-      status.throttle ? _f * status.gear * 0.5 : 0,
+      status.throttle ? -_f * status.gear * 0.5 : 0,
       2
     );
     this.vehicle.applyEngineForce(
-      status.throttle ? _f * status.gear * 0.5 : 0,
+      status.throttle ? -_f * status.gear * 0.5 : 0,
       3
     );
 

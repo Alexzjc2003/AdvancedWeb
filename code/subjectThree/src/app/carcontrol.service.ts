@@ -8,7 +8,7 @@ export class CarcontrolService {
 
   rotationMin: number = -20;
   rotationMax: number = 20;
-  rotationRatio: number[] = [10, 20, 50];
+  rotationRatio: number[] = [30, 40, 50];
 
   constructor() {}
 
