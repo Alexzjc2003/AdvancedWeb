@@ -544,7 +544,6 @@ export class ThreejsSceneComponent implements OnInit {
       // direction.multiplyScalar(6);
       // direction.negate();
 
-      // this.updateSocket();
       // if (!this.debug_mode) {
       //   this.camera.position.copy(
       //     direction
@@ -558,6 +557,7 @@ export class ThreejsSceneComponent implements OnInit {
       // }
 
       this.physics.updateDebugger();
+	  this.updateSocket();
       this.renderer.render(this.scene, this.cameraService.camera);
     };
 
