@@ -367,8 +367,10 @@ export class ThreejsSceneComponent implements OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   handleBeforeUnload(event: Event) {
-    console.log('before unload');
-    this.sendDisconnect();
+    // setTimeout(()=>{
+    // console.log('before unload');
+    // this.sendDisconnect();
+    // },1000)
   }
 
   loadRemoteCar(carName: string, callback: (object: THREE.Object3D) => void) {
