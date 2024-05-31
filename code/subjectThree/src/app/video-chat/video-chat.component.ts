@@ -52,7 +52,8 @@ export class VideoChatComponent implements OnInit {
         if ('srcObject' in localVideo) {
           localVideo.srcObject = stream;
         } else {
-          // localVideo.src = (window.URL.createObjectURL(stream) as any);
+          console.log('srcObject not in localVideo');
+          // localVideo.src = window.URL.createObjectURL(stream);
         }
         localVideo.play();
 
@@ -63,8 +64,8 @@ export class VideoChatComponent implements OnInit {
         this.rtcPeerConnection.onicecandidate = this.handleIceCandidate.bind(this);
         this.rtcPeerConnection.ontrack = this.handleRemoteStream.bind(this);
 
-        this.ws = new WebSocket('ws://advanced-web-backend-service/api/ws/video');
-        // this.ws = new WebSocket('ws://10.117.245.17:58080/api/ws/video');
+        // this.ws = new WebSocket('ws://advanced-web-backend-service/api/ws/video');
+        this.ws = new WebSocket('ws://10.117.245.17:58080/api/ws/video');
 
         this.ws.addEventListener('open', () => {
           console.log('Connected to the signaling server');
@@ -130,6 +131,7 @@ export class VideoChatComponent implements OnInit {
         if ('srcObject' in localVideo) {
           localVideo.srcObject = stream;
         } else {
+          console.log('srcObject not in localVideo');
           // localVideo.src = (window.URL.createObjectURL(stream) as any);
         }
         localVideo.play();
