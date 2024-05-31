@@ -20,10 +20,12 @@ import { buildingOffset } from '../buildingOffset';
 import { FormsModule } from '@angular/forms';
 import { KnowledgeService } from '../knowledge.service';
 
+import { VideoChatComponent } from '../video-chat/video-chat.component';
+
 @Component({
   selector: 'app-threejs-scene',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, VideoChatComponent],
   providers: [PhysicsService, NotificationService],
   templateUrl: './threejs-scene.component.html',
   styleUrl: './threejs-scene.component.css',
