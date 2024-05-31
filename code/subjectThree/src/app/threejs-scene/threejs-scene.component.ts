@@ -224,7 +224,8 @@ export class ThreejsSceneComponent implements OnInit {
   init_websocket() {
     let self = this;
     // this.io.connect('ws://driving-service/room');
-    this.io.connect('ws://10.117.245.17:53000/room');
+    // this.io.connect('ws://10.117.245.17:53000/room');
+    this.io.connect('wss://p.jingyijun.xyz/room');
     this.io.onMessage('online').subscribe((obj: any) => {
       // console.log(obj);
       self.socketId = obj.id;
