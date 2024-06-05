@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ThreejsSceneComponent } from '../threejs-scene/threejs-scene.component';
-import { CommonModule } from '@angular/common';
 import * as THREE from 'three';
-import { carNameList } from '../data/allCars';
+import { carNameList } from '../../../data/allCars';
 import { Router } from '@angular/router';
 
-import { LoadResourceService } from '../service/load-resource.service';
-import { WebSocketService } from '../service/websocket.service';
+import { LoadResourceService } from '@app/three/service/load-resource.service';
+import { WebSocketService } from '@app/utils/service/websocket.service';
 
 @Component({
   selector: 'app-hall',

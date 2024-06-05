@@ -19,14 +19,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgOptimizedImage } from "@angular/common";
 
-import { MainPageComponent } from './main-page/main-page.component';
-import { LoginComponent } from './user/component/login/login.component';
-import { RegisterComponent } from './user/component/register/register.component';
-import { ThreejsSceneComponent } from './threejs-scene/threejs-scene.component';
-import { VideoChatComponent } from './video-chat/video-chat.component';
+import { MainPageComponent } from '@app/main-page/main-page.component';
+import { LoginComponent } from '@app/user/component/login/login.component';
+import { RegisterComponent } from '@app/user/component/register/register.component';
+import { ThreejsSceneComponent } from '@app/three/component/threejs-scene/threejs-scene.component';
+import { VideoChatComponent } from '@app/video-chat/video-chat.component';
 import { TopBarComponent } from '@app/user/component/top-bar/top-bar.component';
 import { SpaceComponent } from '@app/user/component/space/space.component';
-import { HallComponent } from '@app/hall/hall.component';
+import { HallComponent } from '@app/three/component/hall/hall.component';
 
 @NgModule({
     declarations: [

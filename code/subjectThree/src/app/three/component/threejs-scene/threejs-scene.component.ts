@@ -4,24 +4,22 @@ import { HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 
-import { roadPosition } from '../data/roadPosition';
-import { buildingPosition } from '../data/buildingPosition';
+import { roadPosition } from '../../../data/roadPosition';
+import { buildingPosition } from '../../../data/buildingPosition';
 
-import { PhysicsService } from '../service/physics.service';
-import { CameraService } from '../service/camera.service';
-import { CarcontrolService } from '../service/carcontrol.service';
-import { WebSocketService } from '../service/websocket.service';
-import { NotificationService } from '../service/notification.service';
-import { LoadResourceService } from '../service/load-resource.service';
+import { PhysicsService } from '@app/three/service/physics.service'
+import { CameraService } from '@app/three/service/camera.service';
+import { CarcontrolService } from '@app/three/service/carcontrol.service';
+import { WebSocketService } from '@app/utils/service/websocket.service';
+import { NotificationService } from '@app/three/service/notification.service';
+import { LoadResourceService } from '@app/three/service/load-resource.service';
 
-import { roadOffset } from '../data/roadOffset';
-import { buildingOffset } from '../data/buildingOffset';
+import { roadOffset } from '../../../data/roadOffset';
+import { buildingOffset } from '../../../data/buildingOffset';
 
-import { FormsModule } from '@angular/forms';
-import { KnowledgeService } from '../service/knowledge.service';
-
-import { VideoChatComponent } from '../video-chat/video-chat.component';
+import { KnowledgeService } from '@app/three/service/knowledge.service';
 import { UserService } from '@app/user/service/user.service';
+import { LoadResourcePart } from './load-resource';
 
 @Component({
   selector: 'app-threejs-scene',
@@ -117,7 +115,8 @@ export class ThreejsSceneComponent implements OnInit {
     private notification: NotificationService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private loadResourcePart: LoadResourcePart
   ) {
     this.roadPosition = roadPosition;
     this.roadOffset = roadOffset;
@@ -295,7 +294,7 @@ export class ThreejsSceneComponent implements OnInit {
         self.remoteCars.set(remoteId, {
           "obj": "default"
         });
-        this.loadRemoteCar(remoteData.model, (carObj) => {
+        this.loadResourcePart.loadCarResouce(remoteData.model, (carObj) => {
           carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
           carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 
@@ -369,47 +368,16 @@ export class ThreejsSceneComponent implements OnInit {
     noticeContainer.appendChild(ul);
   }
 
-  @HostListener('window:beforeunload', ['$event'])
-  handleBeforeUnload(event: Event) {
-    // setTimeout(()=>{
-    // console.log('before unload');
-    // this.sendDisconnect();
-    // },1000)
-  }
-
-  loadRemoteCar(carName: string, callback: (object: THREE.Object3D) => void) {
-    let fbxPath = `./assets/model/cars/${carName}.fbx`;
-    let texturePath = './assets/model/cars/texture/colormap.png';
-    this.loader.loadFbxTextureResource(fbxPath, texturePath, (carObj) => {
-      const box = new THREE.Box3().setFromObject(carObj);
-      const size = new THREE.Vector3();
-      box.getSize(size);
-      const f = 2 / size.x;
-      carObj.scale.set(f, f, f);
-
-      callback(carObj);
-    });
-  }
 
   loadLocalCar(carName: string) {
     let self = this;
-    let fbxPath = `./assets/model/cars/${carName}.fbx`;
-    let texturePath = './assets/model/cars/texture/colormap.png';
-    this.loader.loadFbxTextureResource(fbxPath, texturePath, (carObj) => {
+    this.loadResourcePart.loadCarResouce(carName, (carObj) => {
       carObj.position.set(3, 3, 3);
-
-      const box = new THREE.Box3().setFromObject(carObj);
-      const size = new THREE.Vector3();
-      box.getSize(size);
-      const f = 2 / size.x;
-      carObj.scale.set(f, f, f);
       self.scene.add(carObj);
       self.model = {
         obj: carObj,
       };
-
       self.physics.setCar(carObj);
-
       self.sendInit();
     });
   }
@@ -576,6 +544,7 @@ export class ThreejsSceneComponent implements OnInit {
     scale: THREE.Vector3,
     rotateY: number
   ) {
+    let self = this;
     let offset_dict = this.roadOffset;
     let offset_x = offset_dict[roadName].offset_x * scale.x;
     let offset_y = offset_dict[roadName].offset_y * scale.y;
@@ -591,7 +560,16 @@ export class ThreejsSceneComponent implements OnInit {
     let mtlPath = `./assets/model/road/${roadName}.mtl`;
     let objPath = `./assets/model/road/${roadName}.obj`;
 
-    this.loadRoadResource(mtlPath, objPath, cornerPosition, rotateY, scale);
+    this.loadResourcePart.loadRoadResource(mtlPath, objPath, cornerPosition, rotateY, scale,
+      (roadObj) => {
+        // self.scene.add(roadObj);
+
+        let road = {
+          obj: roadObj,
+          box: new THREE.Box3().setFromObject(roadObj),
+        };
+        self.roadList.push(road);
+      });
 
     let puzzles = offset_dict[roadName].puzzle;
 
@@ -613,26 +591,7 @@ export class ThreejsSceneComponent implements OnInit {
     }
   }
 
-  loadRoadResource(
-    mtlPath: string,
-    objPath: string,
-    position: THREE.Vector3,
-    rotateY: number,
-    scale: THREE.Vector3
-  ) {
-    let self = this;
-    this.loader.loadMtlObjResource(mtlPath, objPath, (roadObj) => {
-      roadObj.scale.set(scale.x, scale.y, scale.z);
-      roadObj.position.set(position.x, position.y, position.z);
-      roadObj.rotateY(Math.PI * rotateY);
-      // self.scene.add(roadObj);
-      let road = {
-        obj: roadObj,
-        box: new THREE.Box3().setFromObject(roadObj),
-      };
-      self.roadList.push(road);
-    });
-  }
+
 
   loadBuilding(
     buildingName: string,
@@ -640,6 +599,7 @@ export class ThreejsSceneComponent implements OnInit {
     scale: THREE.Vector3,
     rotateY: number
   ) {
+    let self = this;
     let offset_dict = this.buildingOffset;
     let offset_x = offset_dict[buildingName].offset_x * scale.x;
     let offset_y = offset_dict[buildingName].offset_y * scale.y;
@@ -653,29 +613,18 @@ export class ThreejsSceneComponent implements OnInit {
     let mtlPath = `./assets/model/building/${buildingName}.mtl`;
     let objPath = `./assets/model/building/${buildingName}.obj`;
 
-    this.loadBuildingResource(mtlPath, objPath, cornerPosition, rotateY, scale);
+    this.loadResourcePart.loadBuildingResource(mtlPath, objPath, cornerPosition, rotateY, scale,
+      (buildingObj) => {
+        self.scene.add(buildingObj);
+        let building = {
+          obj: buildingObj,
+          box: new THREE.Box3().setFromObject(buildingObj),
+        };
+        self.buildingList.push(building);
+      });
   }
 
-  loadBuildingResource(
-    mtlPath: string,
-    objPath: string,
-    position: THREE.Vector3,
-    rotateY: number,
-    scale: THREE.Vector3
-  ) {
-    let self = this;
-    this.loader.loadMtlObjResource(mtlPath, objPath, (buildingObj) => {
-      buildingObj.scale.set(scale.x, scale.y, scale.z);
-      buildingObj.position.set(position.x, position.y, position.z);
-      buildingObj.rotateY(Math.PI * rotateY);
-      self.scene.add(buildingObj);
-      let building = {
-        obj: buildingObj,
-        box: new THREE.Box3().setFromObject(buildingObj),
-      };
-      self.buildingList.push(building);
-    });
-  }
+  
 
   // debugCameraMove() {
   //   if (this.keyboardPressed['w'] == 1) {
@@ -705,6 +654,7 @@ export class ThreejsSceneComponent implements OnInit {
   // }
 
   loadAllRoads() {
+    let self = this;
     let roadNameList = [
       // 'road_bend',
       'road_crossing',
@@ -733,12 +683,21 @@ export class ThreejsSceneComponent implements OnInit {
       let mtlPath = `./assets/model/road/road_slantHigh.mtl`;
       let objPath = `./assets/model/road/road_slantHigh.obj`;
       let posX = i * 30;
-      this.loadRoadResource(
+      this.loadResourcePart.loadRoadResource(
         mtlPath,
         objPath,
         new THREE.Vector3(posX, 0, -30),
         0,
-        new THREE.Vector3(10, 10, 10)
+        new THREE.Vector3(10, 10, 10),
+        (roadObj) => {
+          self.scene.add(roadObj);
+
+          let road = {
+            obj: roadObj,
+            box: new THREE.Box3().setFromObject(roadObj),
+          };
+          self.roadList.push(road);
+        }
       );
     }
   }
@@ -789,54 +748,53 @@ export class ThreejsSceneComponent implements OnInit {
       'tree_small',
       'tree_large',
     ];
+    let self = this;
 
     for (let i = 0; i < allBuildings.length; i++) {
       let buildingName = allBuildings[i];
       let mtlPath = `./assets/model/building/${buildingName}.mtl`;
       let objPath = `./assets/model/building/${buildingName}.obj`;
       let posX = i * 30;
-      this.loadBuildingResource(
+      this.loadResourcePart.loadBuildingResource(
         mtlPath,
         objPath,
         new THREE.Vector3(posX, 0, 5),
         0,
-        new THREE.Vector3(10, 10, 10)
+        new THREE.Vector3(10, 10, 10),
+        (buildingObj) => {
+          self.scene.add(buildingObj);
+          let building = {
+            obj: buildingObj,
+            box: new THREE.Box3().setFromObject(buildingObj),
+          };
+          self.buildingList.push(building);
+        }
       );
     }
   }
 
   loadGround() {
+    let self = this;
     // 30 * 30
     let mtlPath = `./assets/model/other/ground.mtl`;
     let objPath = `./assets/model/other/ground.obj`;
     let x_width = 300;
     let z_width = 300;
-    this.loadGroundResource(
+    this.loadResourcePart.loadGroundResource(
       mtlPath,
       objPath,
       new THREE.Vector3(-x_width / 2, -1, z_width / 2),
       0,
-      new THREE.Vector3(100, 2.4, 100)
+      new THREE.Vector3(100, 2.4, 100),
+      (groundObj) => {
+        // self.scene.add(groundObj);
+        self.ground = {
+          obj: groundObj,
+          box: new THREE.Box3().setFromObject(groundObj),
+        };
+      }
     );
   }
 
-  loadGroundResource(
-    mtlPath: string,
-    objPath: string,
-    position: THREE.Vector3,
-    rotateY: number,
-    scale: THREE.Vector3
-  ) {
-    let self = this;
-    this.loader.loadMtlObjResource(mtlPath, objPath, (groundObj) => {
-      groundObj.scale.set(scale.x, scale.y, scale.z);
-      groundObj.position.set(position.x, position.y, position.z);
-      groundObj.rotateY(Math.PI * rotateY);
-      // self.scene.add(groundObj);
-      self.ground = {
-        obj: groundObj,
-        box: new THREE.Box3().setFromObject(groundObj),
-      };
-    });
-  }
+
 }
