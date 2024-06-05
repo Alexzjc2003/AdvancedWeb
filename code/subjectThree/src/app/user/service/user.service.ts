@@ -9,6 +9,9 @@ export class UserService {
 	loginUrl: string = "api/login";
 	registerUrl: string = "api/register";
 	getInfoUrl: string = "api/users/data";
+	updateUserUrl: string = "api/users";
+
+	default_headers: any = { 'Content-Type': 'application/json' };
 
 	loggedIn = new BehaviorSubject<boolean>(false);
 	isLoggedIn = this.loggedIn.asObservable();
@@ -28,13 +31,19 @@ export class UserService {
 			password: password,
 		};
 
-		this.httpRequestService.post(this.loginUrl, postData,
+		this.httpRequestService.post(this.loginUrl, postData, this.default_headers,
 			resp => {
 				console.log(resp);
 				self.userInfo.id = resp.user_id;
 				self.userInfo.token = resp.access;
 				self.loggedIn.next(true);
-				onSuccess(resp);
+				self.loadUserDetail((resp) => {
+					onSuccess(resp);
+				}, 
+				(resp) => {
+					console.log("获取信息失败");
+					onError(resp);
+				});
 			},
 
 			resp => {
@@ -50,7 +59,7 @@ export class UserService {
 		age: number,
 		phone: string,
 		email: string,
-		onSuccess: (resp: any) => void, 
+		onSuccess: (resp: any) => void,
 		onError: (resp: any) => void
 	): void {
 		const postData = {
@@ -62,7 +71,7 @@ export class UserService {
 			email: email,
 		};
 
-		this.httpRequestService.post(this.registerUrl, postData,
+		this.httpRequestService.post(this.registerUrl, postData, this.default_headers,
 			resp => {
 				console.log("注册成功!");
 				onSuccess(resp);
@@ -74,22 +83,88 @@ export class UserService {
 			});
 	}
 
-	loadUserDetail() {
+	loadUserDetail(onSuccess: (resp: any) => void, onError: (resp: any) => void) {
+		let self = this;
 		if (!this.isLoggedin()) {
 			console.warn("user.service.ts::loadUserDetail: load detail before login.");
 			return;
 		}
-		this.httpRequestService.get(this.getInfoUrl, { Authorization: this.userInfo.token },
+		let headers = {
+			'Content-Type': 'application/json',
+			'Authorization': this.userInfo.token
+		};
+		this.httpRequestService.get(this.getInfoUrl, {}, headers,
 			resp => {
 				console.log(resp);
+				self.userInfo.detail = {
+					age: resp.age,
+					created_at: resp.created_at,
+					email: resp.email,
+					gender: resp.gender,
+					is_passed: resp.is_passed,
+					password: resp.password,
+					phone: resp.phone,
+					point: resp.point,
+					updated_at: resp.updated_at,
+					username: resp.username
+				};
+				onSuccess(resp);
 			},
 
 			resp => {
 				console.log(resp);
+				onError(resp);
 			}
 		);
 	}
 
+	modifyUserDetail(
+		username: string,
+		password: string,
+		gender: string,
+		age: number,
+		phone: string,
+		email: string,
+		point: number,
+		is_passed: boolean,
+		onSuccess: (resp: any) => void,
+		onError: (resp: any) => void
+	): void {
+		const putData = {
+			age: age,
+			created_at: "0",
+			email: email,
+			gender: gender,
+			id: this.getUserId(),
+			is_passed: is_passed,
+			password: password,
+			phone: phone,
+			point: point,
+			updated_at: "0",
+			username: username
+		};
+
+		let headers = {
+			'Content-Type': 'application/json',
+			'Authorization': this.userInfo.token
+		};
+
+		this.httpRequestService.put(this.updateUserUrl, putData, headers,
+			resp => {
+				console.log("修改成功!");
+				this.loadUserDetail((resp) => {
+					onSuccess(resp);
+				}, (resp) => {
+					console.log("重新获取信息失败");
+					onError(resp);
+				});
+			},
+
+			resp => {
+				console.log(resp);
+				onError(resp);
+			});
+	}
 
 	logout() {
 		this.loggedIn.next(false);
@@ -106,5 +181,13 @@ export class UserService {
 
 	getUserDetail() {
 		return this.userInfo.detail;
+	}
+
+	getUserId() {
+		return this.userInfo.id;
+	}
+
+	getUserToken() {
+		return this.userInfo.token;
 	}
 }

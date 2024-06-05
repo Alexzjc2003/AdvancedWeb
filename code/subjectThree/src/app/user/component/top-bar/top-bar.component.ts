@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '@app/user/service/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-top-bar', 
@@ -9,7 +10,7 @@ import { UserService } from '@app/user/service/user.service';
 export class TopBarComponent implements OnInit{
   title = "subject three";
   isLoggedIn: boolean = false;
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit() {
     // Subscribe to the isLoggedIn observable to get the login status
@@ -21,5 +22,13 @@ export class TopBarComponent implements OnInit{
 
   logout(){
     this.userService.logout();
+  }
+
+  gotoSpace(){
+    let token: string = this.userService.getUserToken();
+    if(token == ""){
+      console.warn("top-bar.component.ts::gotoSpace: not authorized.")
+    }
+    this.router.navigate(['space']);
   }
 }

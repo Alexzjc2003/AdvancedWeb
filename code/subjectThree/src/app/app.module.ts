@@ -5,6 +5,9 @@ import { HttpClientModule } from '@angular/common/http'; // 导入 HttpClientMod
 import { AppComponent } from './app.component'; // 导入主组件
 import { CommonModule } from '@angular/common';
 
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -22,6 +25,7 @@ import { RegisterComponent } from './user/component/register/register.component'
 import { ThreejsSceneComponent } from './threejs-scene/threejs-scene.component';
 import { VideoChatComponent } from './video-chat/video-chat.component';
 import { TopBarComponent } from '@app/user/component/top-bar/top-bar.component';
+import { SpaceComponent } from '@app/user/component/space/space.component';
 
 @NgModule({
     declarations: [
@@ -31,14 +35,17 @@ import { TopBarComponent } from '@app/user/component/top-bar/top-bar.component';
         RegisterComponent,
         ThreejsSceneComponent,
         VideoChatComponent,
-        TopBarComponent
+        TopBarComponent,
+        SpaceComponent
     ],
     imports: [
         CommonModule,
+        FormsModule,
         BrowserModule,
         HttpClientModule,
-        FormsModule,
+        
         ReactiveFormsModule,
+        BrowserAnimationsModule,
         
         MatIconModule,
         MatButtonModule,
@@ -62,6 +69,11 @@ import { TopBarComponent } from '@app/user/component/top-bar/top-bar.component';
                 path: 'register',
                 component: RegisterComponent,
                 title: 'register'
+            },
+            {
+                path: 'space',
+                component: SpaceComponent,
+                title: 'space'
             },
             {
                 path: 'scene',

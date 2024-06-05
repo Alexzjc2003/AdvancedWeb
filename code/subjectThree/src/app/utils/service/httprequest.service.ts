@@ -12,10 +12,11 @@ export class HttpRequestService {
     this.base_url = environment.apiUrl;
   }
 
-  get(url: string, params: { [key: string]: string }, onSuccess: (response: any) => void, onError: (response: any) => void): void {
+  get(url: string, params: { [key: string]: string }, headers: { [key: string]: string }, onSuccess: (response: any) => void, onError: (response: any) => void): void {
     const httpParams = new HttpParams({ fromObject: params });
+    const httpHeaders = new HttpHeaders(headers);
     const total_url = this.base_url + url;
-    this.http.get(total_url, { params: httpParams }).pipe().subscribe({
+    this.http.get(total_url, { params: httpParams, headers: httpHeaders }).pipe().subscribe({
       next: (response: any) => {
         onSuccess(response);
       },
@@ -24,11 +25,10 @@ export class HttpRequestService {
       }
     })
   }
-
-  post(url: string, body: any, onSuccess: (response: any) => void, onError: (response: any) => void): void {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  post(url: string, body: any, headers: { [key: string]: string }, onSuccess: (response: any) => void, onError: (response: any) => void): void {
+    const httpHeaders = new HttpHeaders(headers);
     const total_url = this.base_url + url;
-    this.http.post(total_url, body, { headers }).pipe().subscribe({
+    this.http.post(total_url, body, { headers: httpHeaders }).pipe().subscribe({
       next: (response: any) => {
         onSuccess(response);
       },
@@ -38,10 +38,10 @@ export class HttpRequestService {
     });
   }
 
-  put(url: string, body: any, onSuccess: (response: any) => void, onError: (response: any) => void): void {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  put(url: string, body: any, headers: { [key: string]: string }, onSuccess: (response: any) => void, onError: (response: any) => void): void {
+    const httpHeaders = new HttpHeaders(headers);
     const total_url = this.base_url + url;
-    this.http.put(total_url, body, { headers }).pipe().subscribe({
+    this.http.put(total_url, body, { headers: httpHeaders }).pipe().subscribe({
       next: (response: any) => {
         onSuccess(response);
       },
@@ -51,10 +51,11 @@ export class HttpRequestService {
     });
   }
 
-  delete(url: string, params: { [key: string]: string }, onSuccess: (response: any) => void, onError: (response: any) => void): void {
+  delete(url: string, params: { [key: string]: string }, headers: { [key: string]: string }, onSuccess: (response: any) => void, onError: (response: any) => void): void {
     const httpParams = new HttpParams({ fromObject: params });
+    const httpHeaders = new HttpHeaders(headers);
     const total_url = this.base_url + url;
-    this.http.delete(total_url, { params: httpParams }).pipe().subscribe({
+    this.http.delete(total_url, { params: httpParams, headers: httpHeaders }).pipe().subscribe({
       next: (response: any) => {
         onSuccess(response);
       },
