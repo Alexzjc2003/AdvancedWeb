@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import * as THREE from 'three';
-import { HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 
@@ -20,6 +19,7 @@ import { buildingOffset } from '../../../data/buildingOffset';
 import { KnowledgeService } from '@app/three/service/knowledge.service';
 import { UserService } from '@app/user/service/user.service';
 import { LoadResourcePart } from './load-resource';
+import { RemotePart } from './remote';
 
 @Component({
   selector: 'app-threejs-scene',
@@ -92,7 +92,7 @@ export class ThreejsSceneComponent implements OnInit {
 
   physics: PhysicsService = new PhysicsService();
   carcontrol: CarcontrolService = new CarcontrolService();
-  io: WebSocketService = new WebSocketService();
+  // io: WebSocketService = new WebSocketService();
   loader: LoadResourceService = new LoadResourceService();
   knowledge: KnowledgeService = new KnowledgeService();
 
@@ -100,9 +100,7 @@ export class ThreejsSceneComponent implements OnInit {
 
   roomId: string = "";
 
-  socketId: string = '';
-  remoteCars: Map<string, any> = new Map<string, any>();
-
+  
   container: any;
 
   chat_msg: string = '';
@@ -116,7 +114,8 @@ export class ThreejsSceneComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private loadResourcePart: LoadResourcePart
+    private loadResourcePart: LoadResourcePart,
+    private remotePart: RemotePart
   ) {
     this.roadPosition = roadPosition;
     this.roadOffset = roadOffset;
@@ -153,6 +152,7 @@ export class ThreejsSceneComponent implements OnInit {
   initScene(): void {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xadd8e6);
+    this.remotePart.setRoom(this.roomId, this.scene);
 
     this.physics.useDebugger(this.scene);
 
@@ -209,143 +209,30 @@ export class ThreejsSceneComponent implements OnInit {
 
     // this.loadAllBuildings();
 
-    this.init_websocket();
+    this.remotePart.init_websocket();
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.sendDisconnect();
+        this.remotePart.sendDisconnect();
       }
     });
 
     // this.showNotice("发动");
   }
 
-  init_websocket() {
-    let self = this;
-    this.io.connect('ws://10.117.245.17:53000/room');
-    // this.io.connect('wss://p.jingyijun.xyz/room');
-    this.io.onMessage('online').subscribe((obj: any) => {
-      // console.log(obj);
-      self.socketId = obj.id;
-    });
+  
 
-    this.io.onMessage('update').subscribe((obj: any) => {
-      // console.log("update", obj);
-      self.handleUpdate(obj);
-    });
-
-    this.io.onMessage('offline').subscribe((obj: any) => {
-      // console.log(obj);
-      self.handleOffline(obj.id);
-    });
-
-    this.io.onMessage('message').subscribe((obj: any) => {
-      // console.log(obj);
-      self.handleChat(obj.id, obj.message);
-    });
-  }
-
-  sendInit() {
-    console.log('sendInit', this.roomId);
-    let self = this;
-    this.io.sendMsg('init', {
-      user_id: self.userService.getUserId(),
-      roomID: self.roomId,
-      model: self.model_name,
-      position: {
-        x: this.model.obj.position.x,
-        y: this.model.obj.position.y,
-        z: this.model.obj.position.z,
-      },
-      rotation: {
-        w: this.model.obj.quaternion.w,
-        x: this.model.obj.quaternion.x,
-        y: this.model.obj.quaternion.y,
-        z: this.model.obj.quaternion.z,
-      },
-    });
-  }
+  
 
   sendChatMsg() {
     if (this.chat_msg == "")
       return
-    this.io.sendMsg('chat', {
-      type: 'room',
-      message: this.chat_msg,
-    });
+    this.remotePart.sendChatMsg(this.chat_msg);
     this.chat_msg = ""
   }
 
-  sendDisconnect() {
-    this.io.sendMsg('disconnection', {});
-  }
 
-  handleUpdate(remoteDataList: any[]) {
-    let self = this;
-    for (let remoteData of remoteDataList) {
-      let remoteId = remoteData.id;
-      if (remoteId == this.socketId) {
-        continue;
-      }
-      let centerPosition = remoteData.position;
-      let quaternion = remoteData.rotation;
-      if (!this.remoteCars.has(remoteId)) {
-        console.log("load remote car" + remoteId)
-        self.remoteCars.set(remoteId, {
-          "obj": "default"
-        });
-        this.loadResourcePart.loadCarResouce(remoteData.model, (carObj) => {
-          carObj.position.set(centerPosition.x, centerPosition.y, centerPosition.z);
-          carObj.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
-
-          self.scene.add(carObj);
-          self.remoteCars.set(remoteId, {
-            obj: carObj,
-          });
-        });
-      } else {
-        let carObj = this.remoteCars.get(remoteId).obj;
-        carObj.position.set(
-          centerPosition.x,
-          centerPosition.y,
-          centerPosition.z
-        );
-        carObj.quaternion.set(
-          quaternion.x,
-          quaternion.y,
-          quaternion.z,
-          quaternion.w
-        );
-      }
-    }
-  }
-
-  handleOffline(socketId) {
-    if (this.remoteCars.has(socketId)) {
-      this.scene.remove(this.remoteCars.get(socketId).obj);
-      this.remoteCars.delete(socketId);
-    }
-  }
-
-  handleChat(fromId, message) {
-    this.notification.showNotification(`${fromId}: ${message}`);
-  }
-
-  updateSocket() {
-    this.io.sendMsg('update', {
-      position: {
-        x: this.model.obj.position.x,
-        y: this.model.obj.position.y,
-        z: this.model.obj.position.z,
-      },
-      rotation: {
-        w: this.model.obj.quaternion.w,
-        x: this.model.obj.quaternion.x,
-        y: this.model.obj.quaternion.y,
-        z: this.model.obj.quaternion.z,
-      },
-    });
-  }
+  
 
   showNotice(theme: string) {
     let noticeContainer = document.getElementById('notice-container');
@@ -378,7 +265,7 @@ export class ThreejsSceneComponent implements OnInit {
         obj: carObj,
       };
       self.physics.setCar(carObj);
-      self.sendInit();
+      self.remotePart.sendInit(self.model, self.model_name);
     });
   }
 
@@ -531,7 +418,7 @@ export class ThreejsSceneComponent implements OnInit {
       // }
 
       this.physics.updateDebugger();
-      this.updateSocket();
+      this.remotePart.updateSocket(this.model);
       this.renderer.render(this.scene, this.cameraService.camera);
     };
 
