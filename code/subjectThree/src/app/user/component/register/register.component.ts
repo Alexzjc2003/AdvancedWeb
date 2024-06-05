@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {FormsModule} from "@angular/forms";
+import { Router } from '@angular/router';
 import {UserService} from "@app/user/service/user.service";
 
 @Component({
@@ -16,11 +16,13 @@ export class RegisterComponent {
   email: string = "";
 
 
-  registerService: UserService = inject(UserService);
-  constructor() {
+  constructor(private router: Router, private userService: UserService) {
   }
 
   register(){
-    this.registerService.register(this.username, this.password, this.gender, this.age, this.phone, this.email);
+    this.userService.register(this.username, this.password, this.gender, this.age, this.phone, this.email,
+      (resp) => {
+        this.router.navigate(['/login']);
+      }, (resp) => {});
   }
 }

@@ -1,23 +1,5 @@
 <main>
-  <mat-toolbar class="app-navi">
-    <a routerLink="">
-      <img
-        src="assets/icons/steering-wheel.svg"
-        class="app-navi-icon"
-        alt="icon"
-      />
-    </a>
-    <span class="app-navi-title">Subject Three</span>
-    <span class="example-spacer"></span>
-    <div class="app-navi-button-container">
-      <button mat-button class="app-navi-button" routerLink="login">
-        sign in
-      </button>
-      <button mat-button class="app-navi-button" routerLink="register">
-        sign up
-      </button>
-    </div>
-  </mat-toolbar>
+  <app-top-bar></app-top-bar>
   <section class="content">
     <router-outlet></router-outlet>
   </section>

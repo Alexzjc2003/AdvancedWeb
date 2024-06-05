@@ -1,0 +1,21 @@
+<mat-toolbar class="app-navi">
+    <a routerLink="">
+        <img src="assets/icons/steering-wheel.svg" class="top-bar-navi-icon" alt="icon" />
+    </a>
+    <span class="top-bar-navi-title">Subject Three</span>
+    <span class="example-spacer"></span>
+    <div class="top-bar-navi-button-container">
+        <button mat-button *ngIf="!isLoggedIn" class="top-bar-navi-button" routerLink="login">
+            sign in
+        </button>
+        <button mat-button *ngIf="!isLoggedIn" class="top-bar-navi-button" routerLink="register">
+            sign up
+        </button>
+        <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" routerLink="space">
+            space
+        </button>
+        <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" (click)="logout()">
+            log out
+        </button>
+    </div>
+</mat-toolbar>

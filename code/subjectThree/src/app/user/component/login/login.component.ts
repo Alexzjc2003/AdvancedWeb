@@ -1,6 +1,6 @@
-import {Component, inject} from '@angular/core'
-import {FormsModule} from "@angular/forms";
+import {Component} from '@angular/core'
 import {UserService} from "@app/user/service/user.service";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,12 +10,13 @@ import {UserService} from "@app/user/service/user.service";
 export class LoginComponent {
   username: string = "";
   password: string = "";
-
-  loginService: UserService = inject(UserService);
-  constructor() {
+ 
+  constructor(private router: Router, private userService: UserService) {
   }
 
   login(){
-    this.loginService.login(this.username, this.password);
+    this.userService.login(this.username, this.password, (resp) => {
+      this.router.navigate(['']);
+    }, (resp) => {});
   }
 }

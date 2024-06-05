@@ -3,8 +3,10 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http'; // 导入 HttpClientModule
 import { AppComponent } from './app.component'; // 导入主组件
+import { CommonModule } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { RouterOutlet } from '@angular/router';
 import { RouterModule } from '@angular/router';
@@ -19,6 +21,7 @@ import { LoginComponent } from './user/component/login/login.component';
 import { RegisterComponent } from './user/component/register/register.component';
 import { ThreejsSceneComponent } from './threejs-scene/threejs-scene.component';
 import { VideoChatComponent } from './video-chat/video-chat.component';
+import { TopBarComponent } from '@app/user/component/top-bar/top-bar.component';
 
 @NgModule({
     declarations: [
@@ -27,11 +30,20 @@ import { VideoChatComponent } from './video-chat/video-chat.component';
         LoginComponent,
         RegisterComponent,
         ThreejsSceneComponent,
-        VideoChatComponent
+        VideoChatComponent,
+        TopBarComponent
     ],
     imports: [
+        CommonModule,
         BrowserModule,
         HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+        
+        MatIconModule,
+        MatButtonModule,
+        MatToolbarModule,
+        NgOptimizedImage,
 
         RouterOutlet,
         RouterModule,
@@ -56,12 +68,7 @@ import { VideoChatComponent } from './video-chat/video-chat.component';
                 component: ThreejsSceneComponent,
                 title: 'scene'
             }
-        ]),
-        FormsModule,
-        MatIconModule,
-        MatButtonModule,
-        MatToolbarModule,
-        NgOptimizedImage
+        ])
     ],
     providers: [],
     bootstrap: [AppComponent] // 指定根组件

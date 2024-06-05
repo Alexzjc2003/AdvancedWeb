@@ -1,0 +1,24 @@
+.top-bar-navi {
+    height: 40px
+}
+
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+.top-bar-navi-title {
+    font-size: 20px
+}
+
+.top-bar-navi-button {
+    height: 20px;
+    width: auto;
+    font-size: 15px;
+    margin: 5px;
+}
+
+.top-bar-navi-icon {
+    margin-right: 10px;
+    height: 25px;
+    width: 25px;
+}
