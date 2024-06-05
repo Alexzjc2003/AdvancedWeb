@@ -4,28 +4,26 @@ import { HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 
-import { roadPosition } from '../roadPosition';
-import { buildingPosition } from '../buildingPosition';
+import { roadPosition } from '../data/roadPosition';
+import { buildingPosition } from '../data/buildingPosition';
 
-import { PhysicsService } from '../physics.service';
-import { CameraService } from '../camera.service';
-import { CarcontrolService } from '../carcontrol.service';
-import { WebSocketService } from '../websocket.service';
-import { NotificationService } from '../notification.service';
-import { LoadResourceService } from '../load-resource.service';
+import { PhysicsService } from '../service/physics.service';
+import { CameraService } from '../service/camera.service';
+import { CarcontrolService } from '../service/carcontrol.service';
+import { WebSocketService } from '../service/websocket.service';
+import { NotificationService } from '../service/notification.service';
+import { LoadResourceService } from '../service/load-resource.service';
 
-import { roadOffset } from '../roadOffset';
-import { buildingOffset } from '../buildingOffset';
+import { roadOffset } from '../data/roadOffset';
+import { buildingOffset } from '../data/buildingOffset';
 
 import { FormsModule } from '@angular/forms';
-import { KnowledgeService } from '../knowledge.service';
+import { KnowledgeService } from '../service/knowledge.service';
 
 import { VideoChatComponent } from '../video-chat/video-chat.component';
 
 @Component({
   selector: 'app-threejs-scene',
-  standalone: true,
-  imports: [FormsModule, VideoChatComponent],
   providers: [PhysicsService, NotificationService],
   templateUrl: './threejs-scene.component.html',
   styleUrl: './threejs-scene.component.css',

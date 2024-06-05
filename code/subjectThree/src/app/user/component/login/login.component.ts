@@ -1,13 +1,9 @@
 import {Component, inject} from '@angular/core'
 import {FormsModule} from "@angular/forms";
-import {UserService} from "../user.service";
+import {UserService} from "@app/user/service/user.service";
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [
-    FormsModule
-  ],
   templateUrl: "./login.component.html",
   styleUrl: './login.component.css'
 })

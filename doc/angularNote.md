@@ -27,7 +27,7 @@
 
 **创建组件**
 
-`ng generate component HousingLocation --standalone --skip-tests`
+`ng generate component HousingLocation --skip-tests`
 
 **创建接口**
 

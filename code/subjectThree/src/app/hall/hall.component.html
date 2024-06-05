@@ -1,0 +1,27 @@
+<div id="main-container">
+    <div id="main-left">
+        <div id="main-room-list">
+            <div *ngFor="let room of roomOptions | keyvalue">
+                <span>{{room.key}}: {{room.value}} member(s) </span>
+                <button class="main-goto-three-btn" class="main-enter-btn" color="primary" (click)="gotoThree(room.key)">go to</button>
+            </div>
+            <div>
+                <button id="main-create-btn" mat-button class="app-navi-button" (click)="createRoom()">createRoom</button>
+            </div>
+        </div>
+    </div>
+    <div id="main-right">
+        <div id="main-model-preview"></div>
+        <div id="main-model-list">
+            <div class="main-btn-container">
+                <button id="main-prev-btn" color="primary" (click)="prev()">prev</button>
+            </div>
+            <div id="main-model-name">{{model_name}}</div>
+            <div class="main-btn-container">
+                <button id="main-next-btn" color="primary" (click)="next()">next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <app-threejs-scene></app-threejs-scene> -->
