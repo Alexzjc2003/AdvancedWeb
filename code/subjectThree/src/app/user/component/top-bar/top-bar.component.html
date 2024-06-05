@@ -11,6 +11,9 @@
         <button mat-button *ngIf="!isLoggedIn" class="top-bar-navi-button" routerLink="register">
             sign up
         </button>
+        <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" routerLink="hall">
+            three
+        </button>
         <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" (click)="gotoSpace()">
             space
         </button>

@@ -119,29 +119,19 @@ export class UserService {
 	}
 
 	modifyUserDetail(
-		username: string,
-		password: string,
 		gender: string,
 		age: number,
 		phone: string,
 		email: string,
-		point: number,
-		is_passed: boolean,
 		onSuccess: (resp: any) => void,
 		onError: (resp: any) => void
 	): void {
 		const putData = {
 			age: age,
-			created_at: "0",
 			email: email,
 			gender: gender,
 			id: this.getUserId(),
-			is_passed: is_passed,
-			password: password,
-			phone: phone,
-			point: point,
-			updated_at: "0",
-			username: username
+			phone: phone
 		};
 
 		console.log("putdata", putData);

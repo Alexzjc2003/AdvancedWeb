@@ -13,7 +13,7 @@ import { WebSocketService } from '../service/websocket.service';
   templateUrl: './hall.component.html',
   styleUrl: './hall.component.css'
 })
-export class MainPageComponent implements OnInit {
+export class HallComponent implements OnInit {
   carOptions: string[];
   roomOptions: { [key: string]: number };
 

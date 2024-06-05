@@ -26,6 +26,7 @@ import { ThreejsSceneComponent } from './threejs-scene/threejs-scene.component';
 import { VideoChatComponent } from './video-chat/video-chat.component';
 import { TopBarComponent } from '@app/user/component/top-bar/top-bar.component';
 import { SpaceComponent } from '@app/user/component/space/space.component';
+import { HallComponent } from '@app/hall/hall.component';
 
 @NgModule({
     declarations: [
@@ -36,7 +37,8 @@ import { SpaceComponent } from '@app/user/component/space/space.component';
         ThreejsSceneComponent,
         VideoChatComponent,
         TopBarComponent,
-        SpaceComponent
+        SpaceComponent,
+        HallComponent
     ],
     imports: [
         CommonModule,
@@ -74,6 +76,11 @@ import { SpaceComponent } from '@app/user/component/space/space.component';
                 path: 'space',
                 component: SpaceComponent,
                 title: 'space'
+            },
+            {
+                path: 'hall',
+                component: HallComponent,
+                title: 'hall'
             },
             {
                 path: 'scene',

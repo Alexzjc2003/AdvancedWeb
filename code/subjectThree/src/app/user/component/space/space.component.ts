@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '@app/user/service/user.service';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-space',
@@ -28,22 +27,18 @@ export class SpaceComponent implements OnInit{
 	ngOnInit() {
 		let detail: any = this.userService.getUserDetail();
     this.setUserInfo(detail);
-    console.log(this.userInfo);
+    console.log("info:",this.userInfo);
 	}
 
 	modify() {
     let self = this;
 		if (this.editMode) {
-			console.log(this.userInfo);
+			console.log("modify", this.userInfo);
 			this.userService.modifyUserDetail(
-        this.userInfo.username,
-        this.userInfo.password,
         this.userInfo.gender,
-        this.userInfo.age,
+        Number(this.userInfo.age),
         this.userInfo.phone,
         this.userInfo.email,
-        this.userInfo.point,
-        this.userInfo.is_passed,
         (resp) => {
           self.setUserInfo(resp);
           this.editMode = false;
