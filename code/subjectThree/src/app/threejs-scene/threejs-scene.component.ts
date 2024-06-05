@@ -21,6 +21,7 @@ import { FormsModule } from '@angular/forms';
 import { KnowledgeService } from '../service/knowledge.service';
 
 import { VideoChatComponent } from '../video-chat/video-chat.component';
+import { UserService } from '@app/user/service/user.service';
 
 @Component({
   selector: 'app-threejs-scene',
@@ -115,7 +116,8 @@ export class ThreejsSceneComponent implements OnInit {
   constructor(
     private notification: NotificationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService
   ) {
     this.roadPosition = roadPosition;
     this.roadOffset = roadOffset;
@@ -248,6 +250,7 @@ export class ThreejsSceneComponent implements OnInit {
     console.log('sendInit', this.roomId);
     let self = this;
     this.io.sendMsg('init', {
+      user_id: self.userService.getUserId(),
       roomID: self.roomId,
       model: self.model_name,
       position: {

@@ -144,6 +144,8 @@ export class UserService {
 			username: username
 		};
 
+		console.log("putdata", putData);
+
 		let headers = {
 			'Content-Type': 'application/json',
 			'Authorization': this.userInfo.token
