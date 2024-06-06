@@ -3,19 +3,12 @@ import * as THREE from 'three';
 import { Router, NavigationEnd } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 
-
-
 import { PhysicsService } from '@app/three/service/physics.service'
 import { CameraService } from '@app/three/service/camera.service';
 import { CarcontrolService } from '@app/three/service/carcontrol.service';
 
 import { NotificationService } from '@app/three/service/notification.service';
-import { LoadResourceService } from '@app/three/service/load-resource.service';
 
-
-
-import { KnowledgeService } from '@app/three/service/knowledge.service';
-import { UserService } from '@app/user/service/user.service';
 import { LoadResourcePart } from './load-resource';
 import { RemotePart } from './remote';
 import { EnvironmentPart } from './environment';
@@ -46,8 +39,7 @@ export class ThreejsSceneComponent implements OnInit {
   keyboardPressed: { [key: string]: number };
 
   carcontrol: CarcontrolService = new CarcontrolService();
-  // io: WebSocketService = new WebSocketService();
-  loader: LoadResourceService = new LoadResourceService();
+ 
 
   globalScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1);
 
@@ -66,11 +58,11 @@ export class ThreejsSceneComponent implements OnInit {
     private notification: NotificationService,
     private router: Router,
     private route: ActivatedRoute,
+    public physics: PhysicsService,
 
     private loadResourcePart: LoadResourcePart,
     private remotePart: RemotePart,
     private environmentPart: EnvironmentPart,
-    public physics: PhysicsService,
     private noticePart: NoticePart
   ) {
     
@@ -172,10 +164,6 @@ export class ThreejsSceneComponent implements OnInit {
     this.chat_msg = ""
   }
 
-
-  
-
-
   loadLocalCar(carName: string) {
     let self = this;
     this.loadResourcePart.loadCarResouce(carName, (carObj) => {
@@ -188,8 +176,6 @@ export class ThreejsSceneComponent implements OnInit {
       self.remotePart.sendInit(self.model, self.model_name);
     });
   }
-
-  
 
   bindEventListener() {
     let self = this;
@@ -313,10 +299,6 @@ export class ThreejsSceneComponent implements OnInit {
     animate();
   }
 
-  
-
-  
-
   // debugCameraMove() {
   //   if (this.keyboardPressed['w'] == 1) {
   //     // W键
@@ -343,8 +325,5 @@ export class ThreejsSceneComponent implements OnInit {
   //     this.camera.position.y -= 1;
   //   }
   // }
-
-  
-
 
 }
