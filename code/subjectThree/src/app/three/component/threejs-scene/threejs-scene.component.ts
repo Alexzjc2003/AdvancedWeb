@@ -19,6 +19,7 @@ import { UserService } from '@app/user/service/user.service';
 import { LoadResourcePart } from './load-resource';
 import { RemotePart } from './remote';
 import { EnvironmentPart } from './environment';
+import { NoticePart } from './notice';
 
 @Component({
   selector: 'app-threejs-scene',
@@ -47,7 +48,6 @@ export class ThreejsSceneComponent implements OnInit {
   carcontrol: CarcontrolService = new CarcontrolService();
   // io: WebSocketService = new WebSocketService();
   loader: LoadResourceService = new LoadResourceService();
-  knowledge: KnowledgeService = new KnowledgeService();
 
   globalScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1);
 
@@ -66,11 +66,12 @@ export class ThreejsSceneComponent implements OnInit {
     private notification: NotificationService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService,
+
     private loadResourcePart: LoadResourcePart,
     private remotePart: RemotePart,
     private environmentPart: EnvironmentPart,
-    public physics: PhysicsService
+    public physics: PhysicsService,
+    private noticePart: NoticePart
   ) {
     
 
@@ -117,6 +118,7 @@ export class ThreejsSceneComponent implements OnInit {
     //   0.1,
     //   5000
     // );
+
     this.cameraService.initCam(
       75,
       this.container.clientWidth / this.container.clientHeight,
@@ -152,11 +154,8 @@ export class ThreejsSceneComponent implements OnInit {
     this.scene.add(axes);
 
     this.loadLocalCar(this.model_name);
+
     this.environmentPart.loadEnvironment();
-    // this.loadAllRoads();
-
-    // this.loadAllBuildings();
-
     this.remotePart.init_websocket();
 
     this.router.events.subscribe((event) => {
@@ -164,8 +163,6 @@ export class ThreejsSceneComponent implements OnInit {
         this.remotePart.sendDisconnect();
       }
     });
-
-    // this.showNotice("发动");
   }
 
   sendChatMsg() {
@@ -176,26 +173,7 @@ export class ThreejsSceneComponent implements OnInit {
   }
 
 
-  showNotice(theme: string) {
-    let noticeContainer = document.getElementById('notice-container');
-    if (noticeContainer == undefined) return;
-
-    noticeContainer.innerHTML = '';
-    const themeTitle = document.createElement('p');
-    themeTitle.textContent = `关于 ${theme} 的提示：`;
-
-    const ul = document.createElement('ul');
-    const items = this.knowledge.getKnowledge(theme);
-
-    items.forEach(function (item) {
-      const li = document.createElement('li');
-      li.textContent = `${item.title}: ${item.content}`;
-      ul.appendChild(li);
-    });
-
-    noticeContainer.appendChild(themeTitle);
-    noticeContainer.appendChild(ul);
-  }
+  
 
 
   loadLocalCar(carName: string) {
@@ -253,7 +231,7 @@ export class ThreejsSceneComponent implements OnInit {
         _turn = 0;
       if (this.keyboardPressed['w'] == 1) {
         // W键
-        this.showNotice('发动');
+        this.noticePart.showNotice('发动');
         _gear += 1;
         _throttle = true;
       }
@@ -264,12 +242,12 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['a'] == 1) {
         // A键
-        this.showNotice('转弯');
+        this.noticePart.showNotice('转弯');
         _turn += 1;
       }
       if (this.keyboardPressed['d'] == 1) {
         // D键
-        this.showNotice('转弯');
+        this.noticePart.showNotice('转弯');
         _turn -= 1;
       }
       if (this.keyboardPressed['e'] == 1) {
