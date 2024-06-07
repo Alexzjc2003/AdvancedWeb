@@ -1,0 +1,8 @@
+<div *ngIf="exams">
+    <h2>User Exams</h2>
+    <mat-list-item *ngFor="let exam of exams, index as examIndex">
+        <p mat-line *ngIf="exam.title">
+            title: {{ exam.title }}
+        </p>
+    </mat-list-item>
+</div>

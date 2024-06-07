@@ -17,6 +17,9 @@
         <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" (click)="gotoSpace()">
             space
         </button>
+        <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" (click)="gotoExamRecord()">
+            record
+        </button>
         <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" (click)="logout()">
             log out
         </button>

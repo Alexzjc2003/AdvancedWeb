@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { EmailValidator } from '@angular/forms';
 import { HttpRequestService } from '@app/utils/service/httprequest.service';
 import { BehaviorSubject } from 'rxjs';
 
@@ -10,16 +11,18 @@ export class UserService {
 	registerUrl: string = "api/register";
 	getInfoUrl: string = "api/users/data";
 	updateUserUrl: string = "api/users";
+	getExamUrl: string = "api/exams";
 
 	default_headers: any = { 'Content-Type': 'application/json' };
 
 	loggedIn = new BehaviorSubject<boolean>(false);
 	isLoggedIn = this.loggedIn.asObservable();
 
-	userInfo: { id: string, token: string, detail: {} } = {
+	userInfo: { id: string, token: string, detail: {}, exams: any[] } = {
 		token: "",
 		id: "",
-		detail: {}
+		detail: {},
+		exams: []
 	};
 
 	constructor(private httpRequestService: HttpRequestService) { }
@@ -38,7 +41,13 @@ export class UserService {
 				self.userInfo.token = resp.access;
 				self.loggedIn.next(true);
 				self.loadUserDetail((resp) => {
-					onSuccess(resp);
+					self.loadUserExams((resp) => {
+						onSuccess(resp);
+					}, 
+					(resp) => {
+						console.log("获取考试失败");
+						onError(resp);
+					})
 				}, 
 				(resp) => {
 					console.log("获取信息失败");
@@ -158,12 +167,46 @@ export class UserService {
 			});
 	}
 
+	loadUserExams(onSuccess: (resp: any) => void, onError: (resp: any) => void) {
+		let self = this;
+		if (!this.isLoggedin()) {
+			console.warn("user.service.ts::loadUserExams: load exams before login.");
+			return;
+		}
+		let headers = {
+			'Content-Type': 'application/json',
+			'Authorization': this.userInfo.token
+		};
+		this.httpRequestService.get(this.getExamUrl, {}, headers,
+			resp => {
+				console.log(resp);
+				for(let exam of resp){
+					self.userInfo.exams.push({
+						id: exam.id,
+						title: exam.title,
+						description: exam.description,
+						start_time: "2024-6-7",
+						end_time: "2024-6-7",
+						score: exam.score
+					});
+				}
+				onSuccess(resp);
+			},
+
+			resp => {
+				console.log(resp);
+				onError(resp);
+			}
+		);
+	}
+
 	logout() {
 		this.loggedIn.next(false);
 		this.userInfo = {
 			token: "",
 			id: "",
-			detail: {}
+			detail: {},
+			exams: []
 		};
 	}
 
@@ -173,6 +216,10 @@ export class UserService {
 
 	getUserDetail() {
 		return this.userInfo.detail;
+	}
+
+	getUserExams(){
+		return this.userInfo.exams;
 	}
 
 	getUserId() {
