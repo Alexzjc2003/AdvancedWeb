@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { EmailValidator } from '@angular/forms';
 import { HttpRequestService } from '@app/utils/service/httprequest.service';
 import { BehaviorSubject } from 'rxjs';
 
@@ -39,6 +38,7 @@ export class UserService {
 				console.log(resp);
 				self.userInfo.id = resp.user_id;
 				self.userInfo.token = resp.access;
+				self.storeUserInfo();
 				self.loggedIn.next(true);
 				self.loadUserDetail((resp) => {
 					self.loadUserExams((resp) => {
@@ -117,6 +117,7 @@ export class UserService {
 					updated_at: resp.updated_at,
 					username: resp.username
 				};
+				self.storeUserInfo();
 				onSuccess(resp);
 			},
 
@@ -208,6 +209,7 @@ export class UserService {
 			detail: {},
 			exams: []
 		};
+		this.clearUserInfo()
 	}
 
 	isLoggedin() {
@@ -215,6 +217,11 @@ export class UserService {
 	}
 
 	getUserDetail() {
+		const stringUserInfo = localStorage.getItem('userInfo');
+		if (stringUserInfo) {
+			const userInfo = JSON.parse(stringUserInfo);
+			return userInfo.detail;
+		}
 		return this.userInfo.detail;
 	}
 
@@ -223,10 +230,29 @@ export class UserService {
 	}
 
 	getUserId() {
+		const stringUserInfo = localStorage.getItem('userInfo');
+		if (stringUserInfo) {
+			const userInfo = JSON.parse(stringUserInfo);
+			return userInfo.id;
+		}
+		console.log(this.userInfo);
 		return this.userInfo.id;
 	}
 
 	getUserToken() {
+		const stringUserInfo = localStorage.getItem('userInfo');
+		if (stringUserInfo) {
+			const userInfo = JSON.parse(stringUserInfo);
+			return userInfo.token;
+		}
 		return this.userInfo.token;
+	}
+
+	storeUserInfo() {
+		localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+	}
+
+	clearUserInfo() {
+		localStorage.removeItem('userInfo');
 	}
 }

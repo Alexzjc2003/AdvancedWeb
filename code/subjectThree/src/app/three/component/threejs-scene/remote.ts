@@ -105,8 +105,15 @@ export class RemotePart {
     sendInit(model: any, model_name: string) {
         console.log('sendInit', this.roomId);
         let self = this;
+
+        let UserID = 0
+        const userInfo = localStorage.getItem('userInfo');
+        if (userInfo) {
+            const jsonUserInfo = JSON.parse(userInfo);
+            UserID = +jsonUserInfo.id;
+        }
         this.io.sendMsg('init', {
-            user_id: self.userService.getUserId(),
+            user_id: UserID,
             roomID: self.roomId,
             model: model_name,
             position: {
@@ -136,17 +143,17 @@ export class RemotePart {
 
     updateSocket(model: any) {
         this.io.sendMsg('update', {
-          position: {
-            x: model.obj.position.x,
-            y: model.obj.position.y,
-            z: model.obj.position.z,
-          },
-          rotation: {
-            w: model.obj.quaternion.w,
-            x: model.obj.quaternion.x,
-            y: model.obj.quaternion.y,
-            z: model.obj.quaternion.z,
-          },
+            position: {
+                x: model.obj.position.x,
+                y: model.obj.position.y,
+                z: model.obj.position.z,
+            },
+            rotation: {
+                w: model.obj.quaternion.w,
+                x: model.obj.quaternion.x,
+                y: model.obj.quaternion.y,
+                z: model.obj.quaternion.z,
+            },
         });
-      }
+    }
 }
