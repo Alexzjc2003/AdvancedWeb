@@ -36,14 +36,15 @@ export class UserService {
 				console.log(resp);
 				self.userInfo.id = resp.user_id;
 				self.userInfo.token = resp.access;
+				self.storeUserInfo();
 				self.loggedIn.next(true);
 				self.loadUserDetail((resp) => {
 					onSuccess(resp);
-				}, 
-				(resp) => {
-					console.log("获取信息失败");
-					onError(resp);
-				});
+				},
+					(resp) => {
+						console.log("获取信息失败");
+						onError(resp);
+					});
 			},
 
 			resp => {
@@ -108,6 +109,7 @@ export class UserService {
 					updated_at: resp.updated_at,
 					username: resp.username
 				};
+				self.storeUserInfo();
 				onSuccess(resp);
 			},
 
@@ -165,6 +167,7 @@ export class UserService {
 			id: "",
 			detail: {}
 		};
+		this.clearUserInfo()
 	}
 
 	isLoggedin() {
@@ -172,14 +175,39 @@ export class UserService {
 	}
 
 	getUserDetail() {
+		const stringUserInfo = localStorage.getItem('userInfo');
+		if (stringUserInfo) {
+			const userInfo = JSON.parse(stringUserInfo);
+			return userInfo.detail;
+		}
 		return this.userInfo.detail;
 	}
 
+	// warning: return string Here!
 	getUserId() {
+		const stringUserInfo = localStorage.getItem('userInfo');
+		if (stringUserInfo) {
+			const userInfo = JSON.parse(stringUserInfo);
+			return userInfo.id;
+		}
+		console.log(this.userInfo);
 		return this.userInfo.id;
 	}
 
 	getUserToken() {
+		const stringUserInfo = localStorage.getItem('userInfo');
+		if (stringUserInfo) {
+			const userInfo = JSON.parse(stringUserInfo);
+			return userInfo.token;
+		}
 		return this.userInfo.token;
+	}
+
+	storeUserInfo() {
+		localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+	}
+
+	clearUserInfo() {
+		localStorage.removeItem('userInfo');
 	}
 }

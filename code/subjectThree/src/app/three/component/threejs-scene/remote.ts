@@ -105,10 +105,13 @@ export class RemotePart {
     sendInit(model: any, model_name: string) {
         console.log('sendInit', this.roomId);
         let self = this;
-        // TODO: get user id
-        console.log(self.userService.getUserId());
+
         let UserID = 0
-        UserID = +self.userService.getUserId()
+        const userInfo = localStorage.getItem('userInfo');
+        if (userInfo) {
+            const jsonUserInfo = JSON.parse(userInfo);
+            UserID = +jsonUserInfo.id;
+        }
         this.io.sendMsg('init', {
             user_id: UserID,
             roomID: self.roomId,
