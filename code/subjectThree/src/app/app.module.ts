@@ -17,6 +17,8 @@ import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
+
 import { NgOptimizedImage } from "@angular/common";
 
 import { MainPageComponent } from '@app/main-page/main-page.component';
@@ -27,6 +29,7 @@ import { VideoChatComponent } from '@app/video-chat/video-chat.component';
 import { TopBarComponent } from '@app/user/component/top-bar/top-bar.component';
 import { SpaceComponent } from '@app/user/component/space/space.component';
 import { HallComponent } from '@app/three/component/hall/hall.component';
+import { ExamRecordComponent } from './user/component/exam-record/exam-record.component';
 
 @NgModule({
     declarations: [
@@ -38,6 +41,7 @@ import { HallComponent } from '@app/three/component/hall/hall.component';
         VideoChatComponent,
         TopBarComponent,
         SpaceComponent,
+        ExamRecordComponent,
         HallComponent
     ],
     imports: [
@@ -52,6 +56,7 @@ import { HallComponent } from '@app/three/component/hall/hall.component';
         MatIconModule,
         MatButtonModule,
         MatToolbarModule,
+        MatListModule,
         NgOptimizedImage,
 
         RouterOutlet,
@@ -76,6 +81,11 @@ import { HallComponent } from '@app/three/component/hall/hall.component';
                 path: 'space',
                 component: SpaceComponent,
                 title: 'space'
+            },
+            {
+                path: 'record',
+                component: ExamRecordComponent,
+                title: 'record'
             },
             {
                 path: 'hall',

@@ -31,4 +31,12 @@ export class TopBarComponent implements OnInit{
     }
     this.router.navigate(['space']);
   }
+
+  gotoExamRecord(){
+    let token: string = this.userService.getUserToken();
+    if(token == ""){
+      console.warn("top-bar.component.ts::gotoExamRecord: not authorized.");
+    }
+    this.router.navigate(['record']);
+  }
 }
