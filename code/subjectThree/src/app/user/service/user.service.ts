@@ -43,16 +43,16 @@ export class UserService {
 				self.loadUserDetail((resp) => {
 					self.loadUserExams((resp) => {
 						onSuccess(resp);
-					}, 
+					},
+						(resp) => {
+							console.log("获取考试失败");
+							onError(resp);
+						})
+				},
 					(resp) => {
-						console.log("获取考试失败");
+						console.log("获取信息失败");
 						onError(resp);
-					})
-				}, 
-				(resp) => {
-					console.log("获取信息失败");
-					onError(resp);
-				});
+					});
 			},
 
 			resp => {
@@ -140,11 +140,27 @@ export class UserService {
 			age: age,
 			email: email,
 			gender: gender,
-			id: this.getUserId(),
+			// id: this.getUserId(),
 			phone: phone
 		};
 
 		console.log("putdata", putData);
+
+		// const oldUserDetail = this.getUserDetail();
+		// let changed = false;
+		// if (oldUserDetail) {
+		// 	for (let key in putData) {
+		// 		if (putData[key] != oldUserDetail[key]) {
+		// 			changed = true;
+		// 			break;
+		// 		}
+		// 	}
+		// }
+		// if (!changed) {
+		// 	console.log("没有修改");
+		// 	onSuccess({});
+		// 	return;
+		// }
 
 		let headers = {
 			'Content-Type': 'application/json',
@@ -181,7 +197,7 @@ export class UserService {
 		this.httpRequestService.get(this.getExamUrl, {}, headers,
 			resp => {
 				console.log(resp);
-				for(let exam of resp){
+				for (let exam of resp) {
 					self.userInfo.exams.push({
 						id: exam.id,
 						title: exam.title,
@@ -225,7 +241,7 @@ export class UserService {
 		return this.userInfo.detail;
 	}
 
-	getUserExams(){
+	getUserExams() {
 		return this.userInfo.exams;
 	}
 
