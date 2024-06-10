@@ -19,6 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import {MatTableModule} from '@angular/material/table';
+import {MatDialogModule} from '@angular/material/dialog';
 
 import { NgOptimizedImage } from "@angular/common";
 
@@ -30,7 +31,7 @@ import { VideoChatComponent } from '@app/video-chat/video-chat.component';
 import { TopBarComponent } from '@app/user/component/top-bar/top-bar.component';
 import { SpaceComponent } from '@app/user/component/space/space.component';
 import { HallComponent } from '@app/three/component/hall/hall.component';
-import { ExamRecordComponent } from './user/component/exam-record/exam-record.component';
+import { ExamRecordComponent, PunishmentDetailDialog } from './user/component/exam-record/exam-record.component';
 
 @NgModule({
     declarations: [
@@ -43,6 +44,7 @@ import { ExamRecordComponent } from './user/component/exam-record/exam-record.co
         TopBarComponent,
         SpaceComponent,
         ExamRecordComponent,
+        PunishmentDetailDialog,
         HallComponent
     ],
     imports: [
@@ -59,7 +61,8 @@ import { ExamRecordComponent } from './user/component/exam-record/exam-record.co
         MatToolbarModule,
         MatListModule,
         MatTableModule,
-        
+        MatDialogModule,
+
         NgOptimizedImage,
 
         RouterOutlet,

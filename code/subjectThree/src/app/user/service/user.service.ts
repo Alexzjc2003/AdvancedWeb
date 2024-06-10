@@ -217,6 +217,31 @@ export class UserService {
 		);
 	}
 
+	fetchExamPunishments(examId: number, onSuccess: (resp: any) => void, onError: (resp: any) => void) {
+		let fetchExamPunishmentsUrl = `api/exams/${examId}/punishments`;
+
+		if (!this.isLoggedin()) {
+			console.warn("user.service.ts::fetchExamPunishments: fetch punishments before login.");
+			return;
+		}
+		let headers = {
+			'Content-Type': 'application/json',
+			'Authorization': this.userInfo.token
+		};
+
+		this.httpRequestService.get(fetchExamPunishmentsUrl, {}, headers,
+			resp => {
+				console.log(resp);
+				onSuccess(resp);
+			},
+
+			resp => {
+				console.log(resp);
+				onError(resp);
+			}
+		);
+	}
+
 	logout() {
 		this.loggedIn.next(false);
 		this.userInfo = {
