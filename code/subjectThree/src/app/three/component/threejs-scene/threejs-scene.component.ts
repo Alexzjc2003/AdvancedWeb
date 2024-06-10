@@ -52,9 +52,6 @@ export class ThreejsSceneComponent implements OnInit {
   chat_msg: string = '';
   isTyping: boolean = false;
 
-  debug_mode: number = 0;
-  // debug_mode: number = 1;
-
   constructor(
     private notification: NotificationService,
     private router: Router,
@@ -75,8 +72,6 @@ export class ThreejsSceneComponent implements OnInit {
       s: 0,
       d: 0,
       e: 0,
-      f: 0, // for camera debug
-      c: 0, // for camera debug
     };
   }
 
@@ -106,13 +101,6 @@ export class ThreejsSceneComponent implements OnInit {
     }
     this.bindEventListener();
 
-    // this.camera = new THREE.PerspectiveCamera(
-    //   75,
-    //   this.container.clientWidth / this.container.clientHeight,
-    //   0.1,
-    //   5000
-    // );
-
     this.cameraService.initCam(
       75,
       this.container.clientWidth / this.container.clientHeight,
@@ -127,11 +115,6 @@ export class ThreejsSceneComponent implements OnInit {
     );
 
     this.container.appendChild(this.renderer.domElement);
-
-    // if (this.debug_mode) {
-    //   this.camera.position.copy(new THREE.Vector3(0, 10, 0));
-    //   this.camera.lookAt(new THREE.Vector3(0, 10, 10));
-    // }
 
     this.lookAtVector = new THREE.Vector3(0, 0, 0);
 
@@ -244,6 +227,10 @@ export class ThreejsSceneComponent implements OnInit {
         // E键 - 弹窗测试
         this.notification.showNotification('This is a test message.');
       }
+      if (this.keyboardPressed['z'] == 1) {
+        // Z键 - 惩罚测试
+        this.examService.addPunishment("AIRCRASH", "惩罚测试", -10, (resp)=>{}, (resp)=>{});
+      }
 
       let _right = 0,
         _up = 0,
@@ -277,23 +264,6 @@ export class ThreejsSceneComponent implements OnInit {
 
       this.cameraService.control(dt, _up, _right, _far);
       this.cameraService.follow(this.model.obj);
-      // const direction = new THREE.Vector3();
-      // this.model.obj.getWorldDirection(direction);
-
-      // direction.multiplyScalar(6);
-      // direction.negate();
-
-      // if (!this.debug_mode) {
-      //   this.camera.position.copy(
-      //     direction
-      //       .clone()
-      //       .add(this.model.obj.position)
-      //       .add(new THREE.Vector3(0, 4, 0))
-      //   );
-      //   this.camera.lookAt(this.lookAtVector.copy(this.model.obj.position));
-      // } else {
-      //   this.debugCameraMove();
-      // }
 
       this.physics.updateDebugger();
       this.remotePart.updateSocket(this.model);
@@ -302,32 +272,4 @@ export class ThreejsSceneComponent implements OnInit {
 
     animate();
   }
-
-  // debugCameraMove() {
-  //   if (this.keyboardPressed['w'] == 1) {
-  //     // W键
-  //     this.camera.position.z -= 1;
-  //   }
-  //   if (this.keyboardPressed['s'] == 1) {
-  //     // S键
-  //     this.camera.position.z += 1;
-  //   }
-  //   if (this.keyboardPressed['a'] == 1) {
-  //     // A键
-  //     this.camera.position.x -= 1;
-  //   }
-  //   if (this.keyboardPressed['d'] == 1) {
-  //     // D键
-  //     this.camera.position.x += 1;
-  //   }
-  //   if (this.keyboardPressed['f'] == 1) {
-  //     // F键
-  //     this.camera.position.y += 1;
-  //   }
-  //   if (this.keyboardPressed['c'] == 1) {
-  //     // C键
-  //     this.camera.position.y -= 1;
-  //   }
-  // }
-
 }
