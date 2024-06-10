@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 
 import { LoadResourceService } from '@app/three/service/load-resource.service';
 import { WebSocketService } from '@app/utils/service/websocket.service';
+import { ExamService } from '@app/three/service/exam.service';
 
 @Component({
   selector: 'app-hall',
@@ -35,7 +36,7 @@ export class HallComponent implements OnInit {
 
   io: WebSocketService = new WebSocketService();
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private examService: ExamService) {
     this.carOptions = carNameList;
     this.roomOptions = {};
   }
@@ -70,12 +71,18 @@ export class HallComponent implements OnInit {
   }
 
   gotoThree(roomId: string) {
-    this.router.navigate(['/scene'], {
-      queryParams: {
-        model: this.model_name,
-        roomId: roomId
-      }
-    });
+    let self = this;
+    this.examService.startExam(
+      (resp) => {
+        self.router.navigate(['/scene'], {
+          queryParams: {
+            model: this.model_name,
+            roomId: roomId
+          }
+        });
+      },
+      (resp) => { }
+    );
   }
 
   handleNewRooms(roomMap: { [key: string]: string[] }) {

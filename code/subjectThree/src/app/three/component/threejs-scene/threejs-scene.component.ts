@@ -13,6 +13,7 @@ import { LoadResourcePart } from './load-resource';
 import { RemotePart } from './remote';
 import { EnvironmentPart } from './environment';
 import { NoticePart } from './notice';
+import { ExamService } from '@app/three/service/exam.service';
 
 @Component({
   selector: 'app-threejs-scene',
@@ -59,6 +60,7 @@ export class ThreejsSceneComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public physics: PhysicsService,
+    private examService: ExamService,
 
     private loadResourcePart: LoadResourcePart,
     private remotePart: RemotePart,
@@ -152,7 +154,9 @@ export class ThreejsSceneComponent implements OnInit {
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
+        console.log("sendDisconnect");
         this.remotePart.sendDisconnect();
+        this.examService.endExam((resp)=>{}, (resp)=> {});
       }
     });
   }
