@@ -11,7 +11,6 @@ export class ExamService {
 
 	startExamUrl: string = "api/exams/start";
 	endExamUrl: string = "api/exams/end";
-	
 
 	currentExamId: number = -1;
 
@@ -19,12 +18,17 @@ export class ExamService {
 
 	punishmentNameMap: any;
 
+	isOfficialDriving: boolean = false;
+
+	isExaming: boolean = false;
+
 	constructor(private httpRequestService: HttpRequestService, private userService: UserService) {
 		this.punishmentNameMap = punishmentNameMap;
 	}
 
-	startExam(onSuccess: (resp: any) => void, onError: (resp: any) => void): void {
+	startExam(onSuccess: (resp: any) => void, onError: (resp: any) => void, isOfficialDriving): void {
 		let self = this;
+		this.isOfficialDriving = isOfficialDriving;
 
 		let headers = {
 			'Content-Type': 'application/json',
@@ -42,10 +46,15 @@ export class ExamService {
 				console.log(resp);
 				onError(resp);
 			});
+		this.isExaming = true;
 	}
 
 	endExam(onSuccess: (resp: any) => void, onError: (resp: any) => void): void {
-		if(this.currentExamId == -1){
+		if (!this.isExaming) {
+			return;
+		}
+		this.isExaming = false;
+		if (this.currentExamId == -1) {
 			console.warn("exam.service.ts::endExam: endExam without startExam.");
 			return;
 		}
@@ -75,11 +84,11 @@ export class ExamService {
 		onSuccess: (resp: any) => void,
 		onError: (resp: any) => void
 	): void {
-		if(this.currentExamId == -1){
+		if (this.currentExamId == -1) {
 			console.warn("exam.service.ts::addPunishment: addPunishment without startExam.");
 			return;
 		}
-		
+
 		let headers = {
 			'Content-Type': 'application/json',
 			'Authorization': this.userService.getUserToken()
@@ -92,7 +101,10 @@ export class ExamService {
 			return;
 		}
 
-		let addPunishmentUrl: string = `api/exams/${this.currentExamId}/punishments`;
+		let addPunishmentUrl: string
+		if (!this.isOfficialDriving)
+			addPunishmentUrl = `api/exams/${this.currentExamId}/punishments`;
+		else addPunishmentUrl = `api/drivers/punishments`;
 
 		const postData = {
 			punishment_type: punishment_type,

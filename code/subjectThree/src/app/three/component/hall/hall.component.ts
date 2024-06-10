@@ -81,7 +81,8 @@ export class HallComponent implements OnInit {
           }
         });
       },
-      (resp) => { }
+      (resp) => { },
+      false
     );
   }
 
