@@ -202,8 +202,8 @@ export class UserService {
 						id: exam.id,
 						title: exam.title,
 						description: exam.description,
-						start_time: "2024-6-7",
-						end_time: "2024-6-7",
+						start_time: exam.start_time,
+						end_time: exam.end_time,
 						score: exam.score
 					});
 				}

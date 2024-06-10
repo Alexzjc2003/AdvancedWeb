@@ -8,6 +8,7 @@ import { UserService } from '@app/user/service/user.service';
 })
 export class ExamRecordComponent {
   exams: any[] = [];
+  displayedColumns: string[] = ['title', 'description', 'starttime', 'score', 'detail'];
 
   constructor(private userService: UserService) { }
 
@@ -28,5 +29,9 @@ export class ExamRecordComponent {
         score: exam.score
       })
     }
+  }
+
+  showDetail(examId: number){
+    console.log("get detail of " + examId);
   }
 }

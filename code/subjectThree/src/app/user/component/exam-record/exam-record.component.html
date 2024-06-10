@@ -1,8 +1,32 @@
 <div *ngIf="exams">
     <h2>User Exams</h2>
-    <mat-list-item *ngFor="let exam of exams, index as examIndex">
-        <p mat-line *ngIf="exam.title">
-            title: {{ exam.title }}
-        </p>
-    </mat-list-item>
+    <table mat-table [dataSource]="exams" class="mat-elevation-z8">
+        <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef> title </th>
+            <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> description </th>
+            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="starttime">
+            <th mat-header-cell *matHeaderCellDef> starttime </th>
+            <td mat-cell *matCellDef="let element"> {{element.start_time}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="score">
+            <th mat-header-cell *matHeaderCellDef> score </th>
+            <td mat-cell *matCellDef="let element"> {{element.score}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="detail">
+            <th mat-header-cell *matHeaderCellDef> detail </th>
+            <td mat-cell *matCellDef="let element"><button (click)="showDetail(element.id)">detail</button></td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
 </div>

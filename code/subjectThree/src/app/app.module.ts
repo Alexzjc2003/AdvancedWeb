@@ -18,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
+import {MatTableModule} from '@angular/material/table';
 
 import { NgOptimizedImage } from "@angular/common";
 
@@ -57,6 +58,8 @@ import { ExamRecordComponent } from './user/component/exam-record/exam-record.co
         MatButtonModule,
         MatToolbarModule,
         MatListModule,
+        MatTableModule,
+        
         NgOptimizedImage,
 
         RouterOutlet,
