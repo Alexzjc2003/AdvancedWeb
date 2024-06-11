@@ -129,7 +129,7 @@ export class ThreejsSceneComponent implements OnInit {
         this.examService.endExam(
           (resp) => { },
           (resp) => { },
-          true
+          false
         );
       }
     });
@@ -275,5 +275,13 @@ export class ThreejsSceneComponent implements OnInit {
   @HostListener('window:load', ['$event'])
   handleLoad(event: Event) {
     this.examService.startExam((resp) => { }, (resp) => { }, false);
+  }
+
+  exit() {
+    if (window.confirm("Do you really want to finish driving?")) {
+      this.examService.endExam((resp) => { }, (resp) => { }, true);
+      this.remotePart.sendDisconnect();
+      this.router.navigate(['/hall']);
+    }
   }
 }
