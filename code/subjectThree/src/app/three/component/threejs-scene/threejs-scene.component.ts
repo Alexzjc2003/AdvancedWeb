@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import * as THREE from 'three';
 import { Router, NavigationEnd } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
@@ -218,16 +218,7 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['z'] == 1) {
         // Z键 - 惩罚测试
-        this.examService.addPunishment(
-          'AIRCRASH',
-          '惩罚测试',
-          -10,
-          (resp) => {},
-          (resp) => {}
-        );
-      }
-      if (this.keyboardPressed['b']) {
-        _brake = true;
+        this.examService.addPunishment("AIRCRASH", "惩罚测试", 10, (resp)=>{}, (resp)=>{});
       }
 
       let _right = 0,
@@ -269,5 +260,14 @@ export class ThreejsSceneComponent implements OnInit {
     };
 
     animate();
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  handleBeforeUnload(event: Event) {
+    this.examService.endExam((resp)=>{}, (resp)=> {});
+    // setTimeout(()=>{
+    // console.log('before unload');
+    // this.sendDisconnect();
+    // },1000)
   }
 }
