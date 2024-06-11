@@ -76,7 +76,7 @@ export class ThreejsSceneComponent implements OnInit {
   initScene(): void {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xadd8e6);
-    this.remotePart.setRoom(this.roomId, this.scene);
+    this.remotePart.setRoom(this.roomId, this.scene, this.carcontrol);
     this.environmentPart.setScene(this.scene, this.physics);
 
     this.physics.useDebugger(this.scene);
@@ -252,7 +252,8 @@ export class ThreejsSceneComponent implements OnInit {
         this.carcontrol.turnLight(-1);
       }
       if (this.keyboardPressed['n']) {
-        this.carcontrol.beep();
+        // this.carcontrol.beep();
+        this.remotePart.sendEvent('beep', this.roomId);
       }
       // this.keyboardPressed = {};
 

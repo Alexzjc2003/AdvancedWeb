@@ -3,6 +3,7 @@ import { NotificationService } from '@app/three/service/notification.service';
 import { UserService } from '@app/user/service/user.service';
 import { WebSocketService } from '@app/utils/service/websocket.service';
 import * as THREE from 'three';
+import { CarcontrolService } from '@app/three/service/carcontrol.service';
 import { LoadResourcePart } from './load-resource';
 
 @Injectable({
@@ -15,13 +16,15 @@ export class RemotePart {
   scene: any;
   roomId: string = '';
   chatSocket: WebSocket | null = null;
+  carcontrol: any;
   constructor(
     private loadResourcePart: LoadResourcePart,
     private notification: NotificationService,
     private userService: UserService
   ) { }
 
-  setRoom(roomId: string, scene: THREE.Scene) {
+  setRoom(roomId: string, scene: THREE.Scene, carcontrol: CarcontrolService) {
+    this.carcontrol = carcontrol;
     this.roomId = roomId;
     this.scene = scene;
   }
@@ -48,6 +51,11 @@ export class RemotePart {
     this.io.onMessage('message').subscribe((obj: any) => {
       // console.log(obj);
       self.handleChat(obj.id, obj.message);
+    });
+
+    this.io.onMessage('event').subscribe((obj: any) => {
+      // console.log(obj);
+      self.handleEvent(obj.event);
     });
   }
 
@@ -200,6 +208,28 @@ export class RemotePart {
         z: model.obj.quaternion.z,
       },
     });
+  }
+
+  sendEvent(event: string, roomID: string) {
+    this.io.sendMsg('event', {
+      event: event,
+      room_id: roomID,
+      id: this.socketId,
+      // position
+    });
+  }
+
+  handleEvent(event: string) {
+    switch (event) {
+      case 'beep':
+        {
+          // beep
+          this.carcontrol.beep();
+        }
+        break;
+      default:
+        break;
+    }
   }
 
   createWebSocket() {
