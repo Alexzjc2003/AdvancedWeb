@@ -143,6 +143,7 @@ export class PhysicsService {
     _options.chassisConnectionPointLocal.set(wheel_x, wheel_y, -wheel_z);
     this.vehicle.addWheel(_options);
 
+    // create rigid body for wheels
     this.vehicle.wheelInfos.forEach((w) => {
       let _cylinder = new CANNON.Cylinder(w.radius, w.radius, 0.2);
       let _wheelbody = new CANNON.Body({
@@ -215,8 +216,8 @@ export class PhysicsService {
 
     let _f = 2000;
 
-    for (let i = 0; i < 4; i++) {
-      this.vehicle.setBrake(status.brake ? 5000 : 0, i);
+    for (let i = 2; i < 4; i++) {
+      this.vehicle.setBrake(status.brake ? _f : 0, i);
     }
 
     this.vehicle.applyEngineForce(
@@ -231,7 +232,5 @@ export class PhysicsService {
     this.vehicle.setSteeringValue((status.rotation / 180) * Math.PI, 0);
     this.vehicle.setSteeringValue((status.rotation / 180) * Math.PI, 1);
 
-    // this.vehicle.applyEngineForce(status.throttle ? -500 * status.gear : 0, 0);
-    // this.vehicle.applyEngineForce(status.throttle ? -500 * status.gear : 0, 1);
   }
 }
