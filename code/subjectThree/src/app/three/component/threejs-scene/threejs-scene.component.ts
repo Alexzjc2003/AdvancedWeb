@@ -170,6 +170,7 @@ export class ThreejsSceneComponent implements OnInit {
       if (self.isTyping) {
         return;
       }
+      // console.log(event.key);
       self.keyboardPressed[event.key] = 1;
     });
 
@@ -244,6 +245,17 @@ export class ThreejsSceneComponent implements OnInit {
         _far -= 10;
       }
 
+      if (this.keyboardPressed['ArrowLeft']) {
+        this.carcontrol.turnLight(1);
+      }
+      if (this.keyboardPressed['ArrowRight']) {
+        this.carcontrol.turnLight(-1);
+      }
+      if (this.keyboardPressed['n']) {
+        this.carcontrol.beep();
+      }
+      // this.keyboardPressed = {};
+
       let dt = this.clock.getDelta();
       this.carcontrol.setControl(dt, _gear, _throttle, _brake, _turn);
       this.physics.controlCar(this.carcontrol.getStatus());
@@ -251,6 +263,21 @@ export class ThreejsSceneComponent implements OnInit {
 
       this.model.obj.position.copy(this.physics.getCarPosition());
       this.model.obj.quaternion.copy(this.physics.getCarRotation());
+
+      // overspeed
+      const SPEED_LIMIT = 30;
+      if (this.carcontrol.getStatus().speed > SPEED_LIMIT) {
+        console.log('overspeed');
+      }
+
+      // turning light
+      const TUNNING_LIMIT = 5;
+      if (
+        Math.abs(this.carcontrol.getStatus().rotation) > TUNNING_LIMIT &&
+        !this.carcontrol.isLightCorrect()
+      ) {
+        console.log('incorrect light');
+      }
 
       this.cameraService.control(dt, _up, _right, _far);
       this.cameraService.follow(this.model.obj);
