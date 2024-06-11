@@ -26,7 +26,7 @@ export class ExamService {
 		this.punishmentNameMap = punishmentNameMap;
 	}
 
-	startExam(onSuccess: (resp: any) => void, onError: (resp: any) => void, isOfficialDriving): void {
+	startExam(onSuccess: (resp: any) => void, onError: (resp: any) => void, isOfficialDriving: boolean): void {
 		let self = this;
 		this.isOfficialDriving = isOfficialDriving;
 
@@ -35,7 +35,7 @@ export class ExamService {
 			'Authorization': this.userService.getUserToken()
 		};
 
-		this.httpRequestService.post(this.startExamUrl, {}, headers,
+		this.httpRequestService.post(this.startExamUrl, { exam_type: isOfficialDriving ? 'driver' : 'exam' }, headers,
 			resp => {
 				console.log(resp);
 				self.currentExamId = resp.id;
