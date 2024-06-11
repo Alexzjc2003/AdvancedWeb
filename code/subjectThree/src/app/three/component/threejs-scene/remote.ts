@@ -14,6 +14,7 @@ export class RemotePart {
   remoteCars: Map<string, any> = new Map<string, any>();
   scene: any;
   roomId: string = '';
+  chatSocket: WebSocket | null = null;
   constructor(
     private loadResourcePart: LoadResourcePart,
     private notification: NotificationService,
@@ -172,7 +173,7 @@ export class RemotePart {
         break;
       case 'ai':
         {
-          console.log('todo')
+          this.sendMessage(chat_msg);
         }
         break;
       default:
@@ -200,4 +201,67 @@ export class RemotePart {
       },
     });
   }
+
+  createWebSocket() {
+    let self = this
+    this.chatSocket = new WebSocket("ws://10.117.245.17:58080/api/ws/chat");
+
+    this.chatSocket.onopen = function () {
+      // logMessage("Connected to server");
+      console.log("Connected to server");
+    };
+
+    this.chatSocket.onmessage = function (event) {
+      self.notification.showNotification(`Moss: ${event.data}`);
+      // console.log("Received response from server: " + event.data);
+    }.bind(this);
+
+    this.chatSocket.onclose = function () {
+      // logMessage("Disconnected from server");
+      console.log("Disconnected from server")
+      self.chatSocket = null;
+    };
+
+    this.chatSocket.onerror = function (error) {
+      // logMessage("WebSocket Error: " + error);
+      console.log("WebSocket Error: " + error);
+    };
+  }
+
+  sendMessage(message: string) {
+    if (message) {
+      this.notification.showNotification(`You: ${message}`);
+      // Close any existing WebSocket connection
+      if (this.chatSocket) {
+        this.chatSocket.close();
+      }
+
+      // Create a new WebSocket connection
+      this.createWebSocket();
+
+      // Wait for the connection to open before sending the message
+      if (this.chatSocket) {
+        this.chatSocket.onopen = function () {
+          this.send(JSON.stringify({ request: message }));
+          console.log("Sent message to server: " + message);
+          // logMessage(message);
+          // document.getElementById("message").value = '';
+        };
+      }
+    }
+  }
+
+  // function logMessage(message) {
+  //   let chatBox = document.getElementById("chat-box");
+  //   let messageElement = document.createElement("div");
+  //   messageElement.textContent = message;
+  //   chatBox.appendChild(messageElement);
+  //   chatBox.scrollTop = chatBox.scrollHeight;
+  // }
+
+  // document.getElementById("message").addEventListener("keydown", function (event) {
+  //   if (event.key === "Enter") {
+  //     sendMessage();
+  //   }
+  // });
 }
