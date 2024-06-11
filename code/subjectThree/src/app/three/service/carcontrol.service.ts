@@ -1,16 +1,26 @@
 import { Injectable } from '@angular/core';
+import * as CANNON from 'cannon-es';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CarcontrolService {
+  car: CANNON.Body = new CANNON.Body();
   status: CarStatus = new CarStatus();
 
   rotationMin: number = -20;
   rotationMax: number = 20;
   rotationRatio: number[] = [30, 40, 50];
 
-  constructor() {}
+  turningLight: number = 0;
+
+  audio = new window.AudioContext();
+  beeping = false;
+  os: OscillatorNode = this.audio.createOscillator();
+
+  constructor() {
+    this.os.start(0);
+  }
 
   public setControl(
     dt: number,
@@ -35,8 +45,34 @@ export class CarcontrolService {
     this.status.brake = brake;
   }
 
-  public getStatus(): CarStatus {
-    return this.status;
+  public turnLight(light: number) {
+    this.turningLight = this.turningLight === light ? 0 : light;
+  }
+
+  public isLightCorrect(): boolean {
+    return this.turningLight * this.status.rotation > 0;
+  }
+
+  public getStatus() {
+    return { ...this.status, speed: this.car.velocity.length() * 3.6 };
+  }
+
+  public beep() {
+    if (this.beeping) {
+      return;
+    }
+    this.audio.resume().then(() => {
+      this.os.connect(this.audio.destination);
+      setTimeout(() => {
+        this.os.disconnect(this.audio.destination);
+        this.beeping = false;
+      }, 150);
+      this.beeping = true;
+    });
+  }
+
+  public bindCar(car: CANNON.Body) {
+    this.car = car;
   }
 }
 
