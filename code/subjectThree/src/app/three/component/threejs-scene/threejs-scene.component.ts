@@ -137,7 +137,7 @@ export class ThreejsSceneComponent implements OnInit {
 
   sendChatMsg() {
     if (this.chat_msg == '') return;
-    this.remotePart.sendChatMsg(this.chat_msg);
+    this.remotePart.sendChatMsg(this.chat_msg, this.selectedType, this.roomId, 0);
     this.chat_msg = '';
   }
 
@@ -284,4 +284,7 @@ export class ThreejsSceneComponent implements OnInit {
       this.router.navigate(['/hall']);
     }
   }
+
+  chatType: string[] = ['room', 'private', 'global', 'ai'];
+  selectedType: string = this.chatType[0];
 }

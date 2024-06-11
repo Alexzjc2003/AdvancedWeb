@@ -270,6 +270,7 @@ export class UserService {
 		return this.userInfo.exams;
 	}
 
+	// Attention: return string
 	getUserId() {
 		const stringUserInfo = localStorage.getItem('userInfo');
 		if (stringUserInfo) {

@@ -18,7 +18,7 @@ export class RemotePart {
     private loadResourcePart: LoadResourcePart,
     private notification: NotificationService,
     private userService: UserService
-  ) {}
+  ) { }
 
   setRoom(roomId: string, scene: THREE.Scene) {
     this.roomId = roomId;
@@ -134,11 +134,51 @@ export class RemotePart {
     });
   }
 
-  sendChatMsg(chat_msg: string) {
-    this.io.sendMsg('chat', {
-      type: 'room',
-      message: chat_msg,
-    });
+  sendChatMsg(chat_msg: string, chatType: string, roomId: string, toId: number) {
+    console.log('sendChatMsg', chat_msg, chatType, roomId, toId);
+    // need string here
+    let user_id = String(this.userService.getUserId());
+    switch (chatType) {
+      case 'room':
+        {
+          this.io.sendMsg('chat', {
+            type: 'room',
+            message: chat_msg,
+            room_id: roomId,
+            id: user_id,
+          });
+        }
+        break;
+      case 'private':
+        {
+          this.io.sendMsg('chat', {
+            type: 'private',
+            message: chat_msg,
+            to_id: String(toId),
+            id: user_id,
+            room_id: roomId,
+          });
+        }
+        break;
+      case 'global':
+        {
+          this.io.sendMsg('chat', {
+            type: 'global',
+            message: chat_msg,
+            id: user_id,
+            room_id: roomId,
+          });
+        }
+        break;
+      case 'ai':
+        {
+          console.log('todo')
+        }
+        break;
+      default:
+        break;
+    }
+
   }
 
   sendDisconnect() {
