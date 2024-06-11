@@ -35,18 +35,18 @@ export class ThreejsSceneComponent implements OnInit {
   model: any;
   model_name: string = '';
 
-  
+
 
   keyboardPressed: { [key: string]: number };
 
   carcontrol: CarcontrolService = new CarcontrolService();
- 
+
 
   globalScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1);
 
   roomId: string = "";
 
-  
+
   container: any;
 
   chat_msg: string = '';
@@ -64,7 +64,7 @@ export class ThreejsSceneComponent implements OnInit {
     private environmentPart: EnvironmentPart,
     private noticePart: NoticePart
   ) {
-    
+
 
     this.keyboardPressed = {
       w: 0,
@@ -139,7 +139,7 @@ export class ThreejsSceneComponent implements OnInit {
       if (event instanceof NavigationEnd) {
         console.log("sendDisconnect");
         this.remotePart.sendDisconnect();
-        this.examService.endExam((resp)=>{}, (resp)=> {});
+        this.examService.endExam((resp) => { }, (resp) => { });
       }
     });
   }
@@ -229,7 +229,7 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['z'] == 1) {
         // Z键 - 惩罚测试
-        this.examService.addPunishment("AIRCRASH", "惩罚测试", 10, (resp)=>{}, (resp)=>{});
+        this.examService.addPunishment("AIRCRASH", "惩罚测试", 10, (resp) => { }, (resp) => { });
       }
 
       let _right = 0,
@@ -275,10 +275,15 @@ export class ThreejsSceneComponent implements OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   handleBeforeUnload(event: Event) {
-    this.examService.endExam((resp)=>{}, (resp)=> {});
+    this.examService.endExam((resp) => { }, (resp) => { });
     // setTimeout(()=>{
     // console.log('before unload');
     // this.sendDisconnect();
     // },1000)
+  }
+
+  @HostListener('window:load', ['$event'])
+  handleLoad(event: Event) {
+    this.examService.startExam((resp) => { }, (resp) => { }, false);
   }
 }

@@ -27,6 +27,11 @@ export class ExamService {
 	}
 
 	startExam(onSuccess: (resp: any) => void, onError: (resp: any) => void, isOfficialDriving: boolean): void {
+		if (this.isExaming) {
+			return;
+		}
+		// concurrence
+		this.isExaming = true;
 		let self = this;
 		this.isOfficialDriving = isOfficialDriving;
 
@@ -46,7 +51,6 @@ export class ExamService {
 				console.log(resp);
 				onError(resp);
 			});
-		this.isExaming = true;
 	}
 
 	endExam(onSuccess: (resp: any) => void, onError: (resp: any) => void): void {
