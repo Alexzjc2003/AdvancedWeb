@@ -53,7 +53,7 @@ export class ExamService {
 			});
 	}
 
-	endExam(onSuccess: (resp: any) => void, onError: (resp: any) => void): void {
+	endExam(onSuccess: (resp: any) => void, onError: (resp: any) => void, normalExit: boolean): void {
 		if (!this.isExaming) {
 			return;
 		}
@@ -68,7 +68,7 @@ export class ExamService {
 			'Authorization': this.userService.getUserToken()
 		};
 
-		this.httpRequestService.post(this.endExamUrl, { id: this.currentExamId }, headers,
+		this.httpRequestService.post(this.endExamUrl, { id: this.currentExamId, normal: normalExit }, headers,
 			resp => {
 				console.log(resp);
 				self.currentExamId = -1;

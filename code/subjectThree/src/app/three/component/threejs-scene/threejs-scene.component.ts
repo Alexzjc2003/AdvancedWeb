@@ -127,8 +127,9 @@ export class ThreejsSceneComponent implements OnInit {
         console.log('sendDisconnect');
         this.remotePart.sendDisconnect();
         this.examService.endExam(
-          (resp) => {},
-          (resp) => {}
+          (resp) => { },
+          (resp) => { },
+          true
         );
       }
     });
@@ -264,7 +265,7 @@ export class ThreejsSceneComponent implements OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   handleBeforeUnload(event: Event) {
-    this.examService.endExam((resp) => { }, (resp) => { });
+    this.examService.endExam((resp) => { }, (resp) => { }, false);
     // setTimeout(()=>{
     // console.log('before unload');
     // this.sendDisconnect();
