@@ -3,14 +3,14 @@ import { UserService } from '@app/user/service/user.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-top-bar', 
+  selector: 'app-top-bar',
   templateUrl: './top-bar.component.html',
   styleUrl: './top-bar.component.css'
 })
-export class TopBarComponent implements OnInit{
+export class TopBarComponent implements OnInit {
   title = "subject three";
   isLoggedIn: boolean = false;
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private userService: UserService, private router: Router) { }
 
   ngOnInit() {
     // Subscribe to the isLoggedIn observable to get the login status
@@ -20,21 +20,23 @@ export class TopBarComponent implements OnInit{
     });
   }
 
-  logout(){
+  logout() {
     this.userService.logout();
+    this.router.navigate(['/']);
+    // this.remotePart.sendDisconnect();
   }
 
-  gotoSpace(){
+  gotoSpace() {
     let token: string = this.userService.getUserToken();
-    if(token == ""){
+    if (token == "") {
       console.warn("top-bar.component.ts::gotoSpace: not authorized.")
     }
     this.router.navigate(['space']);
   }
 
-  gotoExamRecord(){
+  gotoExamRecord() {
     let token: string = this.userService.getUserToken();
-    if(token == ""){
+    if (token == "") {
       console.warn("top-bar.component.ts::gotoExamRecord: not authorized.");
     }
     this.router.navigate(['record']);

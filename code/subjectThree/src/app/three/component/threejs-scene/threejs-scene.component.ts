@@ -127,8 +127,9 @@ export class ThreejsSceneComponent implements OnInit {
         console.log('sendDisconnect');
         this.remotePart.sendDisconnect();
         this.examService.endExam(
-          (resp) => {},
-          (resp) => {}
+          (resp) => { },
+          (resp) => { },
+          false
         );
       }
     });
@@ -136,7 +137,7 @@ export class ThreejsSceneComponent implements OnInit {
 
   sendChatMsg() {
     if (this.chat_msg == '') return;
-    this.remotePart.sendChatMsg(this.chat_msg);
+    this.remotePart.sendChatMsg(this.chat_msg, this.selectedType, this.roomId, 0);
     this.chat_msg = '';
   }
 
@@ -219,13 +220,7 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['z'] == 1) {
         // Z键 - 惩罚测试
-        this.examService.addPunishment(
-          'AIRCRASH',
-          '惩罚测试',
-          10,
-          (resp) => {},
-          (resp) => {}
-        );
+        this.examService.addPunishment("AIRCRASH", "惩罚测试", 10, (resp) => { }, (resp) => { });
       }
 
       let _right = 0,
@@ -297,13 +292,26 @@ export class ThreejsSceneComponent implements OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   handleBeforeUnload(event: Event) {
-    this.examService.endExam(
-      (resp) => {},
-      (resp) => {}
-    );
+    this.examService.endExam((resp) => { }, (resp) => { }, false);
     // setTimeout(()=>{
     // console.log('before unload');
     // this.sendDisconnect();
     // },1000)
   }
+
+  @HostListener('window:load', ['$event'])
+  handleLoad(event: Event) {
+    this.examService.startExam((resp) => { }, (resp) => { }, false);
+  }
+
+  exit() {
+    if (window.confirm("Do you really want to finish driving?")) {
+      this.examService.endExam((resp) => { }, (resp) => { }, true);
+      this.remotePart.sendDisconnect();
+      this.router.navigate(['/hall']);
+    }
+  }
+
+  chatType: string[] = ['room', 'private', 'global', 'ai'];
+  selectedType: string = this.chatType[0];
 }
