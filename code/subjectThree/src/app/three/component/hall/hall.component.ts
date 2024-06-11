@@ -10,7 +10,7 @@ import { ExamService } from '@app/three/service/exam.service';
 @Component({
   selector: 'app-hall',
   templateUrl: './hall.component.html',
-  styleUrl: './hall.component.css'
+  styleUrl: './hall.component.css',
 })
 export class HallComponent implements OnInit {
   carOptions: string[];
@@ -25,7 +25,7 @@ export class HallComponent implements OnInit {
   directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight();
 
   model: any;
-  model_name: string = "";
+  model_name: string = '';
   model_index: number = 0;
 
   loader: LoadResourceService = new LoadResourceService();
@@ -47,7 +47,6 @@ export class HallComponent implements OnInit {
     this.renderScene();
   }
 
-
   prev() {
     let total = this.carOptions.length;
     this.model_index = (this.model_index - 1 + total) % total;
@@ -63,9 +62,9 @@ export class HallComponent implements OnInit {
   }
 
   init_websocket() {
-    this.io.connect("ws://10.117.245.17:53000/hall");
+    this.io.connect('ws://10.117.245.17:53000/hall');
     // this.io.connect("wss://p.jingyijun.xyz/hall");
-    this.io.onMessage("sendRooms").subscribe((obj: any) => {
+    this.io.onMessage('sendRooms').subscribe((obj: any) => {
       this.handleNewRooms(obj.rooms);
     });
   }
@@ -77,11 +76,11 @@ export class HallComponent implements OnInit {
         self.router.navigate(['/scene'], {
           queryParams: {
             model: this.model_name,
-            roomId: roomId
-          }
+            roomId: roomId,
+          },
         });
       },
-      (resp) => { }
+      (resp) => {}
     );
   }
 
@@ -93,16 +92,16 @@ export class HallComponent implements OnInit {
   }
 
   createRoom() {
-    this.io.sendMsg("createRooms", {});
+    this.io.sendMsg('createRooms', {});
   }
 
   initScene(): void {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xadd8e6);
 
-    this.container = document.getElementById("main-model-preview");
+    this.container = document.getElementById('main-model-preview');
     if (this.container == undefined) {
-      console.log("container not found. use document instead.");
+      console.log('container not found. use document instead.');
       this.container = document.body;
     }
 
@@ -114,14 +113,15 @@ export class HallComponent implements OnInit {
     );
 
     this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+    this.renderer.setSize(
+      this.container.clientWidth,
+      this.container.clientHeight
+    );
 
     this.container.appendChild(this.renderer.domElement);
 
-
     this.camera.position.copy(new THREE.Vector3(3, 2, 3));
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-
 
     // 添加环境光
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -135,8 +135,8 @@ export class HallComponent implements OnInit {
     let axes = new THREE.AxesHelper(2000);
     this.scene.add(axes);
 
-    this.chooseModel("police");
-    this.model_name = "police";
+    this.chooseModel('police');
+    this.model_name = 'police';
   }
 
   chooseModel(carName: string) {
@@ -150,7 +150,7 @@ export class HallComponent implements OnInit {
   loadLocalCar(carName: string) {
     let self = this;
     let fbxPath = `./assets/model/cars/${carName}.fbx`;
-    let texturePath = "./assets/model/cars/texture/colormap.png";
+    let texturePath = './assets/model/cars/texture/colormap.png';
     this.loader.loadFbxTextureResource(fbxPath, texturePath, (carObj) => {
       carObj.position.set(0, 0, 0);
 
@@ -161,7 +161,7 @@ export class HallComponent implements OnInit {
       carObj.scale.set(f, f, f);
       self.scene.add(carObj);
       self.model = {
-        obj: carObj
+        obj: carObj,
       };
     });
   }

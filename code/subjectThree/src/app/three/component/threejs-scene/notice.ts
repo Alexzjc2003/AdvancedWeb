@@ -1,12 +1,5 @@
 import { Injectable } from '@angular/core';
 import { KnowledgeService } from '@app/three/service/knowledge.service';
-import { LoadResourceService } from '@app/three/service/load-resource.service';
-import { NotificationService } from '@app/three/service/notification.service';
-import { UserService } from '@app/user/service/user.service';
-import { WebSocketService } from '@app/utils/service/websocket.service';
-import * as THREE from 'three';
-import { LoadResourcePart } from './load-resource';
-
 
 
 @Injectable({

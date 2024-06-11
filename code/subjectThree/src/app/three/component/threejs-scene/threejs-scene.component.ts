@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { Router, NavigationEnd } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 
-import { PhysicsService } from '@app/three/service/physics.service'
+import { PhysicsService } from '@app/three/service/physics.service';
 import { CameraService } from '@app/three/service/camera.service';
 import { CarcontrolService } from '@app/three/service/carcontrol.service';
 
@@ -14,6 +14,7 @@ import { RemotePart } from './remote';
 import { EnvironmentPart } from './environment';
 import { NoticePart } from './notice';
 import { ExamService } from '@app/three/service/exam.service';
+import { RenderService } from '@app/three/service/render.service';
 
 @Component({
   selector: 'app-threejs-scene',
@@ -23,30 +24,24 @@ import { ExamService } from '@app/three/service/exam.service';
 })
 export class ThreejsSceneComponent implements OnInit {
   scene: THREE.Scene = new THREE.Scene();
-  // camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
   cameraService: CameraService = new CameraService();
-  renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
+  renderService: RenderService = new RenderService();
   clock: THREE.Clock = new THREE.Clock();
 
-  lookAtVector: THREE.Vector3 = new THREE.Vector3();
   ambientLight: THREE.AmbientLight = new THREE.AmbientLight();
   directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight();
 
   model: any;
   model_name: string = '';
 
-  
-
   keyboardPressed: { [key: string]: number };
 
   carcontrol: CarcontrolService = new CarcontrolService();
- 
 
   globalScale: THREE.Vector3 = new THREE.Vector3(1, 1, 1);
 
-  roomId: string = "";
+  roomId: string = '';
 
-  
   container: any;
 
   chat_msg: string = '';
@@ -64,15 +59,7 @@ export class ThreejsSceneComponent implements OnInit {
     private environmentPart: EnvironmentPart,
     private noticePart: NoticePart
   ) {
-    
-
-    this.keyboardPressed = {
-      w: 0,
-      a: 0,
-      s: 0,
-      d: 0,
-      e: 0,
-    };
+    this.keyboardPressed = {};
   }
 
   ngOnInit(): void {
@@ -80,7 +67,7 @@ export class ThreejsSceneComponent implements OnInit {
 
     this.route.queryParamMap.subscribe((params) => {
       self.model_name = params.get('model')!;
-      self.roomId = params.get("roomId")!;
+      self.roomId = params.get('roomId')!;
       self.initScene();
       self.renderScene();
     });
@@ -108,15 +95,15 @@ export class ThreejsSceneComponent implements OnInit {
       100
     );
 
-    this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize(
+    this.renderService.updateScreenSize(
       this.container.clientWidth,
       this.container.clientHeight
     );
 
-    this.container.appendChild(this.renderer.domElement);
-
-    this.lookAtVector = new THREE.Vector3(0, 0, 0);
+    this.container.appendChild(
+      this.renderService.useSimpleRenderer().domElement
+    );
+    // this.container.appendChild(this.renderService.useComplexRenderer().domElement);
 
     // 添加环境光
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -137,18 +124,20 @@ export class ThreejsSceneComponent implements OnInit {
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        console.log("sendDisconnect");
+        console.log('sendDisconnect');
         this.remotePart.sendDisconnect();
-        this.examService.endExam((resp)=>{}, (resp)=> {});
+        this.examService.endExam(
+          (resp) => {},
+          (resp) => {}
+        );
       }
     });
   }
 
   sendChatMsg() {
-    if (this.chat_msg == "")
-      return
+    if (this.chat_msg == '') return;
     this.remotePart.sendChatMsg(this.chat_msg);
-    this.chat_msg = ""
+    this.chat_msg = '';
   }
 
   loadLocalCar(carName: string) {
@@ -171,7 +160,7 @@ export class ThreejsSceneComponent implements OnInit {
       const width = self.container.clientWidth;
       const height = self.container.clientHeight;
 
-      self.renderer.setSize(width, height);
+      self.renderService.updateScreenSize(width, height);
       self.cameraService.camera.aspect = width / height;
       self.cameraService.camera.updateProjectionMatrix();
     });
@@ -198,10 +187,10 @@ export class ThreejsSceneComponent implements OnInit {
         return;
       }
 
-      // let _status = this.carcontrol.getStatus();
       let _gear = 0,
         _throttle = false,
-        _turn = 0;
+        _turn = 0,
+        _brake = false;
       if (this.keyboardPressed['w'] == 1) {
         // W键
         this.noticePart.showNotice('发动');
@@ -229,7 +218,16 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['z'] == 1) {
         // Z键 - 惩罚测试
-        this.examService.addPunishment("AIRCRASH", "惩罚测试", -10, (resp)=>{}, (resp)=>{});
+        this.examService.addPunishment(
+          'AIRCRASH',
+          '惩罚测试',
+          -10,
+          (resp) => {},
+          (resp) => {}
+        );
+      }
+      if (this.keyboardPressed['b']) {
+        _brake = true;
       }
 
       let _right = 0,
@@ -255,7 +253,7 @@ export class ThreejsSceneComponent implements OnInit {
       }
 
       let dt = this.clock.getDelta();
-      this.carcontrol.setControl(dt, _gear, _throttle, false, _turn);
+      this.carcontrol.setControl(dt, _gear, _throttle, _brake, _turn);
       this.physics.controlCar(this.carcontrol.getStatus());
       this.physics.step(dt);
 
@@ -267,7 +265,7 @@ export class ThreejsSceneComponent implements OnInit {
 
       this.physics.updateDebugger();
       this.remotePart.updateSocket(this.model);
-      this.renderer.render(this.scene, this.cameraService.camera);
+      this.renderService.render(this.scene, this.cameraService.camera);
     };
 
     animate();

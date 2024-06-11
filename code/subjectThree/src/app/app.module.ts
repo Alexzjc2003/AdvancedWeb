@@ -5,7 +5,6 @@ import { HttpClientModule } from '@angular/common/http'; // 导入 HttpClientMod
 import { AppComponent } from './app.component'; // 导入主组件
 import { CommonModule } from '@angular/common';
 
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { FormsModule } from '@angular/forms';
@@ -18,10 +17,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
-import {MatTableModule} from '@angular/material/table';
-import {MatDialogModule} from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { MatDialogModule } from '@angular/material/dialog';
 
-import { NgOptimizedImage } from "@angular/common";
+import { NgOptimizedImage } from '@angular/common';
 
 import { MainPageComponent } from '@app/main-page/main-page.component';
 import { LoginComponent } from '@app/user/component/login/login.component';
@@ -31,81 +30,84 @@ import { VideoChatComponent } from '@app/video-chat/video-chat.component';
 import { TopBarComponent } from '@app/user/component/top-bar/top-bar.component';
 import { SpaceComponent } from '@app/user/component/space/space.component';
 import { HallComponent } from '@app/three/component/hall/hall.component';
-import { ExamRecordComponent, PunishmentDetailDialog } from './user/component/exam-record/exam-record.component';
+import {
+  ExamRecordComponent,
+  PunishmentDetailDialog,
+} from './user/component/exam-record/exam-record.component';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        MainPageComponent,
-        LoginComponent,
-        RegisterComponent,
-        ThreejsSceneComponent,
-        VideoChatComponent,
-        TopBarComponent,
-        SpaceComponent,
-        ExamRecordComponent,
-        PunishmentDetailDialog,
-        HallComponent
-    ],
-    imports: [
-        CommonModule,
-        FormsModule,
-        BrowserModule,
-        HttpClientModule,
-        
-        ReactiveFormsModule,
-        BrowserAnimationsModule,
-        
-        MatIconModule,
-        MatButtonModule,
-        MatToolbarModule,
-        MatListModule,
-        MatTableModule,
-        MatDialogModule,
+  declarations: [
+    AppComponent,
+    MainPageComponent,
+    LoginComponent,
+    RegisterComponent,
+    ThreejsSceneComponent,
+    VideoChatComponent,
+    TopBarComponent,
+    SpaceComponent,
+    ExamRecordComponent,
+    PunishmentDetailDialog,
+    HallComponent,
+  ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BrowserModule,
+    HttpClientModule,
 
-        NgOptimizedImage,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
 
-        RouterOutlet,
-        RouterModule,
-        RouterModule.forRoot([
-            {
-                path: '',
-                component: MainPageComponent,
-                title: 'Home page'
-            },
-            {
-                path: 'login',
-                component: LoginComponent,
-                title: 'login'
-            },
-            {
-                path: 'register',
-                component: RegisterComponent,
-                title: 'register'
-            },
-            {
-                path: 'space',
-                component: SpaceComponent,
-                title: 'space'
-            },
-            {
-                path: 'record',
-                component: ExamRecordComponent,
-                title: 'record'
-            },
-            {
-                path: 'hall',
-                component: HallComponent,
-                title: 'hall'
-            },
-            {
-                path: 'scene',
-                component: ThreejsSceneComponent,
-                title: 'scene'
-            }
-        ])
-    ],
-    providers: [],
-    bootstrap: [AppComponent] // 指定根组件
+    MatIconModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatListModule,
+    MatTableModule,
+    MatDialogModule,
+
+    NgOptimizedImage,
+
+    RouterOutlet,
+    RouterModule,
+    RouterModule.forRoot([
+      {
+        path: '',
+        component: MainPageComponent,
+        title: 'Home page',
+      },
+      {
+        path: 'login',
+        component: LoginComponent,
+        title: 'login',
+      },
+      {
+        path: 'register',
+        component: RegisterComponent,
+        title: 'register',
+      },
+      {
+        path: 'space',
+        component: SpaceComponent,
+        title: 'space',
+      },
+      {
+        path: 'record',
+        component: ExamRecordComponent,
+        title: 'record',
+      },
+      {
+        path: 'hall',
+        component: HallComponent,
+        title: 'hall',
+      },
+      {
+        path: 'scene',
+        component: ThreejsSceneComponent,
+        title: 'scene',
+      },
+    ]),
+  ],
+  providers: [],
+  bootstrap: [AppComponent], // 指定根组件
 })
-export class AppModule { }
+export class AppModule {}
