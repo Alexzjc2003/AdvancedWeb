@@ -184,6 +184,30 @@ export class UserService {
 			});
 	}
 
+	durationToString(nanoseconds: number): string {
+		const nsPerSecond = 1e9;
+		const msPerSecond = 1e6;
+		const nsPerMinute = 60 * nsPerSecond;
+		const nsPerHour = 60 * nsPerMinute;
+		const nsPerDay = 24 * nsPerHour;
+
+		const days = Math.floor(nanoseconds / nsPerDay);
+		let remainingNanoseconds = nanoseconds % nsPerDay;
+
+		const hours = Math.floor(remainingNanoseconds / nsPerHour);
+		remainingNanoseconds %= nsPerHour;
+
+		const minutes = Math.floor(remainingNanoseconds / nsPerMinute);
+		remainingNanoseconds %= nsPerMinute;
+
+		const seconds = Math.floor(remainingNanoseconds / nsPerSecond);
+		remainingNanoseconds %= nsPerSecond;
+
+		const miliseconds = Math.floor(remainingNanoseconds / msPerSecond);
+
+		return `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒 ${miliseconds}毫秒`;
+	}
+
 	loadUserExams(onSuccess: (resp: any) => void, onError: (resp: any) => void) {
 		let self = this;
 		if (!this.isLoggedin()) {
@@ -204,7 +228,10 @@ export class UserService {
 						description: exam.description,
 						start_time: exam.start_time,
 						end_time: exam.end_time,
-						score: exam.score
+						score: exam.score,
+						is_public: exam.is_public,
+						normal: exam.normal,
+						duration: this.durationToString(exam.duration),
 					});
 				}
 				onSuccess(resp);

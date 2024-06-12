@@ -9,7 +9,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dial
 })
 export class ExamRecordComponent {
 	exams: any[] = [];
-	displayedColumns: string[] = ['title', 'description', 'starttime', 'score', 'detail'];
+	displayedColumns: string[] = ['title', 'description', 'starttime', 'score', 'is_public', 'normal', 'duration', 'detail'];
 
 	constructor(private userService: UserService, public dialog: MatDialog) { }
 
@@ -27,7 +27,10 @@ export class ExamRecordComponent {
 				description: exam.description,
 				start_time: exam.start_time,
 				end_time: exam.end_time,
-				score: exam.score
+				score: exam.score,
+				is_public: exam.is_public,
+				normal: exam.normal,
+				duration: exam.duration,
 			})
 		}
 	}
