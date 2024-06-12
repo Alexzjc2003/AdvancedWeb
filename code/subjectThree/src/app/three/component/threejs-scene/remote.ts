@@ -293,7 +293,8 @@ export class RemotePart {
       // Wait for the connection to open before sending the message
       if (this.chatSocket) {
         this.chatSocket.onopen = function () {
-          this.send(JSON.stringify({ request: message }));
+          // this.send(JSON.stringify({ request: message }));
+          this.send(message);
           console.log("Sent message to server: " + message);
           // logMessage(message);
           // document.getElementById("message").value = '';
