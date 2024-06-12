@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { NotificationService } from '@app/three/service/notification.service';
 import { UserService } from '@app/user/service/user.service';
 import { WebSocketService } from '@app/utils/service/websocket.service';
+import { ExamService } from '@app/three/service/exam.service';
 import * as THREE from 'three';
 import { CarcontrolService } from '@app/three/service/carcontrol.service';
 import { LoadResourcePart } from './load-resource';
@@ -17,10 +18,14 @@ export class RemotePart {
   roomId: string = '';
   chatSocket: WebSocket | null = null;
   carcontrol: any;
+  checkInterval: number = 1000;
+  lastBeepTime: number = 0;
+  lastLastBeepTime: number = 0;
   constructor(
     private loadResourcePart: LoadResourcePart,
     private notification: NotificationService,
-    private userService: UserService
+    private userService: UserService,
+    private examService: ExamService,
   ) { }
 
   setRoom(roomId: string, scene: THREE.Scene, carcontrol: CarcontrolService) {
@@ -219,12 +224,28 @@ export class RemotePart {
     });
   }
 
+  checkBeep() {
+
+    let currentTime = new Date().getTime();
+
+    if (currentTime - this.lastBeepTime < this.checkInterval) {
+      return;
+    }
+    console.log(currentTime, this.lastBeepTime, this.lastLastBeepTime)
+    if (this.lastLastBeepTime && currentTime - this.lastLastBeepTime < 5000) {
+      this.examService.addPunishment('FREQUENTLYBEEP', '频繁鸣笛', 1, response => { }, response => { });
+    }
+    this.lastLastBeepTime = this.lastBeepTime;
+    this.lastBeepTime = currentTime;
+  }
+
   handleEvent(event: string) {
     switch (event) {
       case 'beep':
         {
           // beep
           this.carcontrol.beep();
+          this.checkBeep();
         }
         break;
       default:

@@ -120,7 +120,7 @@ export class ExamService {
 
 		this.httpRequestService.post(addPunishmentUrl, postData, headers,
 			resp => {
-				console.log(resp);
+				console.log("addPunishment successfully", resp);
 				onSuccess(resp);
 			},
 

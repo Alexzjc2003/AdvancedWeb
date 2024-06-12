@@ -7,7 +7,8 @@ export const punishmentNameMap = {
     "RedLight": 5,
     "NoLicensePlate": 6,
     "CRASH": 7,
-    "AIRCRASH": 8
+    "AIRCRASH": 8,
+    "FREQUENTLYBEEP": 9,
 }
 
 export const punishmentNameList = [
@@ -19,5 +20,6 @@ export const punishmentNameList = [
     "RedLight",
     "NoLicensePlate",
     "CRASH",
-    "AIRCRASH"
+    "AIRCRASH",
+    "FREQUENTLYBEEP",
 ]
