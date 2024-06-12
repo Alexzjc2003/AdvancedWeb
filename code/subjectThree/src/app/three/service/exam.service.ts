@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserService } from '@app/user/service/user.service';
 import { HttpRequestService } from '@app/utils/service/httprequest.service';
-
+import { NotificationService } from './notification.service';
 import { punishmentNameMap } from '@app/data/allPunishments';
 
 @Injectable({
@@ -22,7 +22,7 @@ export class ExamService {
 
 	isExaming: boolean = false;
 
-	constructor(private httpRequestService: HttpRequestService, private userService: UserService) {
+	constructor(private httpRequestService: HttpRequestService, private userService: UserService, private notification: NotificationService) {
 		this.punishmentNameMap = punishmentNameMap;
 	}
 
@@ -104,6 +104,8 @@ export class ExamService {
 		} else {
 			return;
 		}
+
+		this.notification.showNotification(`惩罚：${punishmentType}，原因：${reason}，扣分：${score}`);
 
 		let addPunishmentUrl: string
 		if (!this.isOfficialDriving)
