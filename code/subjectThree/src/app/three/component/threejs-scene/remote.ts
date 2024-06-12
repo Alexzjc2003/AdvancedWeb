@@ -255,7 +255,7 @@ export class RemotePart {
 
   createWebSocket() {
     let self = this
-    this.chatSocket = new WebSocket("ws://10.117.245.17:58080/api/ws/chat");
+    this.chatSocket = new WebSocket("ws://10.117.245.17:58080/api/ws/chat?jwt=" + this.userService.getUserToken());
 
     this.chatSocket.onopen = function () {
       // logMessage("Connected to server");
