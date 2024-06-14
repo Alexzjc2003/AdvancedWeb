@@ -25,4 +25,7 @@ export class RegisterComponent {
         this.router.navigate(['/login']);
       }, (resp) => {});
   }
+  isUnderage(): boolean {
+    return this.age < 18;
+  }
 }
