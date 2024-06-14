@@ -78,3 +78,8 @@
 .register-field-item.radio-group input[type="radio"] {
   margin-right: 5px;
 }
+
+.warning-text {
+  color: red;
+  margin-left: 10px;
+}
