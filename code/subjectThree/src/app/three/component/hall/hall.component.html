@@ -3,7 +3,7 @@
         <div id="main-room-list">
             <div *ngFor="let room of roomOptions | keyvalue">
                 <span>{{room.key}}: {{room.value}} member(s) </span>
-                <button class="main-goto-three-btn" class="main-enter-btn" color="primary" (click)="gotoThree(room.key)">go to</button>
+                <button id="main-goto-three-btn" class="main-enter-btn" color="primary" (click)="gotoThree(room.key)">go to</button>
             </div>
             <div>
                 <button id="main-create-btn" mat-button class="app-navi-button" (click)="createRoom()">createRoom</button>
