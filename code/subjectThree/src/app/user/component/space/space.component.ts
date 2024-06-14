@@ -34,9 +34,14 @@ export class SpaceComponent implements OnInit{
 
 	ngOnInit() {
     let self = this;
-		let detail: any = this.userService.getUserDetail();
-    this.setUserInfo(detail);
-    console.log("info:",this.userInfo);
+    this.userService.loadUserDetail(
+      (resp)=>{
+        let detail = self.userService.getUserDetail();
+        self.setUserInfo(detail);
+      },
+      (resp)=>{}
+    )
+    
     this.driverService.fetchDriverPunishments(
       (resp) => {
         console.log("driver punishments: ", resp);
@@ -61,9 +66,7 @@ export class SpaceComponent implements OnInit{
         }
         console.log("final", self.chatRecords);
       },
-      (resp) => {
-
-      }
+      (resp) => {}
     )
 
 	}
