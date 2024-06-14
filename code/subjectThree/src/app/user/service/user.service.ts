@@ -24,7 +24,13 @@ export class UserService {
 		exams: []
 	};
 
-	constructor(private httpRequestService: HttpRequestService) { }
+	constructor(private httpRequestService: HttpRequestService) {
+		let userInfo = localStorage.getItem('userInfo')
+		if (userInfo != null) {
+			this.userInfo = JSON.parse(userInfo);
+			this.loggedIn.next(true);
+		}
+	}
 
 	login(username: string, password: string, onSuccess: (resp: any) => void, onError: (resp: any) => void): void {
 		let self = this;
@@ -294,6 +300,7 @@ export class UserService {
 	}
 
 	getUserExams() {
+		// this.loadUserExams((resp) => { }, (resp) => { });
 		return this.userInfo.exams;
 	}
 
