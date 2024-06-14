@@ -10,8 +10,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 400px;
-  padding: 20px;
+  width: 600px;
+  padding: 30px;
   background-color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
@@ -81,5 +81,5 @@
 
 .warning-text {
   color: red;
-  margin-left: 10px;
+  margin-left: 5px;
 }
