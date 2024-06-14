@@ -1,33 +1,40 @@
-<div *ngIf="userInfo">
+<div *ngIf="userInfo" class="user-info-container">
   <h2>User Information</h2>
   <form>
     <div>
       <label>Username:</label>
-      <input [(ngModel)]="userInfo.username" name="username" [disabled]="true" />
+      <input [(ngModel)]="userInfo.username" name="username" [disabled]="true"/>
     </div>
     <div>
       <label>Gender:</label>
-      <input [(ngModel)]="userInfo.gender" name="gender" [disabled]="!editMode" />
+      <div>
+        <label>
+          <input type="radio" value="female" [(ngModel)]="userInfo.gender" name="gender" [disabled]="!editMode"> Female
+        </label>
+        <label>
+          <input type="radio" value="male" [(ngModel)]="userInfo.gender" name="gender" [disabled]="!editMode"> Male
+        </label>
+      </div>
     </div>
     <div>
       <label>Age:</label>
-      <input [(ngModel)]="userInfo.age" name="age" [disabled]="!editMode" />
+      <input [(ngModel)]="userInfo.age" name="age" [disabled]="!editMode"/>
     </div>
     <div>
       <label>Phone:</label>
-      <input [(ngModel)]="userInfo.phone" name="phone" [disabled]="!editMode" />
+      <input [(ngModel)]="userInfo.phone" name="phone" [disabled]="!editMode"/>
     </div>
     <div>
       <label>Email:</label>
-      <input [(ngModel)]="userInfo.email" name="email" [disabled]="!editMode" />
+      <input [(ngModel)]="userInfo.email" name="email" [disabled]="!editMode"/>
     </div>
     <div>
       <label>Point:</label>
-      <input [(ngModel)]="userInfo.point" name="point" [disabled]="true" />
+      <input [(ngModel)]="userInfo.point" name="point" [disabled]="true"/>
     </div>
     <div>
       <label>Is_passed:</label>
-      <input [(ngModel)]="userInfo.is_passed" name="is_passed" [disabled]="true" />
+      <input [(ngModel)]="userInfo.is_passed" name="is_passed" [disabled]="true"/>
     </div>
     <button (click)="modify()">{{ button_msg }}</button>
   </form>
