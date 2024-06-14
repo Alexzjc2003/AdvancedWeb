@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DriverService } from '@app/user/service/driver.service';
 import { UserService } from '@app/user/service/user.service';
 
 @Component({
@@ -19,15 +20,52 @@ export class SpaceComponent implements OnInit{
     is_passed: false
 	};
 
+  driverPunishmentsDisplayedColumns: string[] = ['type', 'reason', 'score'];
+  driverPunishments: any = [];
+
+  chatRecordsDisplayedColumns: string[] = ['message', 'created_at', 'type'];
+  chatRecords: any = [];
+
 	editMode: boolean = false;
 	button_msg: string = "modify";
 
-	constructor(private userService: UserService) { }
+
+	constructor(private userService: UserService, private driverService: DriverService) { }
 
 	ngOnInit() {
+    let self = this;
 		let detail: any = this.userService.getUserDetail();
     this.setUserInfo(detail);
     console.log("info:",this.userInfo);
+    this.driverService.fetchDriverPunishments(
+      (resp) => {
+        console.log("driver punishments: ", resp);
+        // for(let punishment of resp){
+        //   console.log(punishment);
+        // }
+      },
+      (resp) => {
+      }
+    );
+
+    this.userService.fetchChatRecords(
+      (resp) => {
+        console.log("chat records: ", resp);
+        for(let chatRecord of resp){
+          console.log(chatRecord);
+          self.chatRecords.push({
+            message: chatRecord.Message,
+            created_at: chatRecord.created_at,
+            type: chatRecord.type
+          })
+        }
+        console.log("final", self.chatRecords);
+      },
+      (resp) => {
+
+      }
+    )
+
 	}
 
 	modify() {

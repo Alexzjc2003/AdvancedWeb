@@ -14,6 +14,10 @@ export class ExamRecordComponent {
 	constructor(private userService: UserService, public dialog: MatDialog) { }
 
 	ngOnInit() {
+		// this.userService.getUserExams().then((exams) => {
+		// 	this.setUserExams(exams);
+		// 	console.log("exams:", this.exams);
+		// });
 		let exams: any[] = this.userService.getUserExams();
 		this.setUserExams(exams);
 		console.log("exams:", this.exams);

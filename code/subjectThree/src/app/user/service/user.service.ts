@@ -11,6 +11,7 @@ export class UserService {
 	getInfoUrl: string = "api/users/data";
 	updateUserUrl: string = "api/users";
 	getExamUrl: string = "api/exams";
+	fetchChatRecordsUrl: string = "api/records"
 
 	default_headers: any = { 'Content-Type': 'application/json' };
 
@@ -24,7 +25,13 @@ export class UserService {
 		exams: []
 	};
 
-	constructor(private httpRequestService: HttpRequestService) { }
+	constructor(private httpRequestService: HttpRequestService) {
+		let userInfo = localStorage.getItem('userInfo')
+		if (userInfo != null) {
+			this.userInfo = JSON.parse(userInfo);
+			this.loggedIn.next(true);
+		}
+	}
 
 	login(username: string, password: string, onSuccess: (resp: any) => void, onError: (resp: any) => void): void {
 		let self = this;
@@ -269,6 +276,25 @@ export class UserService {
 		);
 	}
 
+	fetchChatRecords(onSuccess: (resp: any) => void, onError: (resp: any) => void) {
+		let headers = {
+			'Content-Type': 'application/json',
+			'Authorization': this.userInfo.token
+		};
+
+		this.httpRequestService.get(this.fetchChatRecordsUrl, {}, headers,
+			resp => {
+				console.log(resp);
+				onSuccess(resp);
+			},
+
+			resp => {
+				console.log(resp);
+				onError(resp);
+			}
+		);
+	}
+
 	logout() {
 		this.loggedIn.next(false);
 		this.userInfo = {
@@ -294,6 +320,7 @@ export class UserService {
 	}
 
 	getUserExams() {
+		// this.loadUserExams((resp) => { }, (resp) => { });
 		return this.userInfo.exams;
 	}
 
