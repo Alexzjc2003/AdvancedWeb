@@ -47,6 +47,21 @@ export class ThreejsSceneComponent implements OnInit {
   chat_msg: string = '';
   isTyping: boolean = false;
 
+  punishmentCoolDown: { [key: string]: boolean } = {
+    "Unknown": true,
+    "OverSpeed": true,
+    "IllegalParking": true,
+    "NoBelts": true,
+    "FlameOut": true,
+    "RedLight": true,
+    "NoLicensePlate": true,
+    "CRASH": true,
+    "AIRCRASH": true,
+    "PHONING": true,
+    "FREQUENTLYBEEP": true,
+    "INCORRECTLIGHT": true
+  };
+
   constructor(
     private notification: NotificationService,
     private router: Router,
@@ -185,6 +200,23 @@ export class ThreejsSceneComponent implements OnInit {
     });
   }
 
+  addPunishment(punishmentType: string, reason: string) {
+    let self = this;
+    if (!this.punishmentCoolDown[punishmentType]) {
+      return;
+    }
+    self.punishmentCoolDown[punishmentType] = false;
+    setTimeout(() => {
+      self.punishmentCoolDown[punishmentType] = true;
+    }, 3000);
+    console.log(`${punishmentType} triggered.`);
+    this.examService.addPunishment(punishmentType, reason, 10,
+      (resp) => {
+      },
+      (resp) => {
+      });
+  }
+
   renderScene(): void {
     const animate = () => {
       requestAnimationFrame(animate);
@@ -223,7 +255,7 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['z'] == 1) {
         // Z键 - 惩罚测试
-        this.examService.addPunishment("AIRCRASH", "惩罚测试", 10, (resp) => { }, (resp) => { });
+        this.addPunishment("AIRCRASH", "惩罚测试");
       }
 
       let _right = 0,
@@ -271,8 +303,7 @@ export class ThreejsSceneComponent implements OnInit {
       // overspeed
       const SPEED_LIMIT = 30;
       if (this.carcontrol.getStatus().speed > SPEED_LIMIT) {
-        console.log("超速");
-        this.examService.addPunishment("OverSpeed", "超速", 10, (resp) => { }, (resp) => { });
+        this.addPunishment("OverSpeed", "超速");
       }
 
       // turning light
@@ -281,8 +312,7 @@ export class ThreejsSceneComponent implements OnInit {
         Math.abs(this.carcontrol.getStatus().rotation) > TUNNING_LIMIT &&
         !this.carcontrol.isLightCorrect()
       ) {
-        console.log("转向灯错误");
-        this.examService.addPunishment("INCORRECTLIGHT", "转向灯错误", 10, (resp) => { }, (resp) => { });
+        this.addPunishment("INCORRECTLIGHT", "转向灯错误");
       }
 
       this.cameraService.control(dt, _up, _right, _far);
