@@ -21,9 +21,11 @@ export class TopBarComponent implements OnInit {
   }
 
   logout() {
-    this.userService.logout();
-    this.router.navigate(['/']);
-    // this.remotePart.sendDisconnect();
+    if (window.confirm("Do you really want to logout?")) {
+      this.userService.logout();
+      this.router.navigate(['/']);
+      // this.remotePart.sendDisconnect();
+    }
   }
 
   gotoSpace() {
