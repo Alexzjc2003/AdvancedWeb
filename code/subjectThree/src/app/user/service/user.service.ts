@@ -11,6 +11,7 @@ export class UserService {
 	getInfoUrl: string = "api/users/data";
 	updateUserUrl: string = "api/users";
 	getExamUrl: string = "api/exams";
+	fetchChatRecordsUrl: string = "api/records"
 
 	default_headers: any = { 'Content-Type': 'application/json' };
 
@@ -257,6 +258,25 @@ export class UserService {
 		};
 
 		this.httpRequestService.get(fetchExamPunishmentsUrl, {}, headers,
+			resp => {
+				console.log(resp);
+				onSuccess(resp);
+			},
+
+			resp => {
+				console.log(resp);
+				onError(resp);
+			}
+		);
+	}
+
+	fetchChatRecords(onSuccess: (resp: any) => void, onError: (resp: any) => void) {
+		let headers = {
+			'Content-Type': 'application/json',
+			'Authorization': this.userInfo.token
+		};
+
+		this.httpRequestService.get(this.fetchChatRecordsUrl, {}, headers,
 			resp => {
 				console.log(resp);
 				onSuccess(resp);
