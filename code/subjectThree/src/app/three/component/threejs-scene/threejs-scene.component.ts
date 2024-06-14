@@ -124,7 +124,10 @@ export class ThreejsSceneComponent implements OnInit {
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        console.log('sendDisconnect');
+        if (event.url.startsWith('/scene')) {
+          return;
+        }
+        console.log('sendDisconnect' + event.url);
         this.remotePart.sendDisconnect();
         this.examService.endExam(
           (resp) => { },

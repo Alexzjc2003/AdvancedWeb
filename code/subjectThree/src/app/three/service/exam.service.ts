@@ -102,6 +102,7 @@ export class ExamService {
 		if (this.punishmentNameMap.hasOwnProperty(punishmentType)) {
 			punishment_type = this.punishmentNameMap[punishmentType];
 		} else {
+			console.warn("exam.service.ts::addPunishment: unknown punishment type.");
 			return;
 		}
 
