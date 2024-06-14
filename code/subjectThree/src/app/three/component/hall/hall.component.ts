@@ -2,10 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import * as THREE from 'three';
 import { carNameList } from '../../../data/allCars';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
 import { LoadResourceService } from '@app/three/service/load-resource.service';
 import { WebSocketService } from '@app/utils/service/websocket.service';
 import { ExamService } from '@app/three/service/exam.service';
+import { ConfirmDialogComponent } from '@app/utils/component/confirm-dialog/confirm-dialog.component';
+import { UserService } from '@app/user/service/user.service';
 
 @Component({
   selector: 'app-hall',
@@ -36,7 +39,7 @@ export class HallComponent implements OnInit {
 
   io: WebSocketService = new WebSocketService();
 
-  constructor(private router: Router, private examService: ExamService) {
+  constructor(private router: Router, private examService: ExamService, public dialog: MatDialog, private userService: UserService) {
     this.carOptions = carNameList;
     this.roomOptions = {};
   }
@@ -70,6 +73,23 @@ export class HallComponent implements OnInit {
   }
 
   gotoThree(roomId: string) {
+    let userInfo = this.userService.getUserDetail();
+    let is_passed = userInfo.is_passed;
+    if (is_passed) {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent);
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.startExam(roomId, true);
+        } else {
+          this.startExam(roomId, false);
+        }
+      });
+    } else {
+      this.startExam(roomId, false);
+    }
+  }
+
+  startExam(roomId: string, isOfficialDriving: boolean) {
     let self = this;
     this.examService.startExam(
       (resp) => {
@@ -81,7 +101,7 @@ export class HallComponent implements OnInit {
         });
       },
       (resp) => { },
-      false
+      isOfficialDriving
     );
   }
 

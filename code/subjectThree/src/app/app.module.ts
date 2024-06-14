@@ -34,6 +34,7 @@ import {
   ExamRecordComponent,
   PunishmentDetailDialog,
 } from './user/component/exam-record/exam-record.component';
+import { ConfirmDialogComponent } from './utils/component/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import {
     ExamRecordComponent,
     PunishmentDetailDialog,
     HallComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     CommonModule,
