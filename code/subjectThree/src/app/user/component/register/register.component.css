@@ -50,6 +50,11 @@
   outline: none;
 }
 
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
 .register-button {
   padding: 10px 20px;
   font-size: 16px;

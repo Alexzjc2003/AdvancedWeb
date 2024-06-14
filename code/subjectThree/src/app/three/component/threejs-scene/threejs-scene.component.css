@@ -1,8 +1,22 @@
-canvas { display: block; }
-
 .container {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.debug-info {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.three-notice-container {
+  display: flex;
   width: 100%;
 }
 
@@ -13,32 +27,93 @@ canvas { display: block; }
   margin-left: 30px;
   border: 1px solid black;
 }
+
 #notice-container {
-  width: calc(30% - 80px); /* 100% - 70% - 2 * margin-left */
+  width: calc(30% - 80px);
   height: 80vh;
   margin-top: 30px;
   margin-left: 20px;
   border: 1px solid blue;
 }
+
 #input-container {
-  width: calc(100% - 60px); /* full width minus 2 * margin-left */
-  height: 5vh;
-  margin-top: 15px;
-  margin-left: 30px;
-  /* border: 1px solid green; */
-}
-#three-input-box {
-  width: 90%;
-  height: 5vh;
-  margin: 0;
-  padding: 0;
-  font-size: 30px;
-  border-radius: 5px;
+  display: flex;
+  width: 100%;
+  margin-top: 20px;
+  align-items: center;
+  justify-content: center;
 }
 
-#three-send-btm{
-  margin-left: 10px;
-  height: 40px;
-  width: 100px;
-  font-size: 20px;
+#input-container form {
+  display: flex;
+  width: 70%;
+  align-items: center;
+}
+
+#three-input-box {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+  margin-left: 30px;
+  transition: border-color 0.3s;
+}
+
+#three-input-box:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+#three-send-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+}
+
+#three-send-btn:hover {
+  background-color: #0056b3;
+}
+
+#exit-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#exit-button:hover {
+  background-color: #cc0000;
+}
+
+.chat-type-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+#chatType {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.chat-type-container > div {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333;
 }
