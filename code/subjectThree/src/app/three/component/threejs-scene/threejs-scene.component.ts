@@ -268,7 +268,8 @@ export class ThreejsSceneComponent implements OnInit {
       // overspeed
       const SPEED_LIMIT = 30;
       if (this.carcontrol.getStatus().speed > SPEED_LIMIT) {
-        console.log('overspeed');
+        console.log("超速");
+        this.examService.addPunishment("OverSpeed", "超速", 10, (resp) => { }, (resp) => { });
       }
 
       // turning light
@@ -277,7 +278,8 @@ export class ThreejsSceneComponent implements OnInit {
         Math.abs(this.carcontrol.getStatus().rotation) > TUNNING_LIMIT &&
         !this.carcontrol.isLightCorrect()
       ) {
-        console.log('incorrect light');
+        console.log("转向灯错误");
+        this.examService.addPunishment("INCORRECTLIGHT", "转向灯错误", 10, (resp) => { }, (resp) => { });
       }
 
       this.cameraService.control(dt, _up, _right, _far);

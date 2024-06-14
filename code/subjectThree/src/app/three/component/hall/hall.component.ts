@@ -76,7 +76,9 @@ export class HallComponent implements OnInit {
     let userInfo = this.userService.getUserDetail();
     let is_passed = userInfo.is_passed;
     if (is_passed) {
-      const dialogRef = this.dialog.open(ConfirmDialogComponent);
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: { title: "提示", message: "是否正式上路？" }
+      });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.startExam(roomId, true);
