@@ -33,7 +33,7 @@ export class UserService {
 		}
 	}
 
-	login(username: string, password: string, onSuccess: (resp: any) => void, onError: (resp: any) => void): void {
+	login(username: string, password: string, onSuccess: () => void, onError: () => void): void {
 		let self = this;
 		const postData = {
 			username: username,
@@ -47,24 +47,17 @@ export class UserService {
 				self.userInfo.token = resp.access;
 				self.storeUserInfo();
 				self.loggedIn.next(true);
-				self.loadUserDetail((resp) => {
-					self.loadUserExams((resp) => {
-						onSuccess(resp);
-					},
-						(resp) => {
-							console.log("获取考试失败");
-							onError(resp);
-						})
-				},
+				self.loadUserDetail(
 					(resp) => {
-						console.log("获取信息失败");
-						onError(resp);
-					});
+						onSuccess();
+					},
+					(resp) => {
+						onError();
+					}
+				);
 			},
-
 			resp => {
-				console.log(resp);
-				onError(resp);
+				onError();
 			});
 	}
 
@@ -215,8 +208,7 @@ export class UserService {
 		return `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒 ${miliseconds}毫秒`;
 	}
 
-	loadUserExams(onSuccess: (resp: any) => void, onError: (resp: any) => void) {
-		let self = this;
+	fetchUserExams(onSuccess: (resp: any) => void, onError: (resp: any) => void) {
 		if (!this.isLoggedin()) {
 			console.warn("user.service.ts::loadUserExams: load exams before login.");
 			return;
@@ -227,25 +219,10 @@ export class UserService {
 		};
 		this.httpRequestService.get(this.getExamUrl, {}, headers,
 			resp => {
-				console.log(resp);
-				for (let exam of resp) {
-					self.userInfo.exams.push({
-						id: exam.id,
-						title: exam.title,
-						description: exam.description,
-						start_time: exam.start_time,
-						end_time: exam.end_time,
-						score: exam.score,
-						is_public: exam.is_public,
-						normal: exam.normal,
-						duration: this.durationToString(exam.duration),
-					});
-				}
 				onSuccess(resp);
 			},
 
 			resp => {
-				console.log(resp);
 				onError(resp);
 			}
 		);
@@ -265,12 +242,10 @@ export class UserService {
 
 		this.httpRequestService.get(fetchExamPunishmentsUrl, {}, headers,
 			resp => {
-				console.log(resp);
 				onSuccess(resp);
 			},
 
-			resp => {
-				console.log(resp);
+			resp => {	
 				onError(resp);
 			}
 		);
@@ -320,7 +295,6 @@ export class UserService {
 	}
 
 	getUserExams() {
-		// this.loadUserExams((resp) => { }, (resp) => { });
 		return this.userInfo.exams;
 	}
 

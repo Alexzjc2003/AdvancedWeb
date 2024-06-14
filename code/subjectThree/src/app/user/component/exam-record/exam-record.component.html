@@ -1,4 +1,4 @@
-<div *ngIf="exams">
+<div *ngIf="exams.length">
     <h2>User Exams</h2>
     <table mat-table [dataSource]="exams" class="mat-elevation-z8">
         <ng-container matColumnDef="title">

@@ -14,29 +14,26 @@ export class ExamRecordComponent {
 	constructor(private userService: UserService, public dialog: MatDialog) { }
 
 	ngOnInit() {
-		// this.userService.getUserExams().then((exams) => {
-		// 	this.setUserExams(exams);
-		// 	console.log("exams:", this.exams);
-		// });
-		let exams: any[] = this.userService.getUserExams();
-		this.setUserExams(exams);
-		console.log("exams:", this.exams);
-	}
-
-	setUserExams(exams: any[]) {
-		for (let exam of exams) {
-			this.exams.push({
-				id: exam.id,
-				title: exam.title,
-				description: exam.description,
-				start_time: exam.start_time,
-				end_time: exam.end_time,
-				score: exam.score,
-				is_public: exam.is_public,
-				normal: exam.normal,
-				duration: exam.duration,
-			})
-		}
+		let self = this;
+		this.userService.fetchUserExams(
+			(resp)=>{
+				for (let exam of resp) {
+					self.exams.push({
+						id: exam.id,
+						title: exam.title,
+						description: exam.description,
+						start_time: exam.start_time,
+						end_time: exam.end_time,
+						score: exam.score,
+						is_public: exam.is_public,
+						normal: exam.normal,
+						duration: self.userService.durationToString(exam.duration),
+					});
+				}
+				console.log("exam-record.component::ngOnInit", self.exams);
+			},
+			(resp)=>{}
+		);
 	}
 
 	showDetail(examId: number) {

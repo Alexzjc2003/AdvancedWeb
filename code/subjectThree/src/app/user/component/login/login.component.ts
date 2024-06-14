@@ -15,8 +15,8 @@ export class LoginComponent {
   }
 
   login(){
-    this.userService.login(this.username, this.password, (resp) => {
+    this.userService.login(this.username, this.password, () => {
       this.router.navigate(['']);
-    }, (resp) => {});
+    }, () => {});
   }
 }
