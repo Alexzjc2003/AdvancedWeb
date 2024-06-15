@@ -73,3 +73,11 @@
 .user-info-container button:hover {
   background-color: #0056b3;
 }
+
+.mock {
+  text-align: center;
+}
+
+.mock:hover{
+  background-color: red;
+}
