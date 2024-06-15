@@ -162,7 +162,7 @@ export class ThreejsSceneComponent implements OnInit {
         console.log('is_passed: ', resp.is_driver);
         this.userService.setUserDetail('is_passed', resp.is_driver);
       },
-      (resp) => {},
+      (resp) => { },
       normalExit
     );
   }
@@ -220,7 +220,7 @@ export class ThreejsSceneComponent implements OnInit {
     });
   }
 
-  addPunishment(punishmentType: string, reason: string) {
+  addPunishment(punishmentType: string, reason: string, score: number = 10) {
     let self = this;
     if (!this.punishmentCoolDown[punishmentType]) {
       return;
@@ -233,9 +233,9 @@ export class ThreejsSceneComponent implements OnInit {
     this.examService.addPunishment(
       punishmentType,
       reason,
-      10,
-      (resp) => {},
-      (resp) => {}
+      score,
+      (resp) => { },
+      (resp) => { }
     );
   }
 
@@ -326,18 +326,26 @@ export class ThreejsSceneComponent implements OnInit {
       this.model.obj.quaternion.copy(this.physics.getCarRotation());
 
       // overspeed
-      const SPEED_LIMIT = 10;
+      const SPEED_LIMIT = 40;
       if (this.carcontrol.getStatus().speed > SPEED_LIMIT) {
         this.addPunishment('OverSpeed', '超速');
       }
 
+
       // turning light
-      const TUNNING_LIMIT = 5;
+      const TUNNING_LIMIT = 10;
+      const TURNING_SPEED_LIMIT = 10;
       if (
         Math.abs(this.carcontrol.getStatus().rotation) > TUNNING_LIMIT &&
-        !this.carcontrol.isLightCorrect()
+        !this.carcontrol.isLightCorrect() &&
+        this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT
       ) {
+        console.log(this.carcontrol.getStatus().speed)
         this.addPunishment('INCORRECTLIGHT', '转向灯错误');
+      }
+
+      if (this.isTyping && this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT) {
+        this.addPunishment('PHONING', '驾驶中打电话', 1);
       }
 
       this.cameraService.control(dt, _up, _right, _far);
@@ -363,8 +371,8 @@ export class ThreejsSceneComponent implements OnInit {
   @HostListener('window:load', ['$event'])
   handleLoad(event: Event) {
     this.examService.startExam(
-      (resp) => {},
-      (resp) => {},
+      (resp) => { },
+      (resp) => { },
       false
     );
   }
@@ -378,7 +386,7 @@ export class ThreejsSceneComponent implements OnInit {
     }
   }
 
-  exitFrame(){
+  exitFrame() {
     cancelAnimationFrame(this.frame);
   }
 
