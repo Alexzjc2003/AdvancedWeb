@@ -1,0 +1,37 @@
+.custom-table {
+    width: 100%;
+    max-width: 1000px; /* 调整表格最大宽度 */
+    margin: auto; /* 让表格居中 */
+    border-collapse: collapse; /* 合并边框 */
+}
+
+.custom-table th, .custom-table td {
+    padding: 12px 15px; /* 添加内边距 */
+    border: 1px solid #ddd; /* 添加边框 */
+    text-align: left; /* 左对齐文本 */
+}
+
+.custom-table th {
+    background-color: #f2f2f2; /* 表头背景颜色 */
+    font-weight: bold; /* 表头字体加粗 */
+}
+
+.custom-table tr:nth-child(even) {
+    background-color: #f9f9f9; /* 偶数行背景颜色 */
+}
+
+.custom-table tr:hover {
+    background-color: #f1f1f1; /* 鼠标悬停行背景颜色 */
+}
+
+.mat-dialog-title {
+    text-align: center; /* 标题居中 */
+    font-size: 1.5em; /* 标题字体大小 */
+    margin-bottom: 20px; /* 标题下方间距 */
+}
+
+.mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end; /* 按钮靠右 */
+    padding: 10px; /* 内边距 */
+}
