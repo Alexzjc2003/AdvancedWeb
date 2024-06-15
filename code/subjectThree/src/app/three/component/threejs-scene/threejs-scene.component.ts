@@ -147,6 +147,7 @@ export class ThreejsSceneComponent implements OnInit {
         if (event.url.startsWith('/scene')) {
           return;
         }
+        this.exitFrame();
         console.log('sendDisconnect' + event.url);
         this.remotePart.sendDisconnect();
         this.endExam(false);
@@ -372,9 +373,13 @@ export class ThreejsSceneComponent implements OnInit {
     if (window.confirm('Do you really want to finish driving?')) {
       this.endExam(true);
       this.remotePart.sendDisconnect();
-      cancelAnimationFrame(this.frame);
+      this.exitFrame()
       this.router.navigate(['/hall']);
     }
+  }
+
+  exitFrame(){
+    cancelAnimationFrame(this.frame);
   }
 
   chatType: string[] = ['room', 'private', 'global', 'ai'];

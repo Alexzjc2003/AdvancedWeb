@@ -104,7 +104,9 @@ export class HallComponent implements OnInit {
           },
         });
       },
-      (resp) => { },
+      (resp) => { 
+        console.log(resp);
+      },
       isOfficialDriving
     );
   }
