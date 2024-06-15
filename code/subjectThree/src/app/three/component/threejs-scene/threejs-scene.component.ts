@@ -15,6 +15,8 @@ import { EnvironmentPart } from './environment';
 import { NoticePart } from './notice';
 import { ExamService } from '@app/three/service/exam.service';
 import { RenderService } from '@app/three/service/render.service';
+import { SnackbarService } from '@app/utils/service/snackbar.service';
+import { UserService } from '@app/user/service/user.service';
 
 @Component({
   selector: 'app-threejs-scene',
@@ -68,6 +70,8 @@ export class ThreejsSceneComponent implements OnInit {
     private route: ActivatedRoute,
     public physics: PhysicsService,
     private examService: ExamService,
+    private userService: UserService,
+    private snackBarService: SnackbarService,
 
     private loadResourcePart: LoadResourcePart,
     private remotePart: RemotePart,
@@ -144,13 +148,21 @@ export class ThreejsSceneComponent implements OnInit {
         }
         console.log('sendDisconnect' + event.url);
         this.remotePart.sendDisconnect();
-        this.examService.endExam(
-          (resp) => { },
-          (resp) => { },
-          false
-        );
+        this.endExam(false);
       }
     });
+  }
+
+  endExam(normalExit: boolean){
+    this.examService.endExam(
+      (resp) => {
+        this.snackBarService.showMessage(resp.info, "sucess");
+        console.log("is_passed: ", resp.is_driver);
+        this.userService.setUserDetail("is_passed", resp.is_driver);
+       },
+      (resp) => { },
+      normalExit
+    );
   }
 
   sendChatMsg() {
@@ -328,7 +340,7 @@ export class ThreejsSceneComponent implements OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   handleBeforeUnload(event: Event) {
-    this.examService.endExam((resp) => { }, (resp) => { }, false);
+    this.endExam(false);
     // setTimeout(()=>{
     // console.log('before unload');
     // this.sendDisconnect();
@@ -342,7 +354,7 @@ export class ThreejsSceneComponent implements OnInit {
 
   exit() {
     if (window.confirm("Do you really want to finish driving?")) {
-      this.examService.endExam((resp) => { }, (resp) => { }, true);
+      this.endExam(true);
       this.remotePart.sendDisconnect();
       this.router.navigate(['/hall']);
     }
