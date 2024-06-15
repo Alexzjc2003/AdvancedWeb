@@ -340,12 +340,16 @@ export class ThreejsSceneComponent implements OnInit {
         !this.carcontrol.isLightCorrect() &&
         this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT
       ) {
-        console.log(this.carcontrol.getStatus().speed)
         this.addPunishment('INCORRECTLIGHT', '转向灯错误');
       }
 
       if (this.isTyping && this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT) {
         this.addPunishment('PHONING', '驾驶中打电话', 1);
+      }
+
+      if (this.carcontrol.getStatus().speed > 100){
+        console.log(this.carcontrol.getStatus().speed)
+        this.addPunishment('AIRCRASH', '坠机', 100);
       }
 
       this.cameraService.control(dt, _up, _right, _far);
