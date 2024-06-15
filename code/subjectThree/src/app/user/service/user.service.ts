@@ -27,7 +27,7 @@ export class UserService {
 
 	constructor(private httpRequestService: HttpRequestService) {
 		let userInfo = localStorage.getItem('userInfo')
-		if (userInfo != null) {
+		if (userInfo != null && userInfo.length > 0) {
 			this.userInfo = JSON.parse(userInfo);
 			this.loggedIn.next(true);
 		}
