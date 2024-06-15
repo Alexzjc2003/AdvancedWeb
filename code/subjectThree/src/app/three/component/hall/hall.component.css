@@ -15,13 +15,23 @@
 }
 
 #main-room-list {
+  text-align: center;
   height: 100%;
   border: 1px solid #ccc;
   padding: 10px;
   background-color: #f9f9f9;
   overflow-y: auto;
 }
+.room-item {
+  margin-bottom: 10px; /* 下边距 */
+}
 
+.room-info {
+  font-family: 'Arial', sans-serif; /* 字体 */
+  font-size: 16px; /* 字体大小 */
+  color: #333; /* 字体颜色 */
+  margin-right: 10px; /* 右边距 */
+}
 .room-item {
   display: flex;
   align-items: center;
@@ -76,7 +86,9 @@
   justify-content: center;
 }
 
-#main-prev-btn, #main-next-btn, #main-goto-three-btn {
+#main-prev-btn,
+#main-next-btn,
+#main-goto-three-btn {
   background-color: #007bff;
   color: white;
   border: none;
@@ -86,7 +98,9 @@
   transition: background-color 0.3s;
 }
 
-#main-prev-btn:hover, #main-next-btn:hover, #main-goto-three-btn:hover {
+#main-prev-btn:hover,
+#main-next-btn:hover,
+#main-goto-three-btn:hover {
   background-color: #0056b3;
 }
 

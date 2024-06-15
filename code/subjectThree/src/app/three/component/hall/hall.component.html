@@ -1,12 +1,14 @@
 <div id="main-container">
     <div id="main-left">
         <div id="main-room-list">
-            <div *ngFor="let room of roomOptions | keyvalue">
-                <span>{{room.key}}: {{room.value}} member(s) </span>
-                <button id="main-goto-three-btn" class="main-enter-btn" color="primary" (click)="gotoThree(room.key)">go to</button>
+            <div *ngFor="let room of roomOptions | keyvalue" class="room-item">
+                <span class="room-info">{{room.key}}: {{room.value}} member(s) </span>
+                <button id="main-goto-three-btn" class="main-enter-btn" color="primary" (click)="gotoThree(room.key)">go
+                    to {{room.key}}</button>
             </div>
             <div>
-                <button id="main-create-btn" mat-button class="app-navi-button" (click)="createRoom()">createRoom</button>
+                <button id="main-create-btn" mat-button class="app-navi-button" (click)="createRoom()">Create
+                    Room</button>
             </div>
         </div>
     </div>
@@ -14,11 +16,11 @@
         <div id="main-model-preview"></div>
         <div id="main-model-list">
             <div class="main-btn-container">
-                <button id="main-prev-btn" color="primary" (click)="prev()">prev</button>
+                <button id="main-prev-btn" color="primary" (click)="prev()">prev car</button>
             </div>
             <div id="main-model-name">{{model_name}}</div>
             <div class="main-btn-container">
-                <button id="main-next-btn" color="primary" (click)="next()">next</button>
+                <button id="main-next-btn" color="primary" (click)="next()">next car</button>
             </div>
         </div>
     </div>
