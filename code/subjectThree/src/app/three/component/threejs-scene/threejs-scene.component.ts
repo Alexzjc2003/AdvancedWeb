@@ -163,7 +163,7 @@ export class ThreejsSceneComponent implements OnInit {
         console.log('is_passed: ', resp.is_driver);
         this.userService.setUserDetail('is_passed', resp.is_driver);
       },
-      (resp) => {},
+      (resp) => { },
       normalExit
     );
   }
@@ -211,6 +211,9 @@ export class ThreejsSceneComponent implements OnInit {
       if (self.isTyping) {
         return;
       }
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+      }
       // console.log(event.key);
       self.keyboardPressed[event.key] = 1;
     });
@@ -237,8 +240,8 @@ export class ThreejsSceneComponent implements OnInit {
       punishmentType,
       reason,
       score,
-      (resp) => {},
-      (resp) => {}
+      (resp) => { },
+      (resp) => { }
     );
   }
 
@@ -385,8 +388,8 @@ export class ThreejsSceneComponent implements OnInit {
   @HostListener('window:load', ['$event'])
   handleLoad(event: Event) {
     this.examService.startExam(
-      (resp) => {},
-      (resp) => {},
+      (resp) => { },
+      (resp) => { },
       false
     );
   }
