@@ -6,25 +6,25 @@
     <span class="example-spacer"></span>
     <div class="top-bar-navi-button-container">
         <button mat-button *ngIf="!isLoggedIn" class="top-bar-navi-button" routerLink="login">
-            sign in
+            Sign In
         </button>
         <button mat-button *ngIf="!isLoggedIn" class="top-bar-navi-button" routerLink="register">
-            sign up
+            Sign Up
         </button>
         <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" routerLink="hall">
-            three
+            Three
         </button>
         <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" (click)="gotoSpace()">
-            space
+            Space
         </button>
         <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" (click)="gotoChat()">
-            chatRecord
+            Chat Record
         </button>
         <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" (click)="gotoExamRecord()">
-            record
+            Exam Record
         </button>
         <button mat-button *ngIf="isLoggedIn" class="top-bar-navi-button" (click)="logout()">
-            log out
+            Log Out
         </button>
     </div>
 </mat-toolbar>
