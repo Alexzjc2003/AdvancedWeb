@@ -327,8 +327,12 @@ export class ThreejsSceneComponent implements OnInit {
 
       // overspeed
       const SPEED_LIMIT = 40;
-      if (this.carcontrol.getStatus().speed > SPEED_LIMIT) {
+      const AIRCRASH_SPEED_LIMIT = 100;
+      if (this.carcontrol.getStatus().speed > SPEED_LIMIT && this.carcontrol.getStatus().speed < AIRCRASH_SPEED_LIMIT) {
         this.addPunishment('OverSpeed', '超速');
+      } else if (this.carcontrol.getStatus().speed > AIRCRASH_SPEED_LIMIT) {
+        console.log(this.carcontrol.getStatus().speed)
+        this.addPunishment('AIRCRASH', '坠机', 100);
       }
 
 
@@ -347,10 +351,6 @@ export class ThreejsSceneComponent implements OnInit {
         this.addPunishment('PHONING', '驾驶中打电话', 1);
       }
 
-      if (this.carcontrol.getStatus().speed > 100){
-        console.log(this.carcontrol.getStatus().speed)
-        this.addPunishment('AIRCRASH', '坠机', 100);
-      }
 
       this.cameraService.control(dt, _up, _right, _far);
       this.cameraService.follow(this.model.obj);
