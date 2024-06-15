@@ -96,8 +96,8 @@ export const roadOffset = {
         "puzzle": [
             {
                 "type": "rectangle",
-                "vectorX": [1, 0, 0],
-                "vectorZ": [0, 0, 1.333]
+                "vectorX": [1.5, 0, 0],
+                "vectorZ": [0, 0, 1.5]
             }
         ]
     },
@@ -105,13 +105,25 @@ export const roadOffset = {
         "offset_x": 0.5,
         "offset_y": 0,
         "offset_z": 0.833,
-        "puzzle": []
+        "puzzle": [
+            {
+                "type": "rectangle",
+                "vectorX": [1.5, 0, 0],
+                "vectorZ": [0, 0, 1.5]
+            }
+        ]
     },
     "road_sideExit": {
         "offset_x": 0.5,
         "offset_y": 0,
         "offset_z": 0.833,
-        "puzzle": []
+        "puzzle": [
+            {
+                "type": "rectangle",
+                "vectorX": [1.5, 0, 0],
+                "vectorZ": [0, 0, 1.5]
+            }
+        ]
     },
     "road_slant": {
         "offset_x": 0.5,
