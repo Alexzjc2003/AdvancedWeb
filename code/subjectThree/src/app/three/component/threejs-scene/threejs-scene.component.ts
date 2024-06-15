@@ -49,6 +49,7 @@ export class ThreejsSceneComponent implements OnInit {
 
   chat_msg: string = '';
   isTyping: boolean = false;
+  privateToID: string = '';
 
   punishmentCoolDown: { [key: string]: boolean } = {
     Unknown: true,
@@ -173,7 +174,7 @@ export class ThreejsSceneComponent implements OnInit {
       this.chat_msg,
       this.selectedType,
       this.roomId,
-      0
+      this.privateToID,
     );
     this.chat_msg = '';
   }
