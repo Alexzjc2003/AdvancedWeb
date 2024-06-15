@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as CANNON from 'cannon-es';
+import * as THREE from 'three';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +21,34 @@ export class CarcontrolService {
   beeping = false;
   os: OscillatorNode = this.audio.createOscillator();
 
+  geoLeft;
+  geoRight;
+  geoNone;
+  turningSign!: THREE.Mesh;
+
   constructor() {
     this.os.start(0);
+
+    let self = this;
+    const fontLoader = new FontLoader();
+    fontLoader.load('assets/fonts/helvetiker_bold.typeface.json', (font) => {
+      let para = {
+        font: font,
+        size: 80,
+        depth: 0.001,
+      };
+      self.geoLeft = new TextGeometry('<-', para);
+      self.geoRight = new TextGeometry('->', para);
+      self.geoNone = new TextGeometry('^^', para);
+
+      self.turningSign = new THREE.Mesh(
+        this.geoNone,
+        new THREE.MeshBasicMaterial({ color: new THREE.Color(0xff0000) })
+      );
+      this.turningSign.position.set(30, 150, 0);
+      this.turningSign.scale.set(0.5, 0.5, 0.5);
+      this.turningSign.rotateY(Math.PI);
+    });
   }
 
   public setControl(
@@ -47,6 +76,23 @@ export class CarcontrolService {
 
   public turnLight(light: number) {
     this.turningLight = this.turningLight === light ? 0 : light;
+
+    let _p = this.turningSign.parent;
+    _p?.remove(this.turningSign);
+    this.turningSign = new THREE.Mesh(
+      this.turningLight > 0
+        ? this.geoLeft
+        : this.turningLight < 0
+        ? this.geoRight
+        : this.geoNone,
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(0xff0000) })
+    );
+
+    this.turningSign.position.set(30, 150, 0);
+    this.turningSign.scale.set(0.5, 0.5, 0.5);
+    this.turningSign.rotateY(Math.PI);
+
+    _p?.add(this.turningSign);
   }
 
   public isLightCorrect(): boolean {
@@ -74,6 +120,8 @@ export class CarcontrolService {
   public bindCar(car: CANNON.Body) {
     this.car = car;
   }
+
+  public updateLight() {}
 }
 
 export class CarStatus {

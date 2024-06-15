@@ -45,7 +45,7 @@ export class ThreejsSceneComponent implements OnInit {
 
   roomId: string = '';
 
-  container: any;
+  container!: HTMLElement | null;
 
   chat_msg: string = '';
   isTyping: boolean = false;
@@ -163,7 +163,7 @@ export class ThreejsSceneComponent implements OnInit {
         console.log('is_passed: ', resp.is_driver);
         this.userService.setUserDetail('is_passed', resp.is_driver);
       },
-      (resp) => { },
+      (resp) => {},
       normalExit
     );
   }
@@ -174,7 +174,7 @@ export class ThreejsSceneComponent implements OnInit {
       this.chat_msg,
       this.selectedType,
       this.roomId,
-      this.privateToID,
+      this.privateToID
     );
     this.chat_msg = '';
   }
@@ -189,6 +189,8 @@ export class ThreejsSceneComponent implements OnInit {
       };
       self.physics.setCar(carObj);
       self.carcontrol.bindCar(self.physics.car);
+      carObj.add(self.carcontrol.turningSign);
+      console.log(carObj);
       self.remotePart.sendInit(self.model, self.model_name);
     });
   }
@@ -196,9 +198,9 @@ export class ThreejsSceneComponent implements OnInit {
   bindEventListener() {
     let self = this;
 
-    document.addEventListener('resize', () => {
-      const width = self.container.clientWidth;
-      const height = self.container.clientHeight;
+    window.addEventListener('resize', () => {
+      const width = self.container?.clientWidth!;
+      const height = self.container?.clientHeight!;
 
       self.renderService.updateScreenSize(width, height);
       self.cameraService.camera.aspect = width / height;
@@ -235,8 +237,8 @@ export class ThreejsSceneComponent implements OnInit {
       punishmentType,
       reason,
       score,
-      (resp) => { },
-      (resp) => { }
+      (resp) => {},
+      (resp) => {}
     );
   }
 
@@ -316,7 +318,9 @@ export class ThreejsSceneComponent implements OnInit {
         // this.carcontrol.beep();
         this.remotePart.sendEvent('beep', this.roomId);
       }
-      // this.keyboardPressed = {};
+      if (this.keyboardPressed['r']) {
+        this.physics.initCar();
+      }
 
       let dt = this.clock.getDelta();
       this.carcontrol.setControl(dt, _gear, _throttle, _brake, _turn);
@@ -329,13 +333,15 @@ export class ThreejsSceneComponent implements OnInit {
       // overspeed
       const SPEED_LIMIT = 40;
       const AIRCRASH_SPEED_LIMIT = 100;
-      if (this.carcontrol.getStatus().speed > SPEED_LIMIT && this.carcontrol.getStatus().speed < AIRCRASH_SPEED_LIMIT) {
+      if (
+        this.carcontrol.getStatus().speed > SPEED_LIMIT &&
+        this.carcontrol.getStatus().speed < AIRCRASH_SPEED_LIMIT
+      ) {
         this.addPunishment('OverSpeed', '超速');
       } else if (this.carcontrol.getStatus().speed > AIRCRASH_SPEED_LIMIT) {
-        console.log(this.carcontrol.getStatus().speed)
+        console.log(this.carcontrol.getStatus().speed);
         this.addPunishment('AIRCRASH', '坠机', 100);
       }
-
 
       // turning light
       const TUNNING_LIMIT = 10;
@@ -345,13 +351,16 @@ export class ThreejsSceneComponent implements OnInit {
         !this.carcontrol.isLightCorrect() &&
         this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT
       ) {
+        console.log(this.carcontrol.getStatus().speed);
         this.addPunishment('INCORRECTLIGHT', '转向灯错误');
       }
 
-      if (this.isTyping && this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT) {
+      if (
+        this.isTyping &&
+        this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT
+      ) {
         this.addPunishment('PHONING', '驾驶中打电话', 1);
       }
-
 
       this.cameraService.control(dt, _up, _right, _far);
       this.cameraService.follow(this.model.obj);
@@ -376,8 +385,8 @@ export class ThreejsSceneComponent implements OnInit {
   @HostListener('window:load', ['$event'])
   handleLoad(event: Event) {
     this.examService.startExam(
-      (resp) => { },
-      (resp) => { },
+      (resp) => {},
+      (resp) => {},
       false
     );
   }
@@ -386,7 +395,7 @@ export class ThreejsSceneComponent implements OnInit {
     if (window.confirm('Do you really want to finish driving?')) {
       this.endExam(true);
       this.remotePart.sendDisconnect();
-      this.exitFrame()
+      this.exitFrame();
       this.router.navigate(['/hall']);
     }
   }
