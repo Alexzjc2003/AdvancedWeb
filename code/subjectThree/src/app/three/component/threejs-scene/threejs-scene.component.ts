@@ -186,6 +186,7 @@ export class ThreejsSceneComponent implements OnInit {
         obj: carObj,
       };
       self.physics.setCar(carObj);
+      self.carcontrol.bindCar(self.physics.car);
       self.remotePart.sendInit(self.model, self.model_name);
     });
   }
@@ -269,6 +270,9 @@ export class ThreejsSceneComponent implements OnInit {
         this.noticePart.showNotice('转弯');
         _turn -= 1;
       }
+      if (this.keyboardPressed['b'] == 1) {
+        _brake = true;
+      }
       if (this.keyboardPressed['e'] == 1) {
         // E键 - 弹窗测试
         this.notification.showNotification('This is a test message.');
@@ -321,7 +325,7 @@ export class ThreejsSceneComponent implements OnInit {
       this.model.obj.quaternion.copy(this.physics.getCarRotation());
 
       // overspeed
-      const SPEED_LIMIT = 30;
+      const SPEED_LIMIT = 10;
       if (this.carcontrol.getStatus().speed > SPEED_LIMIT) {
         this.addPunishment('OverSpeed', '超速');
       }
