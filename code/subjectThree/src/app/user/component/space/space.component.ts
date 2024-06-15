@@ -24,8 +24,6 @@ export class SpaceComponent implements OnInit{
   driverPunishmentsDisplayedColumns: string[] = ['type', 'reason', 'score'];
   driverPunishments: any = [];
 
-  chatRecordsDisplayedColumns: string[] = ['message', 'created_at', 'type'];
-  chatRecords: any = [];
 
 	editMode: boolean = false;
 	button_msg: string = "modify";
@@ -53,22 +51,6 @@ export class SpaceComponent implements OnInit{
       (resp) => {
       }
     );
-
-    this.userService.fetchChatRecords(
-      (resp) => {
-        console.log("chat records: ", resp);
-        for(let chatRecord of resp){
-          console.log(chatRecord);
-          self.chatRecords.push({
-            message: chatRecord.Message,
-            created_at: chatRecord.created_at,
-            type: chatRecord.type
-          })
-        }
-        console.log("final", self.chatRecords);
-      },
-      (resp) => {}
-    )
 
 	}
 

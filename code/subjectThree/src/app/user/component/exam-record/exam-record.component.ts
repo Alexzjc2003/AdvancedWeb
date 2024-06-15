@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { UserService } from '@app/user/service/user.service';
+import { punishmentNameList } from '@app/data/allPunishments';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -39,12 +40,13 @@ export class ExamRecordComponent {
 	showDetail(examId: number) {
 		console.log("get detail of " + examId);
 		let self = this;
-		let punishments: { type: number, reason: string, score: string }[] = [];
+		let punishments: { type: string, reason: string, score: string }[] = [];
 		this.userService.fetchExamPunishments(examId,
 			(resp) => {
+				console.log("punishments: ", resp);
 				for (let punishment of resp) {
 					punishments.push({
-						type: punishment.punishment_type,
+						type: punishmentNameList[punishment.punishment_type] || punishment.punishment_type,
 						reason: punishment.reason,
 						score: punishment.score
 					});
