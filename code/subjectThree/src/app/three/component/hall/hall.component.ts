@@ -82,8 +82,10 @@ export class HallComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.startExam(roomId, true);
-        } else {
+        } else if (result === false) {
           this.startExam(roomId, false);
+        } else {
+          console.log('dialog closed');
         }
       });
     } else {
