@@ -45,7 +45,7 @@ export class ThreejsSceneComponent implements OnInit {
 
   roomId: string = '';
 
-  container: any;
+  container!: HTMLElement | null;
 
   chat_msg: string = '';
   isTyping: boolean = false;
@@ -162,7 +162,7 @@ export class ThreejsSceneComponent implements OnInit {
         console.log('is_passed: ', resp.is_driver);
         this.userService.setUserDetail('is_passed', resp.is_driver);
       },
-      (resp) => { },
+      (resp) => {},
       normalExit
     );
   }
@@ -188,6 +188,8 @@ export class ThreejsSceneComponent implements OnInit {
       };
       self.physics.setCar(carObj);
       self.carcontrol.bindCar(self.physics.car);
+      carObj.add(self.carcontrol.turningSign);
+      console.log(carObj);
       self.remotePart.sendInit(self.model, self.model_name);
     });
   }
@@ -195,9 +197,9 @@ export class ThreejsSceneComponent implements OnInit {
   bindEventListener() {
     let self = this;
 
-    document.addEventListener('resize', () => {
-      const width = self.container.clientWidth;
-      const height = self.container.clientHeight;
+    window.addEventListener('resize', () => {
+      const width = self.container?.clientWidth!;
+      const height = self.container?.clientHeight!;
 
       self.renderService.updateScreenSize(width, height);
       self.cameraService.camera.aspect = width / height;
@@ -234,8 +236,8 @@ export class ThreejsSceneComponent implements OnInit {
       punishmentType,
       reason,
       score,
-      (resp) => { },
-      (resp) => { }
+      (resp) => {},
+      (resp) => {}
     );
   }
 
@@ -331,7 +333,6 @@ export class ThreejsSceneComponent implements OnInit {
         this.addPunishment('OverSpeed', '超速');
       }
 
-
       // turning light
       const TUNNING_LIMIT = 10;
       const TURNING_SPEED_LIMIT = 10;
@@ -340,11 +341,14 @@ export class ThreejsSceneComponent implements OnInit {
         !this.carcontrol.isLightCorrect() &&
         this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT
       ) {
-        console.log(this.carcontrol.getStatus().speed)
+        console.log(this.carcontrol.getStatus().speed);
         this.addPunishment('INCORRECTLIGHT', '转向灯错误');
       }
 
-      if (this.isTyping && this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT) {
+      if (
+        this.isTyping &&
+        this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT
+      ) {
         this.addPunishment('PHONING', '驾驶中打电话', 1);
       }
 
@@ -371,8 +375,8 @@ export class ThreejsSceneComponent implements OnInit {
   @HostListener('window:load', ['$event'])
   handleLoad(event: Event) {
     this.examService.startExam(
-      (resp) => { },
-      (resp) => { },
+      (resp) => {},
+      (resp) => {},
       false
     );
   }
@@ -381,7 +385,7 @@ export class ThreejsSceneComponent implements OnInit {
     if (window.confirm('Do you really want to finish driving?')) {
       this.endExam(true);
       this.remotePart.sendDisconnect();
-      this.exitFrame()
+      this.exitFrame();
       this.router.navigate(['/hall']);
     }
   }
