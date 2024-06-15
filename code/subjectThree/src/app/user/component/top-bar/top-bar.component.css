@@ -1,6 +1,6 @@
 /* top-bar.component.css */
 .app-navi {
-    background-color: #333;
+    background-color: white;
     /* 设置背景颜色 */
 }
 
@@ -12,7 +12,7 @@
 
 .top-bar-navi-title {
     font-size: 20px;
-    color: #fff;
+    color: black;
     /* 设置标题字体颜色 */
 }
 
@@ -29,12 +29,12 @@
 }
 
 .top-bar-navi-button {
-    height: 20px;
+    height: 30px;
     font-size: 15px;
     margin: 5px;
     color: #fff;
     /* 按钮字体颜色 */
-    background-color: #2ebf80;
+    background-color: #f1efef;
     /* 按钮背景颜色 */
     border: none;
     /* 去除边框 */
@@ -47,6 +47,6 @@
 }
 
 .top-bar-navi-button:hover {
-    background-color: #b58b22;
+    background-color: #888888;
     /* 按钮悬停背景颜色 */
 }
