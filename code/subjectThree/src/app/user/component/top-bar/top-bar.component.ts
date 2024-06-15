@@ -43,4 +43,12 @@ export class TopBarComponent implements OnInit {
     }
     this.router.navigate(['record']);
   }
+
+  gotoChat() {
+    let token: string = this.userService.getUserToken();
+    if (token == "") {
+      console.warn("top-bar.component.ts::gotoChat: not authorized.");
+    }
+    this.router.navigate(['chat']);
+  }
 }

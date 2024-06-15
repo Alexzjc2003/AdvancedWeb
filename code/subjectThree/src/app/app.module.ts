@@ -29,6 +29,7 @@ import { ThreejsSceneComponent } from '@app/three/component/threejs-scene/threej
 import { VideoChatComponent } from '@app/video-chat/video-chat.component';
 import { TopBarComponent } from '@app/user/component/top-bar/top-bar.component';
 import { SpaceComponent } from '@app/user/component/space/space.component';
+import { ChatComponent } from './user/component/chat/chat.component';
 import { HallComponent } from '@app/three/component/hall/hall.component';
 import {
   ExamRecordComponent,
@@ -46,6 +47,7 @@ import { ConfirmDialogComponent } from './utils/component/confirm-dialog/confirm
     VideoChatComponent,
     TopBarComponent,
     SpaceComponent,
+    ChatComponent,
     ExamRecordComponent,
     PunishmentDetailDialog,
     HallComponent,
@@ -106,6 +108,11 @@ import { ConfirmDialogComponent } from './utils/component/confirm-dialog/confirm
         path: 'scene',
         component: ThreejsSceneComponent,
         title: 'scene',
+      },
+      {
+        path: 'chat',
+        component: ChatComponent,
+        title: 'chat',
       },
     ]),
   ],

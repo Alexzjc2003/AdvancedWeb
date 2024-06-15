@@ -1,0 +1,43 @@
+<p>chat works!</p>
+<div *ngFor="let record of chatRecords">
+    <p>{{ record.message }}</p>
+    <p>{{ record.created_at }}</p>
+    <p>{{ record.type }}</p>
+  </div>
+<!-- <div *ngIf="chatRecords.length">
+    <h2>Chat Records</h2>
+    <table mat-table [dataSource]="chatRecords" class="mat-elevation-z8">
+        <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef> message </th>
+            <td mat-cell *matCellDef="let element"> {{element.message}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> from_id </th>
+            <td mat-cell *matCellDef="let element"> {{element.from_id}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="starttime">
+            <th mat-header-cell *matHeaderCellDef> to_id </th>
+            <td mat-cell *matCellDef="let element"> {{element.to_id}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="score">
+            <th mat-header-cell *matHeaderCellDef> room_id </th>
+            <td mat-cell *matCellDef="let element"> {{element.room_id}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="is_public">
+            <th mat-header-cell *matHeaderCellDef> type </th>
+            <td mat-cell *matCellDef="let element"> {{element.type}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="normal">
+            <th mat-header-cell *matHeaderCellDef> created_at </th>
+            <td mat-cell *matCellDef="let element"> {{element.created_at}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="chatRecordsDisplayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: chatRecordsDisplayedColumns;"></tr>
+    </table>
+</div> -->
