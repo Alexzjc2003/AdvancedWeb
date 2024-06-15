@@ -50,14 +50,17 @@ export class PhysicsService {
     let _box = new CANNON.Box(
       new CANNON.Vec3(
         base_ptr.length() / 2 + 0.01,
-        0.01,
+        0.1,
         dir_ptr.length() / 2 + 0.01
       )
     );
 
     this.groundBody.addShape(
       _box,
-      _base_pos.addScaledVector(0.5, _base_ptr).addScaledVector(0.5, _dir_ptr),
+      _base_pos
+        .addScaledVector(0.5, _base_ptr)
+        .addScaledVector(0.5, _dir_ptr)
+        .addScaledVector(-0.5, new CANNON.Vec3(0, 0.1, 0)),
       new CANNON.Quaternion()
         .setFromVectors(new CANNON.Vec3(0, 1, 0), _up_ptr)
         .mult(
@@ -113,10 +116,10 @@ export class PhysicsService {
       directionLocal: new CANNON.Vec3(0, -1, 0),
       suspensionStiffness: 30,
       suspensionRestLength: 0.3,
-      maxSuspensionTravel: 0.3,
+      maxSuspensionTravel: 0.1,
       maxSuspensionForce: 100000,
-      dampingRelaxation: 2.3,
-      dampingCompression: 4.4,
+      dampingRelaxation: 1.0,
+      dampingCompression: 2.2,
       axleLocal: new CANNON.Vec3(0, 0, 1),
       chassisConnectionPointLocal: new CANNON.Vec3(1, 0, 1),
       useCustomSlidingRotationalSpeed: true,
@@ -154,11 +157,10 @@ export class PhysicsService {
       _wheelbody.addShape(
         _cylinder,
         new CANNON.Vec3(),
-        new CANNON.Quaternion()
-        .setFromAxisAngle(
-        new CANNON.Vec3(0, 0, 1),
-        Math.PI / 2
-      )
+        new CANNON.Quaternion().setFromAxisAngle(
+          new CANNON.Vec3(0, 0, 1),
+          Math.PI / 2
+        )
       );
       this.world.addBody(_wheelbody);
       this.wheels.push(_wheelbody);
@@ -208,16 +210,16 @@ export class PhysicsService {
   }
 
   public controlCar(status: CarStatus) {
-    let _P = 120000;
+    let _P = 100000;
     let _v = this.car.velocity.length();
 
-    // _v = _v < 25 ? 25 : _v;
-    // let _f = _P / _v;
+    _v = _v < 20 ? 20 : _v;
+    let _f = _P / _v;
 
-    let _f = 2000;
+    // let _f = 2000;
 
     for (let i = 2; i < 4; i++) {
-      this.vehicle.setBrake(status.brake ? _f : 0, i);
+      this.vehicle.setBrake(status.brake ? (_f > 2000 ? _f : 5000) : 0, i);
     }
 
     this.vehicle.applyEngineForce(
@@ -231,6 +233,5 @@ export class PhysicsService {
 
     this.vehicle.setSteeringValue((status.rotation / 180) * Math.PI, 0);
     this.vehicle.setSteeringValue((status.rotation / 180) * Math.PI, 1);
-
   }
 }
