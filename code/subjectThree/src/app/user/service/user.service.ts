@@ -293,6 +293,11 @@ export class UserService {
 		return this.userInfo.detail;
 	}
 
+	setUserDetail(key: string, value: string){
+		this.userInfo.detail[key] = value;
+		this.storeUserInfo();
+	}
+
 	getUserExams() {
 		return this.userInfo.exams;
 	}
