@@ -33,7 +33,7 @@ export class UserService {
 		}
 	}
 
-	login(username: string, password: string, onSuccess: () => void, onError: () => void): void {
+	login(username: string, password: string, onSuccess: (resp) => void, onError: (resp) => void): void {
 		let self = this;
 		const postData = {
 			username: username,
@@ -49,15 +49,14 @@ export class UserService {
 				self.loggedIn.next(true);
 				self.loadUserDetail(
 					(resp) => {
-						onSuccess();
+						onSuccess(resp);
 					},
 					(resp) => {
-						onError();
 					}
 				);
 			},
 			resp => {
-				onError();
+				onError(resp);
 			});
 	}
 

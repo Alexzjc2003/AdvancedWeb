@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DriverService } from '@app/user/service/driver.service';
 import { UserService } from '@app/user/service/user.service';
+import { SnackbarService } from '@app/utils/service/snackbar.service';
 
 @Component({
   selector: 'app-space',
@@ -30,7 +31,7 @@ export class SpaceComponent implements OnInit{
 	button_msg: string = "modify";
 
 
-	constructor(private userService: UserService, private driverService: DriverService) { }
+	constructor(private userService: UserService, private driverService: DriverService, private snackBarService: SnackbarService) { }
 
 	ngOnInit() {
     let self = this;

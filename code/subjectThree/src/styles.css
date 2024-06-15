@@ -7,3 +7,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   height: 100%;
   width: 100%;
 }
+
+::ng-deep .success { background-color: green !important; }
+::ng-deep .error { background-color: fuchsia !important; }

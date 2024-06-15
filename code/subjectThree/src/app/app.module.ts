@@ -19,6 +19,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { NgOptimizedImage } from '@angular/common';
 
@@ -66,6 +67,7 @@ import { ConfirmDialogComponent } from './utils/component/confirm-dialog/confirm
     MatListModule,
     MatTableModule,
     MatDialogModule,
+    MatSnackBarModule,
 
     NgOptimizedImage,
 
