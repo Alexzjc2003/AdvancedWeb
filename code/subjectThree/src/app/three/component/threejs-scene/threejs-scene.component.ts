@@ -219,7 +219,7 @@ export class ThreejsSceneComponent implements OnInit {
     });
   }
 
-  addPunishment(punishmentType: string, reason: string) {
+  addPunishment(punishmentType: string, reason: string, score: number = 10) {
     let self = this;
     if (!this.punishmentCoolDown[punishmentType]) {
       return;
@@ -232,7 +232,7 @@ export class ThreejsSceneComponent implements OnInit {
     this.examService.addPunishment(
       punishmentType,
       reason,
-      10,
+      score,
       (resp) => {},
       (resp) => {}
     );
@@ -327,12 +327,18 @@ export class ThreejsSceneComponent implements OnInit {
         this.addPunishment('OverSpeed', '超速');
       }
 
+      if (this.isTyping && this.carcontrol.getStatus().speed > 1){
+        this.addPunishment('PHONING', '驾驶中打电话', 1);
+      }
+
       // turning light
       const TUNNING_LIMIT = 5;
       if (
         Math.abs(this.carcontrol.getStatus().rotation) > TUNNING_LIMIT &&
-        !this.carcontrol.isLightCorrect()
+        !this.carcontrol.isLightCorrect() 
+        // this.carcontrol.getStatus().speed > 2
       ) {
+        console.log( this.carcontrol.getStatus().speed)
         this.addPunishment('INCORRECTLIGHT', '转向灯错误');
       }
 
