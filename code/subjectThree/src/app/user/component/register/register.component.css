@@ -1,12 +1,3 @@
-/* 设置背景图案 */
-body {
-  background-image: url('../../../../assets/icons/kobe.jpg');
-  /* 替换为实际的背景图片URL */
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  font-family: 'Arial', sans-serif;
-}
 
 .router-outlet-container {
   display: flex;
