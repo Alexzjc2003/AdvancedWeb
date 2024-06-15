@@ -20,7 +20,11 @@
     <select id="chatType" [(ngModel)]="selectedType">
       <option *ngFor="let singleChatType of chatType" [value]="singleChatType">{{singleChatType}}</option>
     </select>
-    <!-- <div>You selected: {{selectedType}}</div> -->
+    <div *ngIf="selectedType === 'private'">
+      <label for="inputBox">对方ID </label>
+      <input id="inputBox" type="text" [(ngModel)]="privateToID" placeholder="输入私聊方ID...">
+    </div>
+    <!-- <div>You selected:{{selectedType}} {{privateToID}}</div> -->
   </div>
 
   <app-video-chat></app-video-chat>

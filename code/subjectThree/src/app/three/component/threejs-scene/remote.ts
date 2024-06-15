@@ -148,7 +148,7 @@ export class RemotePart {
     });
   }
 
-  sendChatMsg(chat_msg: string, chatType: string, roomId: string, toId: number) {
+  sendChatMsg(chat_msg: string, chatType: string, roomId: string, toId: string) {
     console.log('sendChatMsg', chat_msg, chatType, roomId, toId);
     // need string here
     let user_id = String(this.userService.getUserId());
@@ -168,7 +168,7 @@ export class RemotePart {
           this.io.sendMsg('chat', {
             type: 'private',
             message: chat_msg,
-            to_id: String(toId),
+            to_id: toId,
             id: user_id,
             room_id: roomId,
           });
