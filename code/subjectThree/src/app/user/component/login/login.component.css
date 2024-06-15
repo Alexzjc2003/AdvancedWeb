@@ -1,13 +1,9 @@
-/* 设置背景图案 */
-body {
-  background-image: url('../../../../assets/icons/kobe.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  font-family: 'Arial', sans-serif;
-}
-
 .router-outlet-container {
+  /* background-image: url('../../../../assets/icons/kobe.jpg'), #f0f0f0; */
+  /* background-image: url('https://img.picui.cn/free/2024/06/15/666d5f62d9b37.jpg'); */
+  /* background-attachment: fixed; */
+  /* background-size: cover;  */
+  font-family: 'Arial', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
