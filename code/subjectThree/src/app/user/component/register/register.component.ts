@@ -30,6 +30,6 @@ export class RegisterComponent {
       });
   }
   isUnderage(): boolean {
-    return this.age < 18;
+    return this.age < 18 || this.age > 85;
   }
 }

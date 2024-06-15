@@ -29,6 +29,7 @@ export class ThreejsSceneComponent implements OnInit {
   cameraService: CameraService = new CameraService();
   renderService: RenderService = new RenderService();
   clock: THREE.Clock = new THREE.Clock();
+  frame: number = 0;
 
   ambientLight: THREE.AmbientLight = new THREE.AmbientLight();
   directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight();
@@ -50,18 +51,18 @@ export class ThreejsSceneComponent implements OnInit {
   isTyping: boolean = false;
 
   punishmentCoolDown: { [key: string]: boolean } = {
-    "Unknown": true,
-    "OverSpeed": true,
-    "IllegalParking": true,
-    "NoBelts": true,
-    "FlameOut": true,
-    "RedLight": true,
-    "NoLicensePlate": true,
-    "CRASH": true,
-    "AIRCRASH": true,
-    "PHONING": true,
-    "FREQUENTLYBEEP": true,
-    "INCORRECTLIGHT": true
+    Unknown: true,
+    OverSpeed: true,
+    IllegalParking: true,
+    NoBelts: true,
+    FlameOut: true,
+    RedLight: true,
+    NoLicensePlate: true,
+    CRASH: true,
+    AIRCRASH: true,
+    PHONING: true,
+    FREQUENTLYBEEP: true,
+    INCORRECTLIGHT: true,
   };
 
   constructor(
@@ -146,6 +147,7 @@ export class ThreejsSceneComponent implements OnInit {
         if (event.url.startsWith('/scene')) {
           return;
         }
+        this.exitFrame();
         console.log('sendDisconnect' + event.url);
         this.remotePart.sendDisconnect();
         this.endExam(false);
@@ -153,21 +155,26 @@ export class ThreejsSceneComponent implements OnInit {
     });
   }
 
-  endExam(normalExit: boolean){
+  endExam(normalExit: boolean) {
     this.examService.endExam(
       (resp) => {
-        this.snackBarService.showMessage(resp.info, "sucess");
-        console.log("is_passed: ", resp.is_driver);
-        this.userService.setUserDetail("is_passed", resp.is_driver);
-       },
-      (resp) => { },
+        this.snackBarService.showMessage(resp.info, 'sucess');
+        console.log('is_passed: ', resp.is_driver);
+        this.userService.setUserDetail('is_passed', resp.is_driver);
+      },
+      (resp) => {},
       normalExit
     );
   }
 
   sendChatMsg() {
     if (this.chat_msg == '') return;
-    this.remotePart.sendChatMsg(this.chat_msg, this.selectedType, this.roomId, 0);
+    this.remotePart.sendChatMsg(
+      this.chat_msg,
+      this.selectedType,
+      this.roomId,
+      0
+    );
     this.chat_msg = '';
   }
 
@@ -222,16 +229,18 @@ export class ThreejsSceneComponent implements OnInit {
       self.punishmentCoolDown[punishmentType] = true;
     }, 3000);
     console.log(`${punishmentType} triggered.`);
-    this.examService.addPunishment(punishmentType, reason, 10,
-      (resp) => {
-      },
-      (resp) => {
-      });
+    this.examService.addPunishment(
+      punishmentType,
+      reason,
+      10,
+      (resp) => {},
+      (resp) => {}
+    );
   }
 
   renderScene(): void {
     const animate = () => {
-      requestAnimationFrame(animate);
+      this.frame = requestAnimationFrame(animate);
       if (this.model == undefined) {
         return;
       }
@@ -267,7 +276,7 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['z'] == 1) {
         // Z键 - 惩罚测试
-        this.addPunishment("AIRCRASH", "惩罚测试");
+        this.addPunishment('AIRCRASH', '惩罚测试');
       }
 
       let _right = 0,
@@ -315,7 +324,7 @@ export class ThreejsSceneComponent implements OnInit {
       // overspeed
       const SPEED_LIMIT = 30;
       if (this.carcontrol.getStatus().speed > SPEED_LIMIT) {
-        this.addPunishment("OverSpeed", "超速");
+        this.addPunishment('OverSpeed', '超速');
       }
 
       // turning light
@@ -324,7 +333,7 @@ export class ThreejsSceneComponent implements OnInit {
         Math.abs(this.carcontrol.getStatus().rotation) > TUNNING_LIMIT &&
         !this.carcontrol.isLightCorrect()
       ) {
-        this.addPunishment("INCORRECTLIGHT", "转向灯错误");
+        this.addPunishment('INCORRECTLIGHT', '转向灯错误');
       }
 
       this.cameraService.control(dt, _up, _right, _far);
@@ -349,15 +358,24 @@ export class ThreejsSceneComponent implements OnInit {
 
   @HostListener('window:load', ['$event'])
   handleLoad(event: Event) {
-    this.examService.startExam((resp) => { }, (resp) => { }, false);
+    this.examService.startExam(
+      (resp) => {},
+      (resp) => {},
+      false
+    );
   }
 
   exit() {
-    if (window.confirm("Do you really want to finish driving?")) {
+    if (window.confirm('Do you really want to finish driving?')) {
       this.endExam(true);
       this.remotePart.sendDisconnect();
+      this.exitFrame()
       this.router.navigate(['/hall']);
     }
+  }
+
+  exitFrame(){
+    cancelAnimationFrame(this.frame);
   }
 
   chatType: string[] = ['room', 'private', 'global', 'ai'];

@@ -8,5 +8,39 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   width: 100%;
 }
 
-::ng-deep .success { background-color: green !important; }
-::ng-deep .error { background-color: fuchsia !important; }
+/* ::ng-deep .success { background: rgb(0, 139, 0); }
+::ng-deep .error { background: rgb(255, 0, 0); } */
+
+.snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  top: 30px;
+  font-size: 17px;
+  transition: visibility 0.3s, opacity 0.3s, top 0.3s;
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.snackbar.show {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.success {
+  background-color: green;
+}
+
+.error {
+  background-color: rgb(255, 0, 0);
+}
+

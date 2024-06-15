@@ -11,16 +11,16 @@ import { SnackbarService } from '@app/utils/service/snackbar.service';
 export class LoginComponent {
   username: string = "";
   password: string = "";
- 
+
   constructor(private router: Router, private userService: UserService, private snackBarService: SnackbarService) {
   }
 
   login(){
     this.userService.login(this.username, this.password, (resp) => {
-      this.snackBarService.showMessage("登陆成功！", "success");
+      this.snackBarService.showMessage("登陆成功！", 'success');
       this.router.navigate(['']);
     }, (resp) => {
-      this.snackBarService.showMessage(resp.error.message, "error");
+      this.snackBarService.showMessage(resp.error.message, 'error');
     });
   }
 }

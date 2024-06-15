@@ -5,6 +5,7 @@
   background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+  margin-bottom: 50px;
 }
 
 .user-info-container h2 {
@@ -71,4 +72,12 @@
 
 .user-info-container button:hover {
   background-color: #0056b3;
+}
+
+.mock {
+  text-align: center;
+}
+
+.mock:hover{
+  background-color: red;
 }
