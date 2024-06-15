@@ -6,8 +6,8 @@
     <div id="notice-container"></div>
   </div>
   <div id="input-container">
+    <button id="exit-button" (click)="exit()">EXIT</button>
     <form>
-      <button id="exit-button" (click)="exit()">EXIT</button>
       <input [(ngModel)]="chat_msg" name="chat_msg" id="three-input-box" (focus)="isTyping = true"
         (blur)="isTyping = false" />
       <button (click)="sendChatMsg()" class="button fancy-button" id="three-send-btn">
