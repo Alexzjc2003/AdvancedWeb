@@ -72,6 +72,47 @@ export class PhysicsService {
     );
   }
 
+  public addHouse(
+    base_pos: THREE.Vector3,
+    base_ptr: THREE.Vector3,
+    dir_ptr: THREE.Vector3
+  ) {
+    let _base_pos = new CANNON.Vec3(base_pos.x, base_pos.y, base_pos.z);
+    let _base_ptr = new CANNON.Vec3(base_ptr.x, base_ptr.y, base_ptr.z);
+    let _dir_ptr = new CANNON.Vec3(dir_ptr.x, dir_ptr.y, dir_ptr.z);
+
+    let _up_ptr = new CANNON.Vec3(0, 1, 0);
+    let _otho_ptr = _up_ptr.cross(_base_ptr);
+    _otho_ptr.normalize();
+    _otho_ptr = _otho_ptr.scale(_dir_ptr.length());
+
+    let _height = new CANNON.Vec3(0, 100, 0);
+
+    let _box = new CANNON.Box(
+      new CANNON.Vec3(
+        base_ptr.length() / 2 + 0.01,
+        _height.length() / 2,
+        dir_ptr.length() / 2 + 0.01
+      )
+    );
+
+    this.groundBody.addShape(
+      _box,
+      _base_pos
+        .addScaledVector(0.5, _base_ptr)
+        .addScaledVector(0.5, _dir_ptr)
+        .addScaledVector(0.5, _height),
+      new CANNON.Quaternion()
+        .setFromVectors(new CANNON.Vec3(0, 1, 0), _up_ptr)
+        .mult(
+          new CANNON.Quaternion().setFromVectors(
+            new CANNON.Vec3(0, 0, 1),
+            _base_ptr
+          )
+        )
+    );
+  }
+
   car: CANNON.Body = new CANNON.Body({
     mass: 1200,
     material: new CANNON.Material({
