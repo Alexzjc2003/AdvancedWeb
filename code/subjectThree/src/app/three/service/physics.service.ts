@@ -11,14 +11,20 @@ export class PhysicsService {
   world: CANNON.World;
   groundMaterial: CANNON.Material = new CANNON.Material({
     friction: 0.01,
-    restitution: 0.001,
+    restitution: 0.00001,
   });
   groundBody: CANNON.Body = new CANNON.Body({
+    mass: 10000000,
     type: CANNON.Body.STATIC,
     material: this.groundMaterial,
   });
   debugger: any;
   updateDebugger!: Function;
+
+  init = {
+    pos: new CANNON.Vec3(),
+    rot: new CANNON.Quaternion(),
+  };
 
   useDebugger(scene: THREE.Scene) {
     this.debugger = CannonDebugger(scene, this.world);
@@ -50,7 +56,7 @@ export class PhysicsService {
     let _box = new CANNON.Box(
       new CANNON.Vec3(
         base_ptr.length() / 2 + 0.01,
-        0.1,
+        0.5,
         dir_ptr.length() / 2 + 0.01
       )
     );
@@ -60,7 +66,7 @@ export class PhysicsService {
       _base_pos
         .addScaledVector(0.5, _base_ptr)
         .addScaledVector(0.5, _dir_ptr)
-        .addScaledVector(-0.5, new CANNON.Vec3(0, 0.1, 0)),
+        .addScaledVector(-0.5, new CANNON.Vec3(0, 0.8, 0)),
       new CANNON.Quaternion()
         .setFromVectors(new CANNON.Vec3(0, 1, 0), _up_ptr)
         .mult(
@@ -120,7 +126,6 @@ export class PhysicsService {
       restitution: 0.01,
     }),
   });
-
   wheels: CANNON.Body[] = [];
 
   vehicle: CANNON.RaycastVehicle = new CANNON.RaycastVehicle({
@@ -159,8 +164,8 @@ export class PhysicsService {
       suspensionRestLength: 0.3,
       maxSuspensionTravel: 0.1,
       maxSuspensionForce: 100000,
-      dampingRelaxation: 1.0,
-      dampingCompression: 2.2,
+      dampingRelaxation: 2.2,
+      dampingCompression: 4,
       axleLocal: new CANNON.Vec3(0, 0, 1),
       chassisConnectionPointLocal: new CANNON.Vec3(1, 0, 1),
       useCustomSlidingRotationalSpeed: true,
@@ -189,14 +194,15 @@ export class PhysicsService {
 
     // create rigid body for wheels
     this.vehicle.wheelInfos.forEach((w) => {
-      let _cylinder = new CANNON.Cylinder(w.radius, w.radius, 0.2);
+      // let _wheelShape = new CANNON.Cylinder(w.radius, w.radius, 0.2);
+      let _wheelShape = new CANNON.Sphere(w.radius);
       let _wheelbody = new CANNON.Body({
-        mass: 1,
+        mass: 10,
         type: CANNON.BODY_TYPES.KINEMATIC,
         collisionFilterGroup: 0,
       });
       _wheelbody.addShape(
-        _cylinder,
+        _wheelShape,
         new CANNON.Vec3(),
         new CANNON.Quaternion().setFromAxisAngle(
           new CANNON.Vec3(0, 0, 1),
@@ -207,17 +213,25 @@ export class PhysicsService {
       this.wheels.push(_wheelbody);
     });
 
-    this.car.position = new CANNON.Vec3(
+    this.init.pos = new CANNON.Vec3(
       car.position.x,
       car.position.y,
       car.position.z
     );
-    this.car.quaternion = new CANNON.Quaternion(
+
+    this.init.rot = new CANNON.Quaternion(
       car.quaternion.x,
       car.quaternion.y,
       car.quaternion.z,
       car.quaternion.w
     );
+
+    this.initCar();
+  }
+
+  public initCar() {
+    this.car.position.copy(this.init.pos);
+    this.car.quaternion.copy(this.init.rot);
   }
 
   public getCarPosition(): THREE.Vector3 {
@@ -247,6 +261,9 @@ export class PhysicsService {
     this.vehicle.wheelInfos.forEach((w, i) => {
       this.wheels[i].position.copy(w.worldTransform.position);
       this.wheels[i].quaternion.copy(w.worldTransform.quaternion);
+      // let _t = this.vehicle.getWheelTransformWorld(i);
+      // this.wheels[i].position.copy(_t.position);
+      // this.wheels[i].quaternion.copy(_t.quaternion);
     });
   }
 
@@ -274,5 +291,7 @@ export class PhysicsService {
 
     this.vehicle.setSteeringValue((status.rotation / 180) * Math.PI, 0);
     this.vehicle.setSteeringValue((status.rotation / 180) * Math.PI, 1);
+    this.vehicle.setSteeringValue(0, 2);
+    this.vehicle.setSteeringValue(0, 3);
   }
 }
