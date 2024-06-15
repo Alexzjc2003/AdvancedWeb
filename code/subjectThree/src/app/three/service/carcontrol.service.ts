@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as CANNON from 'cannon-es';
 import * as THREE from 'three';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 
 @Injectable({
   providedIn: 'root',
