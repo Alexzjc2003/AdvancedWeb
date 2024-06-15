@@ -40,10 +40,24 @@
   </form>
 </div>
 
+<div mat-dialog-content *ngIf="driverPunishments.length">
+  <table mat-table [dataSource]="driverPunishments" class="mat-elevation-z8">
+      <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef> type </th>
+          <td mat-cell *matCellDef="let element"> {{element.punishment_type}} </td>
+      </ng-container>
 
-<div *ngFor="let punishment of driverPunishments">
-  <p>{{ punishment.type }}</p>
-  <p>{{ punishment.reason }}</p>
-  <p>{{ punishment.score }}</p>
+      <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef> reason </th>
+          <td mat-cell *matCellDef="let element"> {{element.reason}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="score">
+          <th mat-header-cell *matHeaderCellDef> score </th>
+          <td mat-cell *matCellDef="let element"> {{element.score}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="driverPunishmentsDisplayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: driverPunishmentsDisplayedColumns;"></tr>
+  </table>
 </div>
-

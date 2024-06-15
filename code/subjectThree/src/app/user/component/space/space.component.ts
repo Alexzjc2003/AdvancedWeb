@@ -44,9 +44,15 @@ export class SpaceComponent implements OnInit{
     this.driverService.fetchDriverPunishments(
       (resp) => {
         console.log("driver punishments: ", resp);
-        // for(let punishment of resp){
-        //   console.log(punishment);
-        // }
+        for(let punishment of resp){
+          self.driverPunishments.push({
+            id: punishment.id,
+            created_at: punishment.created_at,
+            punishment_type: punishment.punishment_type,
+            reason: punishment.reason,
+            score: punishment.score,
+          })
+        }
       },
       (resp) => {
       }

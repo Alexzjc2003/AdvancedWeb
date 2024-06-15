@@ -19,9 +19,7 @@ export class ChatComponent {
     let self = this;
     this.userService.fetchChatRecords(
       (resp) => {
-        console.log("chat records: ", resp);
         for (let chatRecord of resp) {
-          console.log(chatRecord);
           self.chatRecords.push({
             message: chatRecord.Message,
             from_id: chatRecord.user_id,
@@ -31,7 +29,6 @@ export class ChatComponent {
             created_at: chatRecord.created_at,
           })
         }
-        console.log("final", self.chatRecords);
       },
       (resp) => { }
     )
