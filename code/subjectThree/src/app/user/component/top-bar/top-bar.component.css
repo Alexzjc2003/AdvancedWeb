@@ -1,24 +1,52 @@
-.top-bar-navi {
-    height: 40px
+/* top-bar.component.css */
+.app-navi {
+    background-color: white;
+    /* 设置背景颜色 */
+}
+
+.top-bar-navi-icon {
+    height: 25px;
+    width: 25px;
+    margin-right: 10px;
+}
+
+.top-bar-navi-title {
+    font-size: 20px;
+    color: black;
+    /* 设置标题字体颜色 */
 }
 
 .example-spacer {
     flex: 1 1 auto;
+    /* 弹性增长 */
 }
 
-.top-bar-navi-title {
-    font-size: 20px
+.top-bar-navi-button-container {
+    display: flex;
+    /* 按钮容器使用 flex 布局 */
+    align-items: center;
+    /* 垂直居中 */
 }
 
 .top-bar-navi-button {
-    height: 20px;
-    width: auto;
+    height: 30px;
     font-size: 15px;
     margin: 5px;
+    color: #fff;
+    /* 按钮字体颜色 */
+    background-color: #f1efef;
+    /* 按钮背景颜色 */
+    border: none;
+    /* 去除边框 */
+    cursor: pointer;
+    /* 鼠标指针样式 */
+    border-radius: 5px;
+    /* 圆角边框 */
+    transition: background-color 0.3s;
+    /* 背景颜色过渡效果 */
 }
 
-.top-bar-navi-icon {
-    margin-right: 10px;
-    height: 25px;
-    width: 25px;
+.top-bar-navi-button:hover {
+    background-color: #888888;
+    /* 按钮悬停背景颜色 */
 }
