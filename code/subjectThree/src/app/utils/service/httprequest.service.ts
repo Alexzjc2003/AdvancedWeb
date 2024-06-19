@@ -11,7 +11,7 @@ export class HttpRequestService {
   base_url: string = "";
 
   constructor(private http: HttpClient, private router: Router) {
-    this.base_url = environment.apiUrl;
+    this.base_url = environment.httpUrl;
   }
 
   get(url: string, params: { [key: string]: string }, headers: { [key: string]: string }, onSuccess: (response: any) => void, onError: (response: any) => void): void {
@@ -23,7 +23,7 @@ export class HttpRequestService {
         onSuccess(response);
       },
       error: (error: any) => {
-        if(error.status == 401){
+        if (error.status == 401) {
           localStorage.removeItem('userInfo');
           this.router.navigate(['/login']);
         }
@@ -39,7 +39,7 @@ export class HttpRequestService {
         onSuccess(response);
       },
       error: (error: any) => {
-        if(error.status == 401){
+        if (error.status == 401) {
           localStorage.removeItem('userInfo');
           this.router.navigate(['/login']);
         }
@@ -56,7 +56,7 @@ export class HttpRequestService {
         onSuccess(response);
       },
       error: (error: any) => {
-        if(error.status == 401){
+        if (error.status == 401) {
           localStorage.removeItem('userInfo');
           this.router.navigate(['/login']);
         }
@@ -74,7 +74,7 @@ export class HttpRequestService {
         onSuccess(response);
       },
       error: (error: any) => {
-        if(error.status == 401){
+        if (error.status == 401) {
           localStorage.removeItem('userInfo');
           this.router.navigate(['/login']);
         }

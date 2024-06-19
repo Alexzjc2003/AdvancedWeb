@@ -6,12 +6,12 @@ import { BehaviorSubject } from 'rxjs';
 	providedIn: 'root',
 })
 export class UserService {
-	loginUrl: string = "api/login";
-	registerUrl: string = "api/register";
-	getInfoUrl: string = "api/users/data";
-	updateUserUrl: string = "api/users";
-	getExamUrl: string = "api/exams";
-	fetchChatRecordsUrl: string = "api/records"
+	loginUrl: string = "/login";
+	registerUrl: string = "/register";
+	getInfoUrl: string = "/users/data";
+	updateUserUrl: string = "/users";
+	getExamUrl: string = "/exams";
+	fetchChatRecordsUrl: string = "/records"
 
 	default_headers: any = { 'Content-Type': 'application/json' };
 
@@ -229,7 +229,7 @@ export class UserService {
 	}
 
 	fetchExamPunishments(examId: number, onSuccess: (resp: any) => void, onError: (resp: any) => void) {
-		let fetchExamPunishmentsUrl = `api/exams/${examId}/punishments`;
+		let fetchExamPunishmentsUrl = `/exams/${examId}/punishments`;
 
 		if (!this.isLoggedin()) {
 			console.warn("user.service.ts::fetchExamPunishments: fetch punishments before login.");

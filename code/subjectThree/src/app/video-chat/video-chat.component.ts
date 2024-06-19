@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-video-chat',
@@ -52,8 +53,7 @@ export class VideoChatComponent implements OnInit {
         this.rtcPeerConnection.ontrack = this.handleRemoteStream.bind(this);
 
 
-        this.ws = new WebSocket('ws://10.117.245.17:58080/api/ws/video');
-        // this.ws = new WebSocket('wss://p.jingyijun.xyz/api/ws/video');
+        this.ws = new WebSocket(environment.wsUrl + '/ws/video');
 
         this.ws.addEventListener('open', () => {
           console.log('Connected to the signaling server');

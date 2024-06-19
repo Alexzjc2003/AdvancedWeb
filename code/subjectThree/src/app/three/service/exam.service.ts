@@ -9,8 +9,8 @@ import { punishmentNameMap } from '@app/data/allPunishments';
 })
 export class ExamService {
 
-	startExamUrl: string = "api/exams/start";
-	endExamUrl: string = "api/exams/end";
+	startExamUrl: string = "/exams/start";
+	endExamUrl: string = "/exams/end";
 
 	currentExamId: number = -1;
 
@@ -110,8 +110,8 @@ export class ExamService {
 
 		let addPunishmentUrl: string
 		if (!this.isOfficialDriving)
-			addPunishmentUrl = `api/exams/${this.currentExamId}/punishments`;
-		else addPunishmentUrl = `api/drivers/punishments`;
+			addPunishmentUrl = `/exams/${this.currentExamId}/punishments`;
+		else addPunishmentUrl = `/drivers/punishments`;
 
 		const postData = {
 			punishment_type: punishment_type,

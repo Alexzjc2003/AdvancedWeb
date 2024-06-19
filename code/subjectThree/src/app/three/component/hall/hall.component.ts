@@ -10,6 +10,7 @@ import { ExamService } from '@app/three/service/exam.service';
 import { ConfirmDialogComponent } from '@app/utils/component/confirm-dialog/confirm-dialog.component';
 import { UserService } from '@app/user/service/user.service';
 import { SnackbarService } from '@app/utils/service/snackbar.service';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-hall',
@@ -66,8 +67,8 @@ export class HallComponent implements OnInit {
   }
 
   init_websocket() {
-    this.io.connect('ws://10.117.245.17:53000/hall');
-    // this.io.connect("wss://p.jingyijun.xyz/hall");
+    this.io.connect(environment.socketUrl + 'hall');
+    // this.io.connect("/hall");
     this.io.onMessage('sendRooms').subscribe((obj: any) => {
       this.handleNewRooms(obj.rooms);
     });

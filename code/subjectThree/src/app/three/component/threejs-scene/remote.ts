@@ -6,6 +6,7 @@ import { ExamService } from '@app/three/service/exam.service';
 import * as THREE from 'three';
 import { CarcontrolService } from '@app/three/service/carcontrol.service';
 import { LoadResourcePart } from './load-resource';
+import { environment } from '@env/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -38,8 +39,7 @@ export class RemotePart {
 
   init_websocket() {
     let self = this;
-    this.io.connect('ws://10.117.245.17:53000/room');
-    // this.io.connect('wss://p.jingyijun.xyz/room');
+    this.io.connect(environment.socketUrl + '/room');
     this.io.onMessage('online').subscribe((obj: any) => {
       // console.log(obj);
       self.socketId = obj.id;
@@ -285,7 +285,7 @@ export class RemotePart {
 
   createWebSocket() {
     let self = this
-    this.chatSocket = new WebSocket("ws://10.117.245.17:58080/api/ws/chat?jwt=" + this.userService.getUserToken());
+    this.chatSocket = new WebSocket(environment.wsUrl + "/ws/chat?jwt=" + this.userService.getUserToken());
 
     this.chatSocket.onopen = function () {
       // logMessage("Connected to server");

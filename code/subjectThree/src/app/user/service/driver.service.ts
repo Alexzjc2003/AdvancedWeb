@@ -7,7 +7,7 @@ import { UserService } from './user.service';
   providedIn: 'root'
 })
 export class DriverService {
-  getPunishmentsUrl: string = "api/drivers/punishments"
+  getPunishmentsUrl: string = "/drivers/punishments"
 
   constructor(private httpRequestService: HttpRequestService, private userService: UserService) { }
 
