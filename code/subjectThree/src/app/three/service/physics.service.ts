@@ -18,6 +18,11 @@ export class PhysicsService {
     type: CANNON.Body.STATIC,
     material: this.groundMaterial,
   });
+  houseBody: CANNON.Body = new CANNON.Body({
+    mass: 100000,
+    type: CANNON.Body.STATIC,
+    material: this.groundMaterial,
+  });
   debugger: any;
   updateDebugger!: Function;
 
@@ -36,7 +41,11 @@ export class PhysicsService {
     this.world.gravity.set(0, -9.8, 0);
 
     this.world.addBody(this.groundBody);
+    this.world.addBody(this.houseBody);
     this.vehicle?.addToWorld(this.world);
+    this.houseBody.addEventListener('collide', () => {
+      console.log('shit');
+    });
   }
 
   public addRoad(
@@ -102,7 +111,7 @@ export class PhysicsService {
       )
     );
 
-    this.groundBody.addShape(
+    this.houseBody.addShape(
       _box,
       _base_pos
         .addScaledVector(0.5, _base_ptr)
