@@ -67,7 +67,7 @@ export class HallComponent implements OnInit {
   }
 
   init_websocket() {
-    this.io.connect(environment.socketUrl + 'hall');
+    this.io.connect(environment.socketUrl + '/hall');
     // this.io.connect("/hall");
     this.io.onMessage('sendRooms').subscribe((obj: any) => {
       this.handleNewRooms(obj.rooms);
