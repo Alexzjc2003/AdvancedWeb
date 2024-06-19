@@ -66,6 +66,8 @@ export class ThreejsSceneComponent implements OnInit {
     INCORRECTLIGHT: true,
   };
 
+  indicateTurnCoolDown: boolean = true;
+
   constructor(
     private notification: NotificationService,
     private router: Router,
@@ -351,10 +353,10 @@ export class ThreejsSceneComponent implements OnInit {
       }
 
       if (this.keyboardPressed['ArrowLeft']) {
-        this.carcontrol.turnLight(1);
+        this.indicateTurn(1);
       }
       if (this.keyboardPressed['ArrowRight']) {
-        this.carcontrol.turnLight(-1);
+        this.indicateTurn(-1);
       }
       if (this.keyboardPressed['n']) {
         // this.carcontrol.beep();
@@ -417,6 +419,19 @@ export class ThreejsSceneComponent implements OnInit {
     };
 
     animate();
+  }
+
+  indicateTurn(turn){
+    let self = this;
+    if (!this.indicateTurnCoolDown) {
+      return;
+    }
+    this.indicateTurnCoolDown = false;
+    setTimeout(() => {
+      self.indicateTurnCoolDown = true;
+    }, 3000);
+    console.log("turn", turn);
+    this.carcontrol.turnLight(turn);
   }
 
   @HostListener('window:beforeunload', ['$event'])
