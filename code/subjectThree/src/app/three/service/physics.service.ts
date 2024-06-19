@@ -286,6 +286,7 @@ export class PhysicsService {
     // let _f = 2000;
 
     for (let i = 2; i < 4; i++) {
+      // console.log(this.vehicle);
       this.vehicle.setBrake(status.brake ? (_f > 2000 ? _f : 5000) : 0, i);
     }
 

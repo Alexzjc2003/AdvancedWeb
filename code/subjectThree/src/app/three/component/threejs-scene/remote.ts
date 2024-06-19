@@ -257,10 +257,14 @@ export class RemotePart {
     switch (event.event) {
       case 'beep':
         {
+          if (!event.position || !event.position.x || !event.position.y || !event.position.z ||
+            !this.model.obj.position || !this.model.obj.position.x || !this.model.obj.position.y || !this.model.obj.position.z) {
+            return;
+          }
           const distance = Math.sqrt(
-            Math.pow(event.position.x - this.model.position.x, 2) +
-            Math.pow(event.position.y - this.model.position.y, 2) +
-            Math.pow(event.position.z - this.model.position.z, 2)
+            Math.pow(event.position.x - this.model.obj.position.x, 2) +
+            Math.pow(event.position.y - this.model.obj.position.y, 2) +
+            Math.pow(event.position.z - this.model.obj.position.z, 2)
           );
           console.log('beep distance', distance);
           if (distance > 40) {
