@@ -24,7 +24,7 @@ export class HttpRequestService {
       },
       error: (error: any) => {
         if(error.status == 401){
-          // this.user.clearUserInfo();
+          localStorage.removeItem('userInfo');
           this.router.navigate(['/']);
         }
         onError(error);
@@ -40,7 +40,7 @@ export class HttpRequestService {
       },
       error: (error: any) => {
         if(error.status == 401){
-          // this.user.clearUserInfo();
+          localStorage.removeItem('userInfo');
           this.router.navigate(['/']);
         }
         onError(error);
@@ -57,7 +57,7 @@ export class HttpRequestService {
       },
       error: (error: any) => {
         if(error.status == 401){
-          // this.user.clearUserInfo();
+          localStorage.removeItem('userInfo');
           this.router.navigate(['/']);
         }
         onError(error);
@@ -75,7 +75,7 @@ export class HttpRequestService {
       },
       error: (error: any) => {
         if(error.status == 401){
-          // this.user.clearUserInfo();
+          localStorage.removeItem('userInfo');
           this.router.navigate(['/']);
         }
         onError(error);
