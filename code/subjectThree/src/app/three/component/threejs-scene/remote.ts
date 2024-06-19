@@ -60,7 +60,7 @@ export class RemotePart {
 
     this.io.onMessage('event').subscribe((obj: any) => {
       // console.log(obj);
-      self.handleEvent(obj.event);
+      self.handleEvent(obj);
     });
   }
 
@@ -215,12 +215,22 @@ export class RemotePart {
     });
   }
 
-  sendEvent(event: string, roomID: string) {
+  sendEvent(event: string, roomID: string, model: any) {
     this.io.sendMsg('event', {
       event: event,
       room_id: roomID,
       id: this.socketId,
-      // position
+      position: {
+        x: model.obj.position.x,
+        y: model.obj.position.y,
+        z: model.obj.position.z,
+      },
+      rotation: {
+        w: model.obj.quaternion.w,
+        x: model.obj.quaternion.x,
+        y: model.obj.quaternion.y,
+        z: model.obj.quaternion.z,
+      },
     });
   }
 
@@ -239,8 +249,9 @@ export class RemotePart {
     this.lastBeepTime = currentTime;
   }
 
-  handleEvent(event: string) {
-    switch (event) {
+  handleEvent(event: any) {
+    console.log(event);
+    switch (event.event) {
       case 'beep':
         {
           // beep
