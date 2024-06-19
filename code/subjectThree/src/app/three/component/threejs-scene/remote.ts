@@ -60,7 +60,7 @@ export class RemotePart {
 
     this.io.onMessage('event').subscribe((obj: any) => {
       // console.log(obj);
-      self.handleEvent(obj.event);
+      self.handleEvent(obj);
     });
   }
 
@@ -239,8 +239,9 @@ export class RemotePart {
     this.lastBeepTime = currentTime;
   }
 
-  handleEvent(event: string) {
-    switch (event) {
+  handleEvent(event: any) {
+    console.log(event);
+    switch (event.event) {
       case 'beep':
         {
           // beep
