@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpInterceptor } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { Router } from '@angular/router';
+// import { UserService } from '@app/user/service/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +10,7 @@ import { environment } from '@env/environment';
 export class HttpRequestService {
   base_url: string = "";
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     this.base_url = environment.apiUrl;
   }
 
@@ -21,6 +23,10 @@ export class HttpRequestService {
         onSuccess(response);
       },
       error: (error: any) => {
+        if(error.status == 401){
+          localStorage.removeItem('userInfo');
+          this.router.navigate(['/']);
+        }
         onError(error);
       }
     })
@@ -33,6 +39,10 @@ export class HttpRequestService {
         onSuccess(response);
       },
       error: (error: any) => {
+        if(error.status == 401){
+          localStorage.removeItem('userInfo');
+          this.router.navigate(['/']);
+        }
         onError(error);
       }
     });
@@ -46,6 +56,10 @@ export class HttpRequestService {
         onSuccess(response);
       },
       error: (error: any) => {
+        if(error.status == 401){
+          localStorage.removeItem('userInfo');
+          this.router.navigate(['/']);
+        }
         onError(error);
       }
     });
@@ -60,6 +74,10 @@ export class HttpRequestService {
         onSuccess(response);
       },
       error: (error: any) => {
+        if(error.status == 401){
+          localStorage.removeItem('userInfo');
+          this.router.navigate(['/']);
+        }
         onError(error);
       }
     });
