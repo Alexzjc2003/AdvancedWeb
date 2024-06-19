@@ -409,8 +409,6 @@ export class ThreejsSceneComponent implements OnInit {
       this.physics.updateDebugger();
       this.remotePart.updateSocket(this.model);
       this.renderService.render(this.scene, this.cameraService.camera);
-
-      console.log(this.model.obj.position);
     };
 
     animate();
