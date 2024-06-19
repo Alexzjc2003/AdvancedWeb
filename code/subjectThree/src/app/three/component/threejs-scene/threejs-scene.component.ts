@@ -92,6 +92,7 @@ export class ThreejsSceneComponent implements OnInit {
       self.initScene();
       self.renderScene();
     });
+
   }
 
   initScene(): void {
@@ -154,6 +155,9 @@ export class ThreejsSceneComponent implements OnInit {
         this.endExam(false);
       }
     });
+
+    this.noticePart.showNotice('发动');
+    this.setSteerWindow();
   }
 
   endExam(normalExit: boolean) {
@@ -163,9 +167,24 @@ export class ThreejsSceneComponent implements OnInit {
         console.log('is_passed: ', resp.is_driver);
         this.userService.setUserDetail('is_passed', resp.is_driver);
       },
-      (resp) => { },
+      (resp) => {
+        this.snackBarService.showMessage("endExam: " + resp.error.message + "...", "error");
+      },
       normalExit
     );
+  }
+
+  setSteerWindow() {
+    let outer = document.getElementById('three-container');
+    let inner = document.getElementById('steer-container');
+
+    if (outer != null && inner != null) {
+      var rect = outer.getBoundingClientRect();
+      console.log(rect.bottom, rect.right);
+      console.log(inner.offsetWidth);
+      inner.style.top = (rect.bottom - inner.offsetHeight) + 'px';
+      inner.style.left = (rect.right - inner.offsetWidth) + 'px';
+    }
   }
 
   sendChatMsg() {
@@ -180,9 +199,25 @@ export class ThreejsSceneComponent implements OnInit {
   }
 
   loadLocalCar(carName: string) {
+    let positions = [
+      {
+        x: 102,
+        z: 45
+      },
+      {
+        x: 52,
+        z: 84
+      },
+      {
+        x: 3,
+        z: 3
+      }
+    ];
+    const randomIndex = Math.floor(Math.random() * positions.length);
+    let startPosition = positions[randomIndex];
     let self = this;
     this.loadResourcePart.loadCarResouce(carName, (carObj) => {
-      carObj.position.set(3, 3, 3);
+      carObj.position.set(startPosition.x, 3, startPosition.z);
       self.scene.add(carObj);
       self.model = {
         obj: carObj,
@@ -205,6 +240,11 @@ export class ThreejsSceneComponent implements OnInit {
       self.renderService.updateScreenSize(width, height);
       self.cameraService.camera.aspect = width / height;
       self.cameraService.camera.updateProjectionMatrix();
+      self.setSteerWindow();
+    });
+
+    window.addEventListener('scroll', () => {
+      self.setSteerWindow();
     });
 
     document.addEventListener('keydown', function (event) {
@@ -234,8 +274,9 @@ export class ThreejsSceneComponent implements OnInit {
     self.punishmentCoolDown[punishmentType] = false;
     setTimeout(() => {
       self.punishmentCoolDown[punishmentType] = true;
-    }, 3000);
+    }, 8000);
     console.log(`${punishmentType} triggered.`);
+    this.noticePart.showNotice(punishmentType);
     this.examService.addPunishment(
       punishmentType,
       reason,
@@ -258,7 +299,6 @@ export class ThreejsSceneComponent implements OnInit {
         _brake = false;
       if (this.keyboardPressed['w'] == 1) {
         // W键
-        this.noticePart.showNotice('发动');
         _gear += 1;
         _throttle = true;
       }
@@ -269,12 +309,10 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['a'] == 1) {
         // A键
-        this.noticePart.showNotice('转弯');
         _turn += 1;
       }
       if (this.keyboardPressed['d'] == 1) {
         // D键
-        this.noticePart.showNotice('转弯');
         _turn -= 1;
       }
       if (this.keyboardPressed['b'] == 1) {

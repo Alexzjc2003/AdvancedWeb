@@ -9,6 +9,7 @@ import { WebSocketService } from '@app/utils/service/websocket.service';
 import { ExamService } from '@app/three/service/exam.service';
 import { ConfirmDialogComponent } from '@app/utils/component/confirm-dialog/confirm-dialog.component';
 import { UserService } from '@app/user/service/user.service';
+import { SnackbarService } from '@app/utils/service/snackbar.service';
 
 @Component({
   selector: 'app-hall',
@@ -39,7 +40,7 @@ export class HallComponent implements OnInit {
 
   io: WebSocketService = new WebSocketService();
 
-  constructor(private router: Router, private examService: ExamService, public dialog: MatDialog, private userService: UserService) {
+  constructor(private router: Router, private examService: ExamService, public dialog: MatDialog, private userService: UserService, private snackBarService: SnackbarService) {
     this.carOptions = carNameList;
     this.roomOptions = {};
   }
@@ -104,7 +105,8 @@ export class HallComponent implements OnInit {
           },
         });
       },
-      (resp) => { 
+      (resp) => {
+        this.snackBarService.showMessage("startExam: " + resp.error.message + "...", "error");
         console.log(resp);
       },
       isOfficialDriving
