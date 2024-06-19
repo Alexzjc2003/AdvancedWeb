@@ -3,7 +3,7 @@
   <form>
     <div>
       <label>Username:</label>
-      <input [(ngModel)]="userInfo.username" name="username" [disabled]="true"/>
+      <input [(ngModel)]="userInfo.username" name="username" [disabled]="true" />
     </div>
     <div>
       <label>Gender:</label>
@@ -18,23 +18,23 @@
     </div>
     <div>
       <label>Age:</label>
-      <input [(ngModel)]="userInfo.age" name="age" [disabled]="!editMode"/>
+      <input [(ngModel)]="userInfo.age" name="age" [disabled]="!editMode" />
     </div>
     <div>
       <label>Phone:</label>
-      <input [(ngModel)]="userInfo.phone" name="phone" [disabled]="!editMode"/>
+      <input [(ngModel)]="userInfo.phone" name="phone" [disabled]="!editMode" />
     </div>
     <div>
       <label>Email:</label>
-      <input [(ngModel)]="userInfo.email" name="email" [disabled]="!editMode"/>
+      <input [(ngModel)]="userInfo.email" name="email" [disabled]="!editMode" />
     </div>
     <div>
       <label>Point:</label>
-      <input [(ngModel)]="userInfo.point" name="point" [disabled]="true"/>
+      <input [(ngModel)]="userInfo.point" name="point" [disabled]="true" />
     </div>
     <div>
       <label>Is_passed:</label>
-      <input [(ngModel)]="userInfo.is_passed" name="is_passed" [disabled]="true"/>
+      <input [(ngModel)]="userInfo.is_passed" name="is_passed" [disabled]="true" />
     </div>
     <button (click)="modify()">{{ button_msg }}</button>
   </form>
@@ -43,23 +43,28 @@
 <div *ngIf="driverPunishments.length" class="data-display-title" id="have-punishment">哈哈 以下是你的扣分记录🤣👉</div>
 <div mat-dialog-content *ngIf="driverPunishments.length">
   <table mat-table [dataSource]="driverPunishments" class="mat-elevation-z8">
-      <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef> type </th>
-          <td mat-cell *matCellDef="let element"> {{element.punishment_type}} </td>
-      </ng-container>
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef> type </th>
+      <td mat-cell *matCellDef="let element"> {{element.punishment_type}} </td>
+    </ng-container>
 
-      <ng-container matColumnDef="reason">
-          <th mat-header-cell *matHeaderCellDef> reason </th>
-          <td mat-cell *matCellDef="let element"> {{element.reason}} </td>
-      </ng-container>
+    <ng-container matColumnDef="reason">
+      <th mat-header-cell *matHeaderCellDef> reason </th>
+      <td mat-cell *matCellDef="let element"> {{element.reason}} </td>
+    </ng-container>
 
-      <ng-container matColumnDef="score">
-          <th mat-header-cell *matHeaderCellDef> score </th>
-          <td mat-cell *matCellDef="let element"> {{element.score}} </td>
-      </ng-container>
+    <ng-container matColumnDef="score">
+      <th mat-header-cell *matHeaderCellDef> score </th>
+      <td mat-cell *matCellDef="let element"> {{element.score}} </td>
+    </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="driverPunishmentsDisplayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: driverPunishmentsDisplayedColumns;"></tr>
+    <ng-container matColumnDef="created_at">
+      <th mat-header-cell *matHeaderCellDef> created_at </th>
+      <td mat-cell *matCellDef="let element"> {{element.created_at}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="driverPunishmentsDisplayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: driverPunishmentsDisplayedColumns;"></tr>
   </table>
 </div>
 <app-line-chart [labels]="punishment_types_list" [data]="punishment_score_list"></app-line-chart>

@@ -21,7 +21,7 @@ export class SpaceComponent implements OnInit{
     is_passed: false
 	};
 
-  driverPunishmentsDisplayedColumns: string[] = ['type', 'reason', 'score'];
+  driverPunishmentsDisplayedColumns: string[] = ['type', 'reason', 'score', 'created_at'];
   driverPunishments: any = [];
 
 

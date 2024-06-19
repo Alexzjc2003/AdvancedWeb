@@ -43,7 +43,7 @@ export class ExamRecordComponent {
 	showDetail(examId: number) {
 		console.log("get detail of " + examId);
 		let self = this;
-		let punishments: { type: string, reason: string, score: string }[] = [];
+		let punishments: { type: string, reason: string, score: string, created_at: string }[] = [];
 		this.userService.fetchExamPunishments(examId,
 			(resp) => {
 				console.log("punishments: ", resp);
@@ -51,7 +51,8 @@ export class ExamRecordComponent {
 					punishments.push({
 						type: punishmentNameList[punishment.punishment_type] || punishment.punishment_type,
 						reason: punishment.reason,
-						score: punishment.score
+						score: punishment.score,
+						created_at: punishment.created_at,
 					});
 				}
 				const dialogRef = self.dialog.open(PunishmentDetailDialog, {
@@ -79,7 +80,7 @@ export interface PunishmentData {
 })
 export class PunishmentDetailDialog {
 
-	displayedColumns: string[] = ['type', 'reason', 'score'];
+	displayedColumns: string[] = ['type', 'reason', 'score', 'created_at'];
 
 	constructor(
 		public dialogRef: MatDialogRef<PunishmentDetailDialog>,
