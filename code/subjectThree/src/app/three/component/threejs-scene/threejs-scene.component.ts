@@ -92,7 +92,6 @@ export class ThreejsSceneComponent implements OnInit {
       self.initScene();
       self.renderScene();
     });
-
   }
 
   initScene(): void {
@@ -101,7 +100,7 @@ export class ThreejsSceneComponent implements OnInit {
     this.remotePart.setRoom(this.roomId, this.scene, this.carcontrol);
     this.environmentPart.setScene(this.scene, this.physics);
 
-    this.physics.useDebugger(this.scene);
+    // this.physics.useDebugger(this.scene);
 
     this.container = document.getElementById('three-container');
     if (this.container == undefined) {
@@ -168,7 +167,10 @@ export class ThreejsSceneComponent implements OnInit {
         this.userService.setUserDetail('is_passed', resp.is_driver);
       },
       (resp) => {
-        this.snackBarService.showMessage("endExam: " + resp.error.message + "...", "error");
+        this.snackBarService.showMessage(
+          'endExam: ' + resp.error.message + '...',
+          'error'
+        );
       },
       normalExit
     );
@@ -182,8 +184,8 @@ export class ThreejsSceneComponent implements OnInit {
       var rect = outer.getBoundingClientRect();
       console.log(rect.bottom, rect.right);
       console.log(inner.offsetWidth);
-      inner.style.top = (rect.bottom - inner.offsetHeight) + 'px';
-      inner.style.left = (rect.right - inner.offsetWidth) + 'px';
+      inner.style.top = rect.bottom - inner.offsetHeight + 'px';
+      inner.style.left = rect.right - inner.offsetWidth + 'px';
     }
   }
 
@@ -202,16 +204,16 @@ export class ThreejsSceneComponent implements OnInit {
     let positions = [
       {
         x: 102,
-        z: 45
+        z: 45,
       },
       {
         x: 52,
-        z: 84
+        z: 84,
       },
       {
         x: 3,
-        z: 3
-      }
+        z: 3,
+      },
     ];
     const randomIndex = Math.floor(Math.random() * positions.length);
     let startPosition = positions[randomIndex];
@@ -225,7 +227,6 @@ export class ThreejsSceneComponent implements OnInit {
       self.physics.setCar(carObj);
       self.carcontrol.bindCar(self.physics.car);
       carObj.add(self.carcontrol.turningSign);
-      console.log(carObj);
       self.remotePart.sendInit(self.model, self.model_name);
     });
   }
@@ -281,8 +282,8 @@ export class ThreejsSceneComponent implements OnInit {
       punishmentType,
       reason,
       score,
-      (resp) => { },
-      (resp) => { }
+      (resp) => {},
+      (resp) => {}
     );
   }
 
@@ -365,7 +366,11 @@ export class ThreejsSceneComponent implements OnInit {
 
       let dt = this.clock.getDelta();
       this.carcontrol.setControl(dt, _gear, _throttle, _brake, _turn);
-      this.physics.controlCar(this.carcontrol.getStatus());
+
+      let _status = this.carcontrol.getStatus();
+      this.wheelTransform = `rotate(${-_status.rotation*3}deg)`;
+
+      this.physics.controlCar(_status);
       this.physics.step(dt);
 
       this.model.obj.position.copy(this.physics.getCarPosition());
@@ -406,7 +411,7 @@ export class ThreejsSceneComponent implements OnInit {
       this.cameraService.control(dt, _up, _right, _far);
       this.cameraService.follow(this.model.obj);
 
-      this.physics.updateDebugger();
+      // this.physics.updateDebugger();
       this.remotePart.updateSocket(this.model);
       this.renderService.render(this.scene, this.cameraService.camera);
     };
@@ -426,8 +431,8 @@ export class ThreejsSceneComponent implements OnInit {
   @HostListener('window:load', ['$event'])
   handleLoad(event: Event) {
     this.examService.startExam(
-      (resp) => { },
-      (resp) => { },
+      (resp) => {},
+      (resp) => {},
       false
     );
   }
@@ -447,4 +452,6 @@ export class ThreejsSceneComponent implements OnInit {
 
   chatType: string[] = ['room', 'private', 'global', 'ai'];
   selectedType: string = this.chatType[0];
+
+  wheelTransform = '';
 }
