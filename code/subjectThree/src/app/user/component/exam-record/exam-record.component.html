@@ -1,3 +1,4 @@
+<div *ngIf="!exams.length" class="data-display-title" id="exam-display-title">没有任何考试记录...</div>
 <div *ngIf="exams.length">
     <h2>User Exams</h2>
     <table mat-table [dataSource]="exams" class="mat-elevation-z8 custom-table">

@@ -42,3 +42,8 @@ table {
 .custom-table button:hover {
     background-color: #0056b3; /* 按钮悬停背景色 */
 }
+
+#chat-display-title{
+    color: #ffffff; /* 字体颜色 */
+    background: linear-gradient(135deg, #ba48fc, #e11eca); /* 渐变背景颜色 */
+}

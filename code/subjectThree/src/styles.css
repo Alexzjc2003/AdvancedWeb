@@ -44,3 +44,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background-color: rgb(255, 0, 0);
 }
 
+.data-display-title {
+  text-align: center;
+  font-family: 'Arial', sans-serif; /* 可以选择其他更具风格的字体 */
+  font-size: 1.5em; /* 调整字体大小 */
+  padding: 20px; /* 内边距 */
+  border-radius: 10px; /* 边框圆角 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+  transition: background 0.3s, transform 0.3s; /* 添加过渡效果 */
+  max-width: 300px; /* 设置最大宽度 */
+  margin: 20px auto; /* 上下外边距为20px，左右自动对齐 */
+}

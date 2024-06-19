@@ -155,6 +155,8 @@ export class ThreejsSceneComponent implements OnInit {
         this.endExam(false);
       }
     });
+
+    this.setSteerWindow();
   }
 
   endExam(normalExit: boolean) {

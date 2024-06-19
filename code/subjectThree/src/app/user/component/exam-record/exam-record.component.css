@@ -33,3 +33,8 @@
 .custom-table button:hover {
     background-color: #0056b3; /* 按钮悬停背景色 */
 }
+
+#exam-display-title{
+    color: #ffffff; /* 字体颜色 */
+    background: linear-gradient(135deg, #5443f4, #4138f6); /* 渐变背景颜色 */
+}

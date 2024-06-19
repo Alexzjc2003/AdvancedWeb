@@ -1,9 +1,4 @@
-<!-- <p>chat works!</p> -->
-<!-- <div *ngFor="let record of chatRecords">
-    <p>{{ record.message }}</p>
-    <p>{{ record.created_at }}</p>
-    <p>{{ record.type }}</p>
-  </div> -->
+<div *ngIf="!chatRecords.length" class="data-display-title" id="chat-display-title">没有任何聊天记录...</div>
 <div *ngIf="chatRecords.length">
     <h2>Chat Records</h2>
     <table mat-table [dataSource]="chatRecords" class="mat-elevation-z8 custom-table">
