@@ -41,7 +41,7 @@
 </div>
 <div *ngIf="!driverPunishments.length" class="data-display-title" id="no-punishment">目前没有扣分记录...</div>
 <div *ngIf="driverPunishments.length" class="data-display-title" id="have-punishment">哈哈 以下是你的扣分记录🤣👉</div>
-<div mat-dialog-content *ngIf="driverPunishments.length">
+<div mat-dialog-content *ngIf="driverPunishments.length" class="custom-table">
   <table mat-table [dataSource]="driverPunishments" class="mat-elevation-z8">
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef> type </th>
