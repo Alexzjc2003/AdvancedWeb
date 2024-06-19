@@ -171,7 +171,7 @@ export class PhysicsService {
       useCustomSlidingRotationalSpeed: true,
 
       // Todo: following parameters need further tests
-      frictionSlip: 10000,
+      frictionSlip: 100000,
       rollInfluence: 0.05,
       customSlidingRotationalSpeed: -10000,
     };

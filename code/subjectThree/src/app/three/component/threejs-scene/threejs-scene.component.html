@@ -8,9 +8,18 @@
   <div id="input-container">
     <button id="exit-button" (click)="exit()">EXIT</button>
     <form>
-      <input [(ngModel)]="chat_msg" name="chat_msg" id="three-input-box" (focus)="isTyping = true"
-        (blur)="isTyping = false" />
-      <button (click)="sendChatMsg()" class="button fancy-button" id="three-send-btn">
+      <input
+        [(ngModel)]="chat_msg"
+        name="chat_msg"
+        id="three-input-box"
+        (focus)="isTyping = true"
+        (blur)="isTyping = false"
+      />
+      <button
+        (click)="sendChatMsg()"
+        class="button fancy-button"
+        id="three-send-btn"
+      >
         <i class="material-icons">send</i>send
       </button>
     </form>
@@ -18,11 +27,18 @@
   <div class="chat-type-container">
     <label for="chatType">Chat Type:</label>
     <select id="chatType" [(ngModel)]="selectedType">
-      <option *ngFor="let singleChatType of chatType" [value]="singleChatType">{{singleChatType}}</option>
+      <option *ngFor="let singleChatType of chatType" [value]="singleChatType">
+        {{ singleChatType }}
+      </option>
     </select>
     <div *ngIf="selectedType === 'private'">
       <label for="inputBox">对方ID </label>
-      <input id="inputBox" type="text" [(ngModel)]="privateToID" placeholder="输入私聊方ID...">
+      <input
+        id="inputBox"
+        type="text"
+        [(ngModel)]="privateToID"
+        placeholder="输入私聊方ID..."
+      />
     </div>
     <!-- <div>You selected:{{selectedType}} {{privateToID}}</div> -->
   </div>
@@ -30,4 +46,15 @@
   <app-video-chat></app-video-chat>
 </div>
 
-<div id="steer-container"></div>
+<div id="steer-container">
+  <div>
+    <img
+      src="assets/icons/steering-wheel.svg"
+      [style.transform]="this.wheelTransform"
+    />
+    <!-- <img
+      src="assets/icons/steering-wheel.svg"
+    /> -->
+  </div>
+  <!-- <img src="assets/icons/speedometer.svg" /> -->
+</div>
