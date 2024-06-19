@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { UserService } from '@app/user/service/user.service';
 import { punishmentNameList } from '@app/data/allPunishments';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { SnackbarService } from '@app/utils/service/snackbar.service';
 
 @Component({
 	selector: 'app-exam-record',
@@ -12,7 +13,7 @@ export class ExamRecordComponent {
 	exams: any[] = [];
 	displayedColumns: string[] = ['title', 'description', 'starttime', 'score', 'is_public', 'normal', 'duration', 'detail'];
 
-	constructor(private userService: UserService, public dialog: MatDialog) { }
+	constructor(private userService: UserService, public dialog: MatDialog, private snackBarService: SnackbarService) { }
 
 	ngOnInit() {
 		let self = this;
@@ -33,7 +34,9 @@ export class ExamRecordComponent {
 				}
 				console.log("exam-record.component::ngOnInit", self.exams);
 			},
-			(resp)=>{}
+			(resp)=>{
+				this.snackBarService.showMessage("fetchUserExams: 服务器出错了...", "error");
+			}
 		);
 	}
 
@@ -58,7 +61,9 @@ export class ExamRecordComponent {
 					console.log('The dialog was closed');
 				});
 			},
-			(resp) => { });
+			(resp) => { 
+				this.snackBarService.showMessage("fetchExamPunishments: 服务器出错了...", "error");
+			});
 	}
 }
 

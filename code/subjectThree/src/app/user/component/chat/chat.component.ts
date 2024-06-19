@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UserService } from '@app/user/service/user.service';
+import { SnackbarService } from '@app/utils/service/snackbar.service';
 
 @Component({
   selector: 'app-chat',
@@ -12,7 +13,7 @@ export class ChatComponent {
   chatRecordsDisplayedColumns: string[] = ['message', 'created_at', 'type', 'from_id', 'to_id', 'room_id'];
   chatRecords: any = [];
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private snackBarService: SnackbarService) { }
 
 
   ngOnInit() {
@@ -30,7 +31,9 @@ export class ChatComponent {
           })
         }
       },
-      (resp) => { }
+      (resp) => { 
+        this.snackBarService.showMessage("fetchChatRecords: 服务器出错了...", "error");
+      }
     )
   }
   parseTimestamp(timestamp: string): string {

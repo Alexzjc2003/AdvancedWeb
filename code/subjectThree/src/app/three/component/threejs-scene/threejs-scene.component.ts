@@ -164,7 +164,9 @@ export class ThreejsSceneComponent implements OnInit {
         console.log('is_passed: ', resp.is_driver);
         this.userService.setUserDetail('is_passed', resp.is_driver);
       },
-      (resp) => { },
+      (resp) => { 
+        this.snackBarService.showMessage("endExam: 服务器出错了...", "error");
+      },
       normalExit
     );
   }
