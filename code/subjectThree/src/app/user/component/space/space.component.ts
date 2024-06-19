@@ -28,6 +28,9 @@ export class SpaceComponent implements OnInit{
 	editMode: boolean = false;
 	button_msg: string = "modify";
 
+  labels = [1, 2, 3, 4, 5, 6, 7];
+  data = [9, 8, 7, 6, 5, 4, 3];
+
 
 	constructor(private userService: UserService, private driverService: DriverService, private snackBarService: SnackbarService) { }
 

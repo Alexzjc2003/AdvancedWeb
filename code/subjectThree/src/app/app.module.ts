@@ -10,6 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 
+
 import { RouterOutlet } from '@angular/router';
 import { RouterModule } from '@angular/router';
 
@@ -37,6 +38,7 @@ import {
   PunishmentDetailDialog,
 } from './user/component/exam-record/exam-record.component';
 import { ConfirmDialogComponent } from './utils/component/confirm-dialog/confirm-dialog.component';
+import { LineChartComponent } from './line-chart/line-chart.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +54,8 @@ import { ConfirmDialogComponent } from './utils/component/confirm-dialog/confirm
     ExamRecordComponent,
     PunishmentDetailDialog,
     HallComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    LineChartComponent
   ],
   imports: [
     CommonModule,
@@ -62,6 +65,7 @@ import { ConfirmDialogComponent } from './utils/component/confirm-dialog/confirm
 
     ReactiveFormsModule,
     BrowserAnimationsModule,
+
 
     MatIconModule,
     MatButtonModule,

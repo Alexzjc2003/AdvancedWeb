@@ -23,6 +23,8 @@
     "axios": "^1.6.8",
     "cannon-es": "^0.20.0",
     "cannon-es-debugger": "^1.0.0",
+    "chart.js": "^4.4.3",
+    "ng2-charts": "^6.0.1",
     "primeng": "^17.11.0",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.7.5",
