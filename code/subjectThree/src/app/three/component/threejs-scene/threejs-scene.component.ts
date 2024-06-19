@@ -92,6 +92,7 @@ export class ThreejsSceneComponent implements OnInit {
       self.initScene();
       self.renderScene();
     });
+    
   }
 
   initScene(): void {
@@ -168,6 +169,19 @@ export class ThreejsSceneComponent implements OnInit {
     );
   }
 
+  setSteerWindow() {
+    let outer = document.getElementById('three-container');
+    let inner = document.getElementById('steer-container');
+
+    if (outer != null && inner != null) {
+      var rect = outer.getBoundingClientRect();
+      console.log(rect.bottom, rect.right);
+      console.log(inner.offsetWidth);
+      inner.style.top = (rect.bottom - inner.offsetHeight) + 'px';
+      inner.style.left = (rect.right - inner.offsetWidth) + 'px';
+    }
+  }
+
   sendChatMsg() {
     if (this.chat_msg == '') return;
     this.remotePart.sendChatMsg(
@@ -205,6 +219,11 @@ export class ThreejsSceneComponent implements OnInit {
       self.renderService.updateScreenSize(width, height);
       self.cameraService.camera.aspect = width / height;
       self.cameraService.camera.updateProjectionMatrix();
+      self.setSteerWindow();
+    });
+
+    window.addEventListener('scroll', () => {
+      self.setSteerWindow();
     });
 
     document.addEventListener('keydown', function (event) {

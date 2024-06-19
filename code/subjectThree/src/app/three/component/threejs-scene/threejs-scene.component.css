@@ -112,8 +112,17 @@
   margin-top: 10px;
 }
 
-.chat-type-container > div {
+.chat-type-container>div {
   margin-top: 10px;
   font-size: 16px;
   color: #333;
+}
+
+#steer-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 150px;
+  background-color: lightcoral;
 }
