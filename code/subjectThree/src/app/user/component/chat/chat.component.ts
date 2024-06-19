@@ -31,8 +31,8 @@ export class ChatComponent {
           })
         }
       },
-      (resp) => { 
-        this.snackBarService.showMessage("fetchChatRecords: 服务器出错了...", "error");
+      (resp) => {
+        this.snackBarService.showMessage("fetchChatRecords: " + resp.error.message + "...", "error");
       }
     )
   }

@@ -105,8 +105,8 @@ export class HallComponent implements OnInit {
           },
         });
       },
-      (resp) => { 
-        this.snackBarService.showMessage("startExam: 服务器出错了...", "error");
+      (resp) => {
+        this.snackBarService.showMessage("startExam: " + resp.error.message + "...", "error");
         console.log(resp);
       },
       isOfficialDriving

@@ -18,7 +18,7 @@ export class ExamRecordComponent {
 	ngOnInit() {
 		let self = this;
 		this.userService.fetchUserExams(
-			(resp)=>{
+			(resp) => {
 				for (let exam of resp) {
 					self.exams.push({
 						id: exam.id,
@@ -34,8 +34,8 @@ export class ExamRecordComponent {
 				}
 				console.log("exam-record.component::ngOnInit", self.exams);
 			},
-			(resp)=>{
-				this.snackBarService.showMessage("fetchUserExams: 服务器出错了...", "error");
+			(resp) => {
+				this.snackBarService.showMessage("fetchUserExams: " + resp.error.message + "...", "error");
 			}
 		);
 	}
@@ -61,8 +61,8 @@ export class ExamRecordComponent {
 					console.log('The dialog was closed');
 				});
 			},
-			(resp) => { 
-				this.snackBarService.showMessage("fetchExamPunishments: 服务器出错了...", "error");
+			(resp) => {
+				this.snackBarService.showMessage("fetchExamPunishments: " + resp.error.message + "...", "error");
 			});
 	}
 }

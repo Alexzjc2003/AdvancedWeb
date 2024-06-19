@@ -92,7 +92,7 @@ export class ThreejsSceneComponent implements OnInit {
       self.initScene();
       self.renderScene();
     });
-    
+
   }
 
   initScene(): void {
@@ -155,7 +155,7 @@ export class ThreejsSceneComponent implements OnInit {
         this.endExam(false);
       }
     });
-    
+
     this.noticePart.showNotice('发动');
     this.setSteerWindow();
   }
@@ -167,8 +167,8 @@ export class ThreejsSceneComponent implements OnInit {
         console.log('is_passed: ', resp.is_driver);
         this.userService.setUserDetail('is_passed', resp.is_driver);
       },
-      (resp) => { 
-        this.snackBarService.showMessage("endExam: 服务器出错了...", "error");
+      (resp) => {
+        this.snackBarService.showMessage("endExam: " + resp.error.message + "...", "error");
       },
       normalExit
     );
