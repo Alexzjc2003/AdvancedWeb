@@ -199,9 +199,25 @@ export class ThreejsSceneComponent implements OnInit {
   }
 
   loadLocalCar(carName: string) {
+    let positions = [
+      {
+        x: 102,
+        z: 45
+      },
+      {
+        x: 52,
+        z: 84
+      },
+      {
+        x: 3,
+        z: 3
+      }
+    ];
+    const randomIndex = Math.floor(Math.random() * positions.length);
+    let startPosition = positions[randomIndex];
     let self = this;
     this.loadResourcePart.loadCarResouce(carName, (carObj) => {
-      carObj.position.set(3, 3, 3);
+      carObj.position.set(startPosition.x, 3, startPosition.z);
       self.scene.add(carObj);
       self.model = {
         obj: carObj,
@@ -393,6 +409,8 @@ export class ThreejsSceneComponent implements OnInit {
       this.physics.updateDebugger();
       this.remotePart.updateSocket(this.model);
       this.renderService.render(this.scene, this.cameraService.camera);
+
+      console.log(this.model.obj.position);
     };
 
     animate();
