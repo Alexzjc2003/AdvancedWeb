@@ -398,7 +398,7 @@ export class ThreejsSceneComponent implements OnInit {
         !this.carcontrol.isLightCorrect() &&
         this.carcontrol.getStatus().speed > TURNING_SPEED_LIMIT
       ) {
-        console.log(this.carcontrol.getStatus().speed);
+        // console.log(this.carcontrol.getStatus().speed);
         this.addPunishment('INCORRECTLIGHT', '转向灯错误');
       }
 
