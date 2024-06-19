@@ -358,7 +358,7 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['n']) {
         // this.carcontrol.beep();
-        this.remotePart.sendEvent('beep', this.roomId);
+        this.remotePart.sendEvent('beep', this.roomId, this.model);
       }
       if (this.keyboardPressed['r']) {
         this.physics.initCar();
