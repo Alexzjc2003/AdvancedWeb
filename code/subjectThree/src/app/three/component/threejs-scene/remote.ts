@@ -21,6 +21,7 @@ export class RemotePart {
   checkInterval: number = 1000;
   lastBeepTime: number = 0;
   lastLastBeepTime: number = 0;
+  model: any;
   constructor(
     private loadResourcePart: LoadResourcePart,
     private notification: NotificationService,
@@ -28,10 +29,11 @@ export class RemotePart {
     private examService: ExamService,
   ) { }
 
-  setRoom(roomId: string, scene: THREE.Scene, carcontrol: CarcontrolService) {
+  setRoom(roomId: string, scene: THREE.Scene, carcontrol: CarcontrolService, model: any) {
     this.carcontrol = carcontrol;
     this.roomId = roomId;
     this.scene = scene;
+    this.model = model;
   }
 
   init_websocket() {
@@ -124,7 +126,7 @@ export class RemotePart {
     this.notification.showNotification(`${fromId}: ${message}`);
   }
 
-  sendInit(model: any, model_name: string) {
+  sendInit(model_name: string) {
     console.log('sendInit', this.roomId);
     let self = this;
 
@@ -135,15 +137,15 @@ export class RemotePart {
       roomID: self.roomId,
       model: model_name,
       position: {
-        x: model.obj.position.x,
-        y: model.obj.position.y,
-        z: model.obj.position.z,
+        x: self.model.obj.position.x,
+        y: self.model.obj.position.y,
+        z: self.model.obj.position.z,
       },
       rotation: {
-        w: model.obj.quaternion.w,
-        x: model.obj.quaternion.x,
-        y: model.obj.quaternion.y,
-        z: model.obj.quaternion.z,
+        w: self.model.obj.quaternion.w,
+        x: self.model.obj.quaternion.x,
+        y: self.model.obj.quaternion.y,
+        z: self.model.obj.quaternion.z,
       },
     });
   }
@@ -199,37 +201,39 @@ export class RemotePart {
     this.io.sendMsg('disconnection', {});
   }
 
-  updateSocket(model: any) {
+  updateSocket() {
+    let self = this;
     this.io.sendMsg('update', {
       position: {
-        x: model.obj.position.x,
-        y: model.obj.position.y,
-        z: model.obj.position.z,
+        x: self.model.obj.position.x,
+        y: self.model.obj.position.y,
+        z: self.model.obj.position.z,
       },
       rotation: {
-        w: model.obj.quaternion.w,
-        x: model.obj.quaternion.x,
-        y: model.obj.quaternion.y,
-        z: model.obj.quaternion.z,
+        w: self.model.obj.quaternion.w,
+        x: self.model.obj.quaternion.x,
+        y: self.model.obj.quaternion.y,
+        z: self.model.obj.quaternion.z,
       },
     });
   }
 
-  sendEvent(event: string, roomID: string, model: any) {
+  sendEvent(event: string, roomID: string) {
+    let self = this;
     this.io.sendMsg('event', {
       event: event,
       room_id: roomID,
       id: this.socketId,
       position: {
-        x: model.obj.position.x,
-        y: model.obj.position.y,
-        z: model.obj.position.z,
+        x: self.model.obj.position.x,
+        y: self.model.obj.position.y,
+        z: self.model.obj.position.z,
       },
       rotation: {
-        w: model.obj.quaternion.w,
-        x: model.obj.quaternion.x,
-        y: model.obj.quaternion.y,
-        z: model.obj.quaternion.z,
+        w: self.model.obj.quaternion.w,
+        x: self.model.obj.quaternion.x,
+        y: self.model.obj.quaternion.y,
+        z: self.model.obj.quaternion.z,
       },
     });
   }
@@ -250,12 +254,20 @@ export class RemotePart {
   }
 
   handleEvent(event: any) {
-    console.log(event);
     switch (event.event) {
       case 'beep':
         {
+          const distance = Math.sqrt(
+            Math.pow(event.position.x - this.model.position.x, 2) +
+            Math.pow(event.position.y - this.model.position.y, 2) +
+            Math.pow(event.position.z - this.model.position.z, 2)
+          );
+          console.log('beep distance', distance);
+          if (distance > 40) {
+            return;
+          }
           // beep
-          this.carcontrol.beep();
+          this.carcontrol.beep(event.position);
           this.checkBeep();
         }
         break;

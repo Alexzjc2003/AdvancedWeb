@@ -34,7 +34,7 @@ export class ThreejsSceneComponent implements OnInit {
   ambientLight: THREE.AmbientLight = new THREE.AmbientLight();
   directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight();
 
-  model: any;
+  model: any = {};
   model_name: string = '';
 
   keyboardPressed: { [key: string]: number };
@@ -99,7 +99,7 @@ export class ThreejsSceneComponent implements OnInit {
   initScene(): void {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xadd8e6);
-    this.remotePart.setRoom(this.roomId, this.scene, this.carcontrol);
+    this.remotePart.setRoom(this.roomId, this.scene, this.carcontrol, this.model);
     this.environmentPart.setScene(this.scene, this.physics);
 
     // this.physics.useDebugger(this.scene);
@@ -223,13 +223,12 @@ export class ThreejsSceneComponent implements OnInit {
     this.loadResourcePart.loadCarResouce(carName, (carObj) => {
       carObj.position.set(startPosition.x, 3, startPosition.z);
       self.scene.add(carObj);
-      self.model = {
-        obj: carObj,
-      };
+      self.model.obj = carObj;
+      
       self.physics.setCar(carObj);
       self.carcontrol.bindCar(self.physics.car);
       carObj.add(self.carcontrol.turningSign);
-      self.remotePart.sendInit(self.model, self.model_name);
+      self.remotePart.sendInit(self.model_name);
     });
   }
 
@@ -360,7 +359,7 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['n']) {
         // this.carcontrol.beep();
-        this.remotePart.sendEvent('beep', this.roomId, this.model);
+        this.remotePart.sendEvent('beep', this.roomId);
       }
       if (this.keyboardPressed['r']) {
         this.physics.initCar();
@@ -414,7 +413,7 @@ export class ThreejsSceneComponent implements OnInit {
       this.cameraService.follow(this.model.obj);
 
       // this.physics.updateDebugger();
-      this.remotePart.updateSocket(this.model);
+      this.remotePart.updateSocket();
       this.renderService.render(this.scene, this.cameraService.camera);
     };
 

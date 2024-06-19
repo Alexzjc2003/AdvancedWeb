@@ -25,7 +25,7 @@ export class HttpRequestService {
       error: (error: any) => {
         if(error.status == 401){
           localStorage.removeItem('userInfo');
-          this.router.navigate(['/']);
+          this.router.navigate(['/login']);
         }
         onError(error);
       }
@@ -41,7 +41,7 @@ export class HttpRequestService {
       error: (error: any) => {
         if(error.status == 401){
           localStorage.removeItem('userInfo');
-          this.router.navigate(['/']);
+          this.router.navigate(['/login']);
         }
         onError(error);
       }
@@ -58,7 +58,7 @@ export class HttpRequestService {
       error: (error: any) => {
         if(error.status == 401){
           localStorage.removeItem('userInfo');
-          this.router.navigate(['/']);
+          this.router.navigate(['/login']);
         }
         onError(error);
       }
@@ -76,7 +76,7 @@ export class HttpRequestService {
       error: (error: any) => {
         if(error.status == 401){
           localStorage.removeItem('userInfo');
-          this.router.navigate(['/']);
+          this.router.navigate(['/login']);
         }
         onError(error);
       }
