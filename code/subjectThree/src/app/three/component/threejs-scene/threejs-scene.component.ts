@@ -155,7 +155,8 @@ export class ThreejsSceneComponent implements OnInit {
         this.endExam(false);
       }
     });
-
+    
+    this.noticePart.showNotice('发动');
     this.setSteerWindow();
   }
 
@@ -257,8 +258,9 @@ export class ThreejsSceneComponent implements OnInit {
     self.punishmentCoolDown[punishmentType] = false;
     setTimeout(() => {
       self.punishmentCoolDown[punishmentType] = true;
-    }, 3000);
+    }, 8000);
     console.log(`${punishmentType} triggered.`);
+    this.noticePart.showNotice(punishmentType);
     this.examService.addPunishment(
       punishmentType,
       reason,
@@ -281,7 +283,6 @@ export class ThreejsSceneComponent implements OnInit {
         _brake = false;
       if (this.keyboardPressed['w'] == 1) {
         // W键
-        this.noticePart.showNotice('发动');
         _gear += 1;
         _throttle = true;
       }
@@ -292,12 +293,10 @@ export class ThreejsSceneComponent implements OnInit {
       }
       if (this.keyboardPressed['a'] == 1) {
         // A键
-        this.noticePart.showNotice('转弯');
         _turn += 1;
       }
       if (this.keyboardPressed['d'] == 1) {
         // D键
-        this.noticePart.showNotice('转弯');
         _turn -= 1;
       }
       if (this.keyboardPressed['b'] == 1) {
