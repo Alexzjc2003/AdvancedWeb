@@ -37,7 +37,7 @@ export class LineChartComponent implements OnInit {
       }
     }
     const config: ChartConfiguration = {
-      type: 'line',
+      type: 'bar',
       data: data,
       options: options
     }

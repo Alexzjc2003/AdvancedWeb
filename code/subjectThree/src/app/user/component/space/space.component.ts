@@ -28,9 +28,8 @@ export class SpaceComponent implements OnInit{
 	editMode: boolean = false;
 	button_msg: string = "modify";
 
-  labels = [1, 2, 3, 4, 5, 6, 7];
-  data = [9, 8, 7, 6, 5, 4, 3];
-
+  punishment_types_list: string[] = [];
+  punishment_score_list: number[] = [];
 
 	constructor(private userService: UserService, private driverService: DriverService, private snackBarService: SnackbarService) { }
 
@@ -54,7 +53,16 @@ export class SpaceComponent implements OnInit{
             punishment_type: punishment.punishment_type,
             reason: punishment.reason,
             score: punishment.score,
-          })
+          });
+          const type: string = punishment.punishment_type;
+          const score = punishment.score;
+          const index = this.punishment_types_list.indexOf(type);
+          if(index == -1){
+            this.punishment_types_list.push(type);
+            this.punishment_score_list.push(score);
+          } else {
+            this.punishment_score_list[index] += score;
+          }
         }
       },
       (resp) => {
