@@ -184,8 +184,8 @@ export class ThreejsSceneComponent implements OnInit {
 
     if (outer != null && inner != null) {
       var rect = outer.getBoundingClientRect();
-      console.log(rect.bottom, rect.right);
-      console.log(inner.offsetWidth);
+      // console.log(rect.bottom, rect.right);
+      // console.log(inner.offsetWidth);
       inner.style.top = rect.bottom - inner.offsetHeight + 'px';
       inner.style.left = rect.right - inner.offsetWidth + 'px';
     }
@@ -265,6 +265,10 @@ export class ThreejsSceneComponent implements OnInit {
         return;
       }
       self.keyboardPressed[event.key] = 0;
+    });
+
+    this.physics.setCollideHandler(()=>{
+      this.addPunishment('CRASH', '碰撞', 50);
     });
   }
 
@@ -428,7 +432,7 @@ export class ThreejsSceneComponent implements OnInit {
     this.indicateTurnCoolDown = false;
     setTimeout(() => {
       self.indicateTurnCoolDown = true;
-    }, 3000);
+    }, 500);
     console.log("turn", turn);
     this.carcontrol.turnLight(turn);
   }

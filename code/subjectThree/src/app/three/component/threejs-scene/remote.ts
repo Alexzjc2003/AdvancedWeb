@@ -100,6 +100,9 @@ export class RemotePart {
         });
       } else {
         let carObj = this.remoteCars.get(remoteId).obj;
+        if (!carObj || !carObj.position || !carObj.quaternion) {
+          continue;
+        }
         carObj.position.set(
           centerPosition.x,
           centerPosition.y,
