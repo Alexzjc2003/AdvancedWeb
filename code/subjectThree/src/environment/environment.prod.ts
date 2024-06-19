@@ -6,5 +6,5 @@ export const environment = {
     // wsUrl: 'ws://10.117.245.17:58080/api',
     socketUrl: 'wss://p.jingyijun.xyz',
     httpUrl: 'https://p.jingyijun.xyz/api',
-    wsUrl: 'wss://p.jingyijun.xyz/api',,
+    wsUrl: 'wss://p.jingyijun.xyz/api',
 };
